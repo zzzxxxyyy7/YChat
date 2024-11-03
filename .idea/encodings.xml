@@ -3,6 +3,8 @@
   <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/YChat-Chat-Server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/YChat-Chat-Server/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/YChat-FrameWork/YChat-Common-Starter/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/YChat-FrameWork/YChat-Common-Starter/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/YChat-FrameWork/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/YChat-FrameWork/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
