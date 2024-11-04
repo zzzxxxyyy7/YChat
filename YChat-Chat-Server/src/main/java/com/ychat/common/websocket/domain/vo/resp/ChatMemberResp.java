@@ -20,6 +20,7 @@ import java.util.Date;
 public class ChatMemberResp {
     @ApiModelProperty("uid")
     private Long uid;
+
     /**
      * @see com.abin.mallchat.common.user.domain.enums.ChatActiveStatusEnum
      */

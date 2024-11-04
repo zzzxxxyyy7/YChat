@@ -3,11 +3,14 @@ package com.ychat.common.websocket;
 import cn.hutool.json.JSONUtil;
 import com.ychat.common.websocket.domain.enums.WSReqTypeEnum;
 import com.ychat.common.websocket.domain.vo.req.WSBaseReq;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
-import io.netty.channel.ChannelHandler.Sharable;
 
 /**
  * 自定义消息处理器
@@ -17,8 +20,29 @@ import io.netty.channel.ChannelHandler.Sharable;
 public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
     /**
+     * 事件捕捉器
+     * @param ctx
+     * @param evt
+     * @throws Exception
+     */
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
+            // 读空闲
+            if (idleStateEvent.state() == IdleState.READER_IDLE) {
+                // TODO 关闭用户的连接
+                //userOffLine(ctx);
+            }
+        } else if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
+            System.out.println("握手完成");
+        }
+        super.userEventTriggered(ctx, evt);
+    }
+
+    /**
      * 基于事件驱动的多路复用框架
-     * @param channelHandlerContext
+     * @param ctx
      * @param textWebSocketFrame
      * @throws Exception
      */
@@ -36,4 +60,11 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
         }
     }
 
+
+    private void userOffLine(ChannelHandlerContext ctx) {
+        String channelId = ctx.channel().id().asLongText();
+        log.info("用户离线，channelId:{}", channelId);
+        // 关闭 Channel 实现用户离线
+        ctx.close();
+    }
 }
