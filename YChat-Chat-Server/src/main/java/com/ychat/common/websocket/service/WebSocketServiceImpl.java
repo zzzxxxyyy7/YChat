@@ -1,0 +1,86 @@
+package com.ychat.common.websocket.service;
+
+import cn.hutool.json.JSONUtil;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.ychat.common.websocket.config.SafeSnowflake;
+import com.ychat.common.websocket.domain.dto.WSChannelExtraDTO;
+import com.ychat.common.websocket.domain.vo.resp.WSBaseResp;
+import com.ychat.common.websocket.service.adapter.webSocketAdapter;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * Description: 专门管理 websocket 逻辑，包括推拉流、连接建立等等
+ */
+@Service
+public class WebSocketServiceImpl implements WebSocketService{
+
+    @Autowired
+    private WxMpService wxMpService;
+
+    @Autowired
+    public SafeSnowflake safeSnowflake;
+
+    // 缓存五分钟
+    private static final Duration EXPIRE_TIME = Duration.ofMinutes(5);
+    private static final Long MAX_MUM_SIZE = 10000L;
+
+    /**
+     * 管理所有客户端连接，包括登录态、游客态
+     */
+    private static final ConcurrentHashMap<ChannelHandlerContext, WSChannelExtraDTO> ONLINE_WS_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * 待登录映射、客户端发起扫码请求申请二维码时生成 临时场景值和 Channel 的唯一关系
+     * 登录成功后，通过该关系，将临时场景值对应的 Channel 关联到登录态的 Channel
+     * 定期清理该关系，避免内存泄露
+     */
+    public static final Cache<Integer, Channel> WAIT_LOGIN_MAP = Caffeine.newBuilder()
+            .expireAfterWrite(EXPIRE_TIME)
+            .maximumSize(MAX_MUM_SIZE)
+            .build();
+
+    @Override
+    public void saveChannel(ChannelHandlerContext ctx) {
+        // 记录连接
+        ONLINE_WS_MAP.put(ctx, new WSChannelExtraDTO());
+    }
+
+    @Override
+    public void handleLoginReq(Channel channel) throws WxErrorException {
+        // 雪花算法生成临时场景值
+        Integer code = generateLoginCode(channel);
+        // 缓存待登录关系
+        WAIT_LOGIN_MAP.asMap().put(code, channel);
+        // 获取二维码，有效期五分钟
+        WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.getQrcodeService().qrCodeCreateTmpTicket(code, (int) EXPIRE_TIME.getSeconds());
+        sendUrlMsg(channel, webSocketAdapter.getRespLoginUrl(wxMpQrCodeTicket));
+    }
+
+    private void sendUrlMsg(Channel channel, WSBaseResp<?> resp) {
+        channel.writeAndFlush(new TextWebSocketFrame(JSONUtil.toJsonStr(resp)));
+    }
+
+    private Integer generateLoginCode(Channel channel) {
+        return safeSnowflake.nextId();
+    }
+
+    /**
+     * 用户下线，移除缓存
+     * @param ctx
+     */
+    @Override
+    public void offline(ChannelHandlerContext ctx) {
+        ONLINE_WS_MAP.remove(ctx);
+    }
+}
