@@ -3,6 +3,9 @@ package com.ychat.common.websocket.service;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.ychat.common.user.dao.UserDao;
+import com.ychat.common.user.domain.entity.User;
+import com.ychat.common.user.service.LoginService;
 import com.ychat.common.websocket.config.SafeSnowflake;
 import com.ychat.common.websocket.domain.dto.WSChannelExtraDTO;
 import com.ychat.common.websocket.domain.vo.resp.WSBaseResp;
@@ -14,6 +17,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -23,13 +27,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * Description: 专门管理 websocket 逻辑，包括推拉流、连接建立等等
  */
 @Service
-public class WebSocketServiceImpl implements WebSocketService{
+public class WebSocketServiceImpl implements WebSocketService {
 
     @Autowired
+    @Lazy
     private WxMpService wxMpService;
 
     @Autowired
     public SafeSnowflake safeSnowflake;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private LoginService loginService;
 
     // 缓存五分钟
     private static final Duration EXPIRE_TIME = Duration.ofMinutes(5);
@@ -57,21 +68,21 @@ public class WebSocketServiceImpl implements WebSocketService{
     }
 
     @Override
-    public void handleLoginReq(Channel channel) throws WxErrorException {
+    public void handleLoginReq(Channel ctx) throws WxErrorException {
         // 雪花算法生成临时场景值
-        Integer code = generateLoginCode(channel);
+        Integer code = generateLoginCode();
         // 缓存待登录关系
-        WAIT_LOGIN_MAP.asMap().put(code, channel);
+        WAIT_LOGIN_MAP.asMap().put(code, ctx);
         // 获取二维码，有效期五分钟
         WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.getQrcodeService().qrCodeCreateTmpTicket(code, (int) EXPIRE_TIME.getSeconds());
-        sendUrlMsg(channel, webSocketAdapter.getRespLoginUrl(wxMpQrCodeTicket));
+        sendUrlMsg(ctx, webSocketAdapter.getRespLoginUrl(wxMpQrCodeTicket));
     }
 
     private void sendUrlMsg(Channel channel, WSBaseResp<?> resp) {
         channel.writeAndFlush(new TextWebSocketFrame(JSONUtil.toJsonStr(resp)));
     }
 
-    private Integer generateLoginCode(Channel channel) {
+    private Integer generateLoginCode() {
         return safeSnowflake.nextId();
     }
 
@@ -82,5 +93,46 @@ public class WebSocketServiceImpl implements WebSocketService{
     @Override
     public void offline(ChannelHandlerContext ctx) {
         ONLINE_WS_MAP.remove(ctx);
+    }
+
+    @Override
+    public void scanLoginSuccess(Integer loginCode, Long uid) {
+        // 确认连接是否在这个服务节点上
+        Channel ctx = WAIT_LOGIN_MAP.getIfPresent(loginCode);
+
+        if (null == ctx) {
+            return;
+        }
+
+        WAIT_LOGIN_MAP.invalidate(loginCode);
+
+        User user = userDao.getById(uid);
+
+        String token = loginService.login(uid);
+
+        sendMsg(ctx,  webSocketAdapter.getRespLoginSuccess(user, token));
+    }
+
+    /**
+     * 给本地 channel 发送消息
+     *
+     * @param channel
+     * @param wsBaseResp
+     */
+    private void sendMsg(Channel channel, WSBaseResp<?> wsBaseResp) {
+        channel.writeAndFlush(new TextWebSocketFrame(JSONUtil.toJsonStr(wsBaseResp)));
+    }
+
+    // 传递前端用户扫码成功，请求授权的消息
+    @Override
+    public void waitAuthorize(Integer loginCode) {
+        // 确认连接是否在这个服务节点上
+        Channel ctx = WAIT_LOGIN_MAP.getIfPresent(loginCode);
+
+        if (null == ctx) {
+            return;
+        }
+
+        sendMsg(ctx, webSocketAdapter.getRespLoginSuccess());
     }
 }

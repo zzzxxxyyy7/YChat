@@ -14,4 +14,8 @@ public interface WebSocketService {
     void handleLoginReq(Channel channel) throws WxErrorException;
 
     void offline(ChannelHandlerContext ctx);
+
+    void scanLoginSuccess(Integer loginCode, Long uid);
+
+    void waitAuthorize(Integer loginCode);
 }

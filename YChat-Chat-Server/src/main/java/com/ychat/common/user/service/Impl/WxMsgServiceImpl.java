@@ -8,6 +8,7 @@ import com.ychat.common.user.service.IUserService;
 import com.ychat.common.user.service.WxMsgService;
 import com.ychat.common.user.service.adapter.TextBuilder;
 import com.ychat.common.user.service.adapter.UserAdapter;
+import com.ychat.common.websocket.service.WebSocketService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -20,10 +21,19 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
 public class WxMsgServiceImpl implements WxMsgService {
+
+    @Autowired
+    private WebSocketService webSocketService;
+
+    /**
+     * 存储 openId 和 二维码临时 Code 的关系
+     */
+    private static final ConcurrentHashMap<String , Integer> WAIT_AUTHORIZE_MAP = new ConcurrentHashMap<>();
 
     /**
      * 用户的openId和前端登录场景code的映射关系
@@ -56,7 +66,8 @@ public class WxMsgServiceImpl implements WxMsgService {
         boolean authorized = registered && ObjectUtil.isNotEmpty(user.getName());
         if (registered && authorized) {
             // 都有，才是登录成功
-            return TextBuilder.build("登录成功", wxMpXmlMessage);
+            webSocketService.scanLoginSuccess(loginCode, user.getId());
+            return null;
         }
 
         // 未注册，注册
@@ -65,10 +76,15 @@ public class WxMsgServiceImpl implements WxMsgService {
             userService.register(newUser);
         }
 
+        WAIT_AUTHORIZE_MAP.put(openid, loginCode);
+
+        // 传递前端用户扫码成功，请求授权的消息
+        webSocketService.waitAuthorize(loginCode);
+
         // 授权地址
         String skipUrl = String.format(URL, wxMpService.getWxMpConfigStorage().getAppId(), URLEncoder.encode(callback + "/wx/portal/public/callBack"));
 
-        return TextBuilder.build("请点击链接授权：<a href=\"" + skipUrl + "\">登录</a>", wxMpXmlMessage);
+        return TextBuilder.build("请点击链接登录：<a href=\"" + skipUrl + "\">登录</a>", wxMpXmlMessage);
     }
 
     private String getEventKey(WxMpXmlMessage wxMpXmlMessage) {
@@ -83,10 +99,17 @@ public class WxMsgServiceImpl implements WxMsgService {
     @Override
     public void authorize(WxOAuth2UserInfo userInfo) {
         User user = userDao.getByOpenId(userInfo.getOpenid());
+
         // 更新用户信息，防抖，只有首次登录才更新
         if (StringUtils.isEmpty(user.getName())) {
             fillUserInfo(user.getId(), userInfo);
         }
+
+        // 拿到 Code 找到 Channel 进行登录
+        Integer code = WAIT_AUTHORIZE_MAP.remove(user.getOpenId());
+
+        // 拿到 code ，执行登录逻辑
+        webSocketService.scanLoginSuccess(code, user.getId());
     }
 
     private void fillUserInfo(Long uid, WxOAuth2UserInfo userInfo) {

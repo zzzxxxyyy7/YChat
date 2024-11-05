@@ -10,10 +10,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication(scanBasePackages = {"com.ychat"})
 @MapperScan("com.ychat.common.**.mapper")
-public class MallchatCustomApplication {
+public class YChatCustomApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MallchatCustomApplication.class,args);
+        SpringApplication.run(YChatCustomApplication.class,args);
     }
 
 }
