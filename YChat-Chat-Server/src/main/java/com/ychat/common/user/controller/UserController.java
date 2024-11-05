@@ -1,9 +1,10 @@
 package com.ychat.common.user.controller;
 
 
+import com.ychat.common.user.dao.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -13,9 +14,16 @@ import org.springframework.stereotype.Controller;
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-04
  */
-@Controller
+@RestController
 @RequestMapping("/user")
 public class UserController {
 
+    @Autowired
+    private UserDao userDao;
+
+    @RequestMapping("/getList")
+    public String index(){
+        return userDao.getByOpenId("8848").toString();
+    }
 }
 

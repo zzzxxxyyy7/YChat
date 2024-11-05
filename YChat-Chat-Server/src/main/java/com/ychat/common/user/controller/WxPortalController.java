@@ -1,5 +1,6 @@
 package com.ychat.common.user.controller;
 
+import com.ychat.common.user.service.WxMsgService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
@@ -32,6 +33,9 @@ public class WxPortalController {
     @Autowired
     private WxMpService wxMpService;
 
+    @Autowired
+    private WxMsgService wxMsgService;
+
     @GetMapping("/{appid}")
     public String test(@PathVariable String appid) throws WxErrorException {
         WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.getQrcodeService().qrCodeCreateTmpTicket(appid, 10000);
@@ -58,12 +62,20 @@ public class WxPortalController {
         return "非法请求";
     }
 
+    /**
+     * 扫码登录之后，微信回调接口，实现授权逻辑
+     * @param code
+     * @return
+     * @throws WxErrorException
+     */
     @GetMapping("/callBack")
     public RedirectView callBack(@RequestParam String code) throws WxErrorException {
         WxOAuth2AccessToken accessToken = wxService.getOAuth2Service().getAccessToken(code);
         WxOAuth2UserInfo userInfo = wxService.getOAuth2Service().getUserInfo(accessToken, "zh_CN");
-        System.out.println(userInfo);
-        return null;
+        wxMsgService.authorize(userInfo);
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl("www.ychat.com");
+        return redirectView;
     }
 
     @PostMapping(produces = "application/xml; charset=UTF-8")

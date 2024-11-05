@@ -1,7 +1,6 @@
 package com.ychat.common.user.service;
 
 import com.ychat.common.user.domain.entity.User;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
@@ -11,6 +10,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-04
  */
-public interface IUserService extends IService<User> {
+public interface IUserService {
 
+    /**
+     * 用户注册，需要获得id
+     *
+     * @param user
+     */
+    Long register(User user);
 }
