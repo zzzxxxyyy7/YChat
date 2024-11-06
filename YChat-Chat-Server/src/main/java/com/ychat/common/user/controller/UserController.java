@@ -2,6 +2,8 @@ package com.ychat.common.user.controller;
 
 
 import com.ychat.common.user.dao.UserDao;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,17 @@ public class UserController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    @RequestMapping("/redissonClient")
+    public void redissonClientTest() {
+        RLock lock = redissonClient.getLock("123");
+        lock.lock();
+        System.out.println(5465);
+        lock.unlock();
+    }
 
     @RequestMapping("/getList")
     public String index(){
