@@ -11,23 +11,26 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     # Redis服务器地址
-    host: ${mallchat.redis.host}
+    host: ${ychat.redis.host}
     # Redis服务器端口号
-    port: ${mallchat.redis.port}
+    port: ${ychat.redis.port}
     # 使用的数据库索引，默认是0
     database: 0
     # 连接超时时间
     timeout: 1800000
     # 设置密码
-    password: ${mallchat.redis.password}
+    password: ${ychat.redis.password}
   jackson:
     serialization:
       write-dates-as-timestamps: true
 wx:
   mp:
-    callback: ${mallchat.wx.callback}
+    callback: ${ychat.wx.callback}
     configs:
-      - appId: ${mallchat.wx.appId} # 第一个公众号的 appid
-        secret: ${mallchat.wx.secret} # 公众号的 appsecret
-        token: ${mallchat.wx.token} # 接口配置里的 Token 值
-        aesKey: ${mallchat.wx.aesKey} # 接口配置里的 EncodingAESKey 值
+      - appId: ${ychat.wx.appId} # 第一个公众号的 appid
+        secret: ${ychat.wx.secret} # 公众号的 appsecret
+        token: ${ychat.wx.token} # 接口配置里的 Token 值
+        aesKey: ${ychat.wx.aesKey} # 接口配置里的 EncodingAESKey 值
+
+jwt:
+  secret: ${ychat.jwt.secret}
