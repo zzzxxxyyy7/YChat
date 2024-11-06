@@ -1,4 +1,4 @@
-package com.ychat.common.user.config;
+package com.ychat.common.user.config.Redis;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;

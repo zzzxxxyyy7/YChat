@@ -67,7 +67,7 @@ public class WxMsgServiceImpl implements WxMsgService {
         if (registered && authorized) {
             // 都有，才是登录成功
             webSocketService.scanLoginSuccess(loginCode, user.getId());
-            return null;
+            return TextBuilder.build("您已经成功登录", wxMpXmlMessage);
         }
 
         // 未注册，注册
