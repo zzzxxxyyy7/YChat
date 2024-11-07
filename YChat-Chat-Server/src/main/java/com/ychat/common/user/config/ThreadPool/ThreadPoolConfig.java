@@ -31,6 +31,8 @@ public class ThreadPoolConfig implements AsyncConfigurer {
     @Primary
     public ThreadPoolTaskExecutor yChatExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        // 线程池优雅停机，Bean Destory 的时候会被 Spring 回调，执行最后的逻辑处理再退出
+        executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setCorePoolSize(10);
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(200);
