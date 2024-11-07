@@ -39,6 +39,8 @@ public class ThreadPoolConfig implements AsyncConfigurer {
         executor.setThreadNamePrefix("ychat-executor-");
         // 满了调用线程执行，认为重要任务
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // 设置线程工厂执行异常捕获
+        executor.setThreadFactory(new YChatThreadFactory(executor));
         executor.initialize();
         return executor;
     }
