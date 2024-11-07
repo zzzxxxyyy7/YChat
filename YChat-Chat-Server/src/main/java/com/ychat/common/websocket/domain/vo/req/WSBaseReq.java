@@ -11,5 +11,5 @@ public class WSBaseReq {
      */
     private Integer type;
 
-    private String data;
+    private String token;
 }

@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -135,4 +136,23 @@ public class WebSocketServiceImpl implements WebSocketService {
 
         sendMsg(ctx, webSocketAdapter.getRespLoginSuccess());
     }
+
+    /**
+     * 校验这次 webSocket 握手连接是否携带有效 token
+     * @param ctx
+     * @param token
+     */
+    @Override
+    public void authorize(Channel ctx, String token) {
+        Long validUid = loginService.getValidUid(token);
+        if (Objects.nonNull(validUid)) {
+            // token 有效
+            User user = userDao.getById(validUid);
+            sendMsg(ctx, webSocketAdapter.getRespLoginSuccess(user , token));
+        } else {
+            // token 失效
+            sendMsg(ctx, webSocketAdapter.getRespLoginFail());
+        }
+    }
+
 }

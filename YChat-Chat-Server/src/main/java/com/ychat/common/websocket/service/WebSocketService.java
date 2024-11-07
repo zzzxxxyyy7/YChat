@@ -18,4 +18,6 @@ public interface WebSocketService {
     void scanLoginSuccess(Integer loginCode, Long uid);
 
     void waitAuthorize(Integer loginCode);
+
+    void authorize(Channel channel, String token);
 }

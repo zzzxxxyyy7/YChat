@@ -55,7 +55,7 @@ public class LoginServiceImpl implements LoginService {
         // token 中拿不到 uid，非法 token
         if (null == uid) return null;
         // 查询 token 是否在缓存中
-        String oldToken = RedisUtils.get(getUserTokenKey(uid));
+        String oldToken = RedisUtils.getStr(getUserTokenKey(uid));
         // 如果不在，说明过期
         if (StringUtils.isEmpty(oldToken)) return null;
 

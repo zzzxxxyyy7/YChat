@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public enum WSReqTypeEnum {
     LOGIN(1, "请求登录二维码"),
     HEARTBEAT(2, "心跳包"),
+    // 非首次建立连接，多次带上 token 的认证条件
     AUTHORIZE(3, "登录认证"),
     ;
 

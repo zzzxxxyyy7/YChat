@@ -46,4 +46,11 @@ public class webSocketAdapter {
         resp.setData("扫码成功，请授权登录");
         return resp;
     }
+
+    public static WSBaseResp<?> getRespLoginFail() {
+        WSBaseResp<String> resp = new WSBaseResp<>();
+        resp.setType(WSRespTypeEnum.INVALIDATE_TOKEN.getType());
+        resp.setData("Token 已过期，请重新登录");
+        return resp;
+    }
 }
