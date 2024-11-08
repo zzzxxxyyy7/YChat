@@ -1,7 +1,10 @@
 package com.ychat.common.user.controller;
 
+import com.ychat.common.user.config.Redis.RedisKeyBuilder;
 import com.ychat.common.user.config.ThreadPool.YChatUncaughtExceptionHandler;
 import com.ychat.common.user.dao.UserDao;
+import com.ychat.common.user.utils.JwtUtils;
+import com.ychat.common.user.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -11,6 +14,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.TimeUnit;
 
 import static com.ychat.common.user.config.ThreadPool.ThreadPoolConfig.YCHAT_EXECUTOR;
 
@@ -27,6 +32,9 @@ public class TestController {
 
     @Autowired
     private RedissonClient redissonClient;
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @Autowired
     @Qualifier(YCHAT_EXECUTOR)
@@ -71,5 +79,14 @@ public class TestController {
             throw new RuntimeException("错误");
         });
         Thread.sleep(200);
+    }
+
+    @RequestMapping("/jwt")
+    public String getUserTokenKey() {
+        String token = jwtUtils.createToken(3306L);
+        String userTokenKey = RedisKeyBuilder.getKey(RedisKeyBuilder.USER_TOKEN_STRING , 3306L);
+        System.out.println(userTokenKey);
+        RedisUtils.set(userTokenKey, token, 999, TimeUnit.DAYS);
+        return "永久测试 Token 生成成功: " + token;
     }
 }

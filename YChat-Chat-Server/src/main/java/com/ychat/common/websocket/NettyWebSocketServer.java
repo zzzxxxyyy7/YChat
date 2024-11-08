@@ -86,14 +86,9 @@ public class NettyWebSocketServer {
                         //保存用户ip
                         //pipeline.addLast(new HttpHeadersHandler());
                         /**
-                         * 说明：
-                         *  1. 对于 WebSocket，它的数据是以帧frame 的形式传递的；
-                         *  2. 可以看到 WebSocketFrame 下面有6个子类
-                         *  3. 浏览器发送请求时： ws://localhost:7000/hello 表示请求的uri
-                         *  4. WebSocketServerProtocolHandler 核心功能是把 http协议升级为 ws 协议，保持长连接；
-                         *      是通过一个状态码 101 来切换的
+                         * 自定义 webSocket 握手处理器，用来处理 子协议 protocal 携带参数 token 进行登录验证
                          */
-                        pipeline.addLast(new WebSocketServerProtocolHandler("/"));
+                        pipeline.addLast(new YChatShakeHandler());
                         // 自定义handler ，处理业务逻辑
                         pipeline.addLast(NETTY_WEB_SOCKET_SERVER_HANDLER);
                     }

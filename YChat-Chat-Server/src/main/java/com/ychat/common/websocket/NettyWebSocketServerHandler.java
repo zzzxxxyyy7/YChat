@@ -31,6 +31,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         webSocketService = SpringUtil.getBean(WebSocketService.class);
+        // 保存 channel 的游客态
         webSocketService.saveChannel(ctx);
     }
 
@@ -54,7 +55,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
-            // 读空闲事件触发用户下线
+            // 读空闲事件触发用户下线 -- 客户端被动下线
             if (idleStateEvent.state() == IdleState.READER_IDLE) {
                 // TODO 关闭用户的连接
                 userOffLine(ctx);
@@ -82,15 +83,18 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
                 break;
             case LOGIN:
                 this.webSocketService.handleLoginReq(ctx.channel());
-                log.info("请求二维码 = {}", msg.text());
                 break;
         }
     }
 
-
+    /**
+     * 客户端断开，执行下线逻辑
+     * @param ctx
+     */
     private void userOffLine(ChannelHandlerContext ctx) {
         String channelId = ctx.channel().id().asLongText();
         log.info("用户离线，channelId:{}", channelId);
+        // 清除 Channel 和 User 绑定的对应关系
         webSocketService.offline(ctx);
         // 关闭 Channel 实现用户离线
         ctx.close();

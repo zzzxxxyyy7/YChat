@@ -60,8 +60,10 @@ public class WxMsgServiceImpl implements WxMsgService {
         }
 
         User user = userDao.getByOpenId(openid);
+
         // 是否已注册（拿到 openId 就可以注册）
         boolean registered = ObjectUtil.isNotEmpty(user);
+
         // 是否已授权
         boolean authorized = registered && ObjectUtil.isNotEmpty(user.getName());
         if (registered && authorized) {

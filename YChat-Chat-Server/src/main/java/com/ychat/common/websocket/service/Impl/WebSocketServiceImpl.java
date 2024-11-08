@@ -1,4 +1,4 @@
-package com.ychat.common.websocket.service;
+package com.ychat.common.websocket.service.Impl;
 
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -9,6 +9,7 @@ import com.ychat.common.user.service.LoginService;
 import com.ychat.common.websocket.config.SafeSnowflake;
 import com.ychat.common.websocket.domain.dto.WSChannelExtraDTO;
 import com.ychat.common.websocket.domain.vo.resp.WSBaseResp;
+import com.ychat.common.websocket.service.WebSocketService;
 import com.ychat.common.websocket.service.adapter.webSocketAdapter;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -111,7 +112,7 @@ public class WebSocketServiceImpl implements WebSocketService {
 
         String token = loginService.login(uid);
 
-        sendMsg(ctx,  webSocketAdapter.getRespLoginSuccess(user, token));
+        putLoginSuccessMessage(ctx, user, token);
     }
 
     /**
@@ -148,11 +149,26 @@ public class WebSocketServiceImpl implements WebSocketService {
         if (Objects.nonNull(validUid)) {
             // token 有效
             User user = userDao.getById(validUid);
-            sendMsg(ctx, webSocketAdapter.getRespLoginSuccess(user , token));
+            // 发送 token 有效，重新建立登录状态的消息
+            putLoginSuccessMessage(ctx, user, token);
         } else {
             // token 失效
             sendMsg(ctx, webSocketAdapter.getRespLoginFail());
         }
+    }
+
+    public void putLoginSuccessMessage(Channel ctx, User user, String message) {
+        // 保存 channel 的 uid
+        /**
+         * 当连接建立时，自动存入 channel -> null 的关系
+         * @see NettyWebSocketServerHandler.channelActive
+         */
+        WSChannelExtraDTO wsChannelExtraDTO = ONLINE_WS_MAP.get(ctx);
+        // 更新 channel -> null --> channel -> uid 的关系, 保存用户登录成功的状态
+        wsChannelExtraDTO.setUid(user.getId());
+        // todo 用户上线成功状态事件变更
+        // 统一推送用户上线消息
+        sendMsg(ctx, webSocketAdapter.getRespLoginSuccess(user , message));
     }
 
 }
