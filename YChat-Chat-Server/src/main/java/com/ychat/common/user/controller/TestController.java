@@ -82,11 +82,11 @@ public class TestController {
     }
 
     @RequestMapping("/jwt")
-    public String getUserTokenKey() {
-        String token = jwtUtils.createToken(3306L);
-        String userTokenKey = RedisKeyBuilder.getKey(RedisKeyBuilder.USER_TOKEN_STRING , 3306L);
+    public String getUserTokenKey(Long uid) {
+        String token = jwtUtils.createToken(uid);
+        String userTokenKey = RedisKeyBuilder.getKey(RedisKeyBuilder.USER_TOKEN_STRING , uid);
         System.out.println(userTokenKey);
-        RedisUtils.set(userTokenKey, token, 999, TimeUnit.DAYS);
+        RedisUtils.set(userTokenKey, token, 9999, TimeUnit.DAYS);
         return "永久测试 Token 生成成功: " + token;
     }
 }

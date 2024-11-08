@@ -6,10 +6,13 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.ssl.SslHandler;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class YChatShakeHandler extends ChannelInboundHandlerAdapter {
 
     /**
+     * 如果在第一次 Http 握手就取得了 Token，直接手动升级协议为 WebSocket ，否则继续往下走，走完 WebSocket 的握手逻辑，再升级为 WebSocket (表明这是第一次升级)
      * @param ctx
      * @param msg
      * @throws Exception
@@ -21,20 +24,27 @@ public class YChatShakeHandler extends ChannelInboundHandlerAdapter {
         if (httpObject instanceof HttpRequest) {
             final HttpRequest req = (HttpRequest) httpObject;
             // 请求中取出 token
-            String token = req.headers().get("Sec-Websocket-Protoco");
+            HttpHeaders headers = req.headers();
+            String token = headers.get("Sec-Websocket-Protocol");
             // 下方作为子协议参数传回 token
             final WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(getWebSocketLocation(ctx.pipeline(), req, req.getUri()), token, false);
             final WebSocketServerHandshaker handshaker = wsFactory.newHandshaker(req);
+
             if (handshaker == null) {
                 WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
             } else {
                 ctx.pipeline().remove(this);
-                ChannelFuture handshakeFuture = handshaker.handshake(ctx.channel(), req);
-                handshakeFuture.addListener((ChannelFutureListener) future -> {
-                    if (!future.isSuccess()) {
-                        ctx.fireExceptionCaught(future.cause());
-                    } else {
-                        ctx.fireUserEventTriggered(WebSocketServerProtocolHandler.ServerHandshakeStateEvent.HANDSHAKE_COMPLETE);
+                final ChannelFuture handshakeFuture = handshaker.handshake(ctx.channel(), req);
+                handshakeFuture.addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                        if (!channelFuture.isSuccess()) {
+                            ctx.fireExceptionCaught(channelFuture.cause());
+                            log.info("握手失败: {}", token);
+                        } else {
+                            ctx.fireUserEventTriggered(WebSocketServerProtocolHandler.ServerHandshakeStateEvent.HANDSHAKE_COMPLETE);
+                            log.info("握手成功: {}", token);
+                        }
                     }
                 });
             }

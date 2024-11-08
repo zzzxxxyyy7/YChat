@@ -10,7 +10,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
@@ -72,7 +71,8 @@ public class NettyWebSocketServer {
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline pipeline = socketChannel.pipeline();
                         // 读空闲时间、写空闲时间、全局空闲时间、30 秒客户端没有向服务器发送心跳则关闭连接
-                        pipeline.addLast(new IdleStateHandler(30, 0, 0));
+                        // TODO 修改读空闲时间至合理时间
+                        pipeline.addLast(new IdleStateHandler(600, 0, 0));
                         // 因为使用http协议，所以需要使用http的编码器，解码器
                         pipeline.addLast(new HttpServerCodec());
                         // 以块方式写，添加 chunkedWriter 处理器

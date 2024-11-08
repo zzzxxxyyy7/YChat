@@ -14,6 +14,7 @@ import com.ychat.common.websocket.service.adapter.webSocketAdapter;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Description: 专门管理 websocket 逻辑，包括推拉流、连接建立等等
  */
 @Service
+@Slf4j
 public class WebSocketServiceImpl implements WebSocketService {
 
     @Autowired
@@ -67,6 +69,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     public void saveChannel(ChannelHandlerContext ctx) {
         // 记录连接
         ONLINE_WS_MAP.put(ctx, new WSChannelExtraDTO());
+        log.info("新连接建立，channel: {}", ctx);
     }
 
     @Override
@@ -163,6 +166,7 @@ public class WebSocketServiceImpl implements WebSocketService {
          * 当连接建立时，自动存入 channel -> null 的关系
          * @see NettyWebSocketServerHandler.channelActive
          */
+        // TODO 这种方式拿不到指定的 Channel
         WSChannelExtraDTO wsChannelExtraDTO = ONLINE_WS_MAP.get(ctx);
         // 更新 channel -> null --> channel -> uid 的关系, 保存用户登录成功的状态
         wsChannelExtraDTO.setUid(user.getId());
