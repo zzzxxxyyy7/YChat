@@ -1,7 +1,6 @@
 package com.ychat.common.websocket.service;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import me.chanjar.weixin.common.error.WxErrorException;
 
 /**
@@ -9,11 +8,11 @@ import me.chanjar.weixin.common.error.WxErrorException;
  */
 public interface WebSocketService {
 
-    void saveChannel(ChannelHandlerContext ctx);
+    void saveChannel(Channel ctx);
 
     void handleLoginReq(Channel channel) throws WxErrorException;
 
-    void offline(ChannelHandlerContext ctx);
+    void offline(Channel ctx);
 
     void scanLoginSuccess(Integer loginCode, Long uid);
 

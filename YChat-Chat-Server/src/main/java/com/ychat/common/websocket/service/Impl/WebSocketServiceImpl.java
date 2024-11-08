@@ -12,7 +12,6 @@ import com.ychat.common.websocket.domain.vo.resp.WSBaseResp;
 import com.ychat.common.websocket.service.WebSocketService;
 import com.ychat.common.websocket.service.adapter.webSocketAdapter;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -53,7 +52,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     /**
      * 管理所有客户端连接，包括登录态、游客态
      */
-    private static final ConcurrentHashMap<ChannelHandlerContext, WSChannelExtraDTO> ONLINE_WS_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Channel, WSChannelExtraDTO> ONLINE_WS_MAP = new ConcurrentHashMap<>();
 
     /**
      * 待登录映射、客户端发起扫码请求申请二维码时生成 临时场景值和 Channel 的唯一关系
@@ -66,7 +65,7 @@ public class WebSocketServiceImpl implements WebSocketService {
             .build();
 
     @Override
-    public void saveChannel(ChannelHandlerContext ctx) {
+    public void saveChannel(Channel ctx) {
         // 记录连接
         ONLINE_WS_MAP.put(ctx, new WSChannelExtraDTO());
         log.info("新连接建立，channel: {}", ctx);
@@ -96,7 +95,7 @@ public class WebSocketServiceImpl implements WebSocketService {
      * @param ctx
      */
     @Override
-    public void offline(ChannelHandlerContext ctx) {
+    public void offline(Channel ctx) {
         ONLINE_WS_MAP.remove(ctx);
     }
 
@@ -166,7 +165,6 @@ public class WebSocketServiceImpl implements WebSocketService {
          * 当连接建立时，自动存入 channel -> null 的关系
          * @see NettyWebSocketServerHandler.channelActive
          */
-        // TODO 这种方式拿不到指定的 Channel
         WSChannelExtraDTO wsChannelExtraDTO = ONLINE_WS_MAP.get(ctx);
         // 更新 channel -> null --> channel -> uid 的关系, 保存用户登录成功的状态
         wsChannelExtraDTO.setUid(user.getId());

@@ -6,6 +6,8 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.util.Attribute;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -26,6 +28,9 @@ public class YChatShakeHandler extends ChannelInboundHandlerAdapter {
             // 请求中取出 token
             HttpHeaders headers = req.headers();
             String token = headers.get("Sec-Websocket-Protocol");
+            // 拿到这条 Channel 的副键并设置 Token
+            Attribute<Object> Attr_Token = ctx.channel().attr(AttributeKey.valueOf("token"));
+            Attr_Token.set(token);
             // 下方作为子协议参数传回 token
             final WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(getWebSocketLocation(ctx.pipeline(), req, req.getUri()), token, false);
             final WebSocketServerHandshaker handshaker = wsFactory.newHandshaker(req);

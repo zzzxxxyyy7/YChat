@@ -50,7 +50,7 @@ public class webSocketAdapter {
     public static WSBaseResp<?> getRespLoginFail() {
         WSBaseResp<String> resp = new WSBaseResp<>();
         resp.setType(WSRespTypeEnum.INVALIDATE_TOKEN.getType());
-        resp.setData("Token 已过期，请重新登录");
+        resp.setData("Token 无效或者已过期，请重新登录");
         return resp;
     }
 }
