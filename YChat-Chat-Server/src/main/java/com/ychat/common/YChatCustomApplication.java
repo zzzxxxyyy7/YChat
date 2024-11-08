@@ -5,8 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * @author zhongzb
- * @date 2021/05/27
+ * @author catch
+ * @date 2024/02/27
  */
 @SpringBootApplication(scanBasePackages = {"com.ychat"})
 @MapperScan("com.ychat.common.**.mapper")
