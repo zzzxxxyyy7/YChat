@@ -13,9 +13,8 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.Attribute;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 自定义消息处理器
@@ -60,15 +59,20 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
             IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
             // 读空闲事件触发用户下线 -- 客户端被动下线
             if (idleStateEvent.state() == IdleState.READER_IDLE) {
-                // TODO 关闭用户的连接
                 userOffLine(ctx.channel());
             }
         } else if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
+            String token = NettyUtils.getAttr(ctx.channel(), NettyUtils.USER_TOKEN);
+            /**
+             * 如果这条 Channel 已经绑定了 token，则进行授权（即连接请求携带了 token 在 url 中）
+             * 第一个登录的是不会携带 token 的，所以需要再判断
+             */
+            if (StringUtils.isNotBlank(token)) {
+                webSocketService.authorize(ctx.channel(), token);
+            }
             log.info("握手成功");
-        } else if(evt == WebSocketServerProtocolHandler.ServerHandshakeStateEvent.HANDSHAKE_COMPLETE) {
-            Attribute<Object> Attr_Token = ctx.channel().attr(AttributeKey.valueOf("token"));
-            this.webSocketService.authorize(ctx.channel(), Attr_Token.get().toString());
         }
+        super.userEventTriggered(ctx, evt);
     }
 
     /**
