@@ -21,6 +21,10 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private JwtUtils jwtUtils;
 
+    /**
+     * 续期 token
+     * @param token
+     */
     @Override
     @Async
     public void renewalTokenIfNecessary(String token) {
@@ -35,6 +39,11 @@ public class LoginServiceImpl implements LoginService {
 
     }
 
+    /**
+     * 登录时获取 token
+     * @param uid
+     * @return
+     */
     @Override
     public String login(Long uid) {
         String token = jwtUtils.createToken(uid);
@@ -63,6 +72,11 @@ public class LoginServiceImpl implements LoginService {
         return Objects.equals(token , oldToken) ? uid : null;
     }
 
+    /**
+     * 通过 uid 获取 token Key
+     * @param uid
+     * @return
+     */
     public String getUserTokenKey(Long uid) {
         // 构建 Redis Key
         return RedisKeyBuilder.getKey(RedisKeyBuilder.USER_TOKEN_STRING , uid);

@@ -5,9 +5,9 @@ spring:
   application:
     name: ychat
   datasource:
-    url: jdbc:mysql://139.224.188.112:3306/ychat?useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true
-    username: root
-    password: zyj2021823
+    url: jdbc:mysql://${ychat.mysql.host}:${ychat.mysql.port}/${ychat.mysql.database}?useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    username: ${ychat.mysql.username}
+    password: ${ychat.mysql.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     # Redis服务器地址
@@ -34,3 +34,8 @@ wx:
 
 jwt:
   secret: ${ychat.jwt.secret}
+
+# mybatis-plus配置控制台打印完整带参数 SQL 语句
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

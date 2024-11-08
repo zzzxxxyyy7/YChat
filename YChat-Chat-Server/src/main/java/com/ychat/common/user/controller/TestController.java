@@ -1,6 +1,7 @@
 package com.ychat.common.user.controller;
 
 import com.ychat.common.user.config.ThreadPool.YChatUncaughtExceptionHandler;
+import com.ychat.common.user.dao.UserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -19,6 +20,9 @@ import static com.ychat.common.user.config.ThreadPool.ThreadPoolConfig.YCHAT_EXE
 public class TestController {
 
     @Autowired
+    private UserDao userDao;
+
+    @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
@@ -27,6 +31,11 @@ public class TestController {
     @Autowired
     @Qualifier(YCHAT_EXECUTOR)
     private ThreadPoolTaskExecutor executor;
+
+    @RequestMapping("/user")
+    public String userTest() {
+        return userDao.getById("11000").toString();
+    }
 
     @RequestMapping("/redissonClient")
     public void redissonClientTest() {
