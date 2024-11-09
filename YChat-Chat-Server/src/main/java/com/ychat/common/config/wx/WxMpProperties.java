@@ -1,4 +1,4 @@
-package com.ychat.common.user.config.wx;
+package com.ychat.common.config.wx;
 
 import cn.hutool.json.JSONUtil;
 import lombok.Data;
@@ -8,7 +8,6 @@ import java.util.List;
 
 /**
  * WeChat mp properties
- *
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Data

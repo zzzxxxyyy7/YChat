@@ -2,6 +2,7 @@ package com.ychat.common.user.controller;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import com.ychat.common.front.Response.ApiResult;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.vo.UserInfoVo;
@@ -14,11 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * <p>
  * 用户表 前端控制器
- * </p>
- *
- * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-04
  */
 @RestController
@@ -31,11 +28,11 @@ public class UserController {
 
     @GetMapping("/userInfo")
     @ApiOperation("获取用户信息")
-    public UserInfoVo userInfo(@RequestParam Long id) {
+    public ApiResult<UserInfoVo> userInfo(@RequestParam Long id) {
         User userInfo = userDao.getById(id);
         UserInfoVo userInfoVo = new UserInfoVo();
         BeanUtil.copyProperties(userInfo , userInfoVo);
-        return userInfoVo;
+        return ApiResult.success(userInfoVo);
     }
 }
 

@@ -1,10 +1,10 @@
 package com.ychat.common.user.controller;
 
-import com.ychat.common.user.config.Redis.RedisKeyBuilder;
-import com.ychat.common.user.config.ThreadPool.YChatUncaughtExceptionHandler;
+import com.ychat.common.config.Redis.RedisKeyBuilder;
+import com.ychat.common.config.ThreadPool.YChatUncaughtExceptionHandler;
 import com.ychat.common.user.dao.UserDao;
-import com.ychat.common.user.utils.JwtUtils;
-import com.ychat.common.user.utils.RedisUtils;
+import com.ychat.common.utils.jwt.JwtUtils;
+import com.ychat.common.utils.redis.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.ychat.common.user.config.ThreadPool.ThreadPoolConfig.YCHAT_EXECUTOR;
+import static com.ychat.common.config.ThreadPool.ThreadPoolConfig.YCHAT_EXECUTOR;
 
 @Slf4j
 @RestController

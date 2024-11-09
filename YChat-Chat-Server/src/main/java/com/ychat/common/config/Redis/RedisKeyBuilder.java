@@ -1,4 +1,4 @@
-package com.ychat.common.user.config.Redis;
+package com.ychat.common.config.Redis;
 
 public class RedisKeyBuilder {
 

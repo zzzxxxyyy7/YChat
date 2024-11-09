@@ -1,4 +1,4 @@
-package com.ychat.common.user.config.swagger;
+package com.ychat.common.config.swagger;
 
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Description:
- */
 @Configuration
 @EnableSwagger2WebMvc
 public class SwaggerConfig {

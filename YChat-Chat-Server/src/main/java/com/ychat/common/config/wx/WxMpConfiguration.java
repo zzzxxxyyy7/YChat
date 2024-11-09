@@ -1,4 +1,4 @@
-package com.ychat.common.user.config.wx;
+package com.ychat.common.config.wx;
 
 import com.ychat.common.user.service.handler.LogHandler;
 import com.ychat.common.user.service.handler.MsgHandler;
@@ -22,7 +22,6 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.EVENT;
 
 /**
  * WeChat mp configuration
- *
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @AllArgsConstructor

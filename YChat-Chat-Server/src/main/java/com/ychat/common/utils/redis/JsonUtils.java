@@ -1,4 +1,4 @@
-package com.ychat.common.user.utils;
+package com.ychat.common.utils.redis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

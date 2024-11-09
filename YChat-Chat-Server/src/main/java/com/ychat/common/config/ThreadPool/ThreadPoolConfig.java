@@ -1,4 +1,4 @@
-package com.ychat.common.user.config.ThreadPool;
+package com.ychat.common.config.ThreadPool;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
