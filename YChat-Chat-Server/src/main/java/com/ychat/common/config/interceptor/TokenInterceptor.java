@@ -22,6 +22,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     public static final String TOKEN_HEADER = "Authorization";
     public static final String BEARER = "Bearer ";
+    public static final String UID = "uid";
 
     @Autowired
     private LoginService loginService;
@@ -30,9 +31,9 @@ public class TokenInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = getToken(request);
         Long validUid = loginService.getValidUid(token);
-        if (Objects.nonNull(validUid)) {
-            request.setAttribute("uid", validUid);
-        } else {
+        // 如果 token 无效
+        if (Objects.isNull(validUid)) {
+            // 校验接口是否需要登录
             boolean privateURI = isPrivateURI(request, response);
             if (privateURI) {
                 HttpErrorEnum.ACCESS_DENIED.sendHttpError(response);
