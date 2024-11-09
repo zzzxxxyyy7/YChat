@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,12 +41,12 @@ public class TestController {
     @Qualifier(YCHAT_EXECUTOR)
     private ThreadPoolTaskExecutor executor;
 
-    @RequestMapping("/user")
+    @GetMapping("/user")
     public String userTest() {
         return userDao.getById("11000").toString();
     }
 
-    @RequestMapping("/redissonClient")
+    @GetMapping("/redissonClient")
     public void redissonClientTest() {
         RLock lock = redissonClient.getLock("123");
         lock.lock();
@@ -53,14 +54,14 @@ public class TestController {
         lock.unlock();
     }
 
-    @RequestMapping("/redis")
+    @GetMapping("/redis")
     public void redis() {
         redisTemplate.opsForValue().set("name","卷心菜");
         String name = (String) redisTemplate.opsForValue().get("name");
         System.out.println(name); //卷心菜
     }
 
-    @RequestMapping("/thread")
+    @GetMapping("/thread")
     public void thread() throws InterruptedException {
         Thread thread = new Thread(() -> {
             log.info("123");
@@ -72,7 +73,7 @@ public class TestController {
         Thread.sleep(200);
     }
 
-    @RequestMapping("/threads")
+    @GetMapping("/threads")
     public void threads() throws InterruptedException {
         executor.execute(() -> {
             log.info("123");
@@ -81,7 +82,7 @@ public class TestController {
         Thread.sleep(200);
     }
 
-    @RequestMapping("/jwt")
+    @GetMapping("/jwt")
     public String getUserTokenKey(Long uid) {
         String token = jwtUtils.createToken(uid);
         String userTokenKey = RedisKeyBuilder.getKey(RedisKeyBuilder.USER_TOKEN_STRING , uid);
