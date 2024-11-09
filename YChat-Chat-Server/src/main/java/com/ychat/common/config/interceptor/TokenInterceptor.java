@@ -2,7 +2,9 @@ package com.ychat.common.config.interceptor;
 
 import com.ychat.common.Error.HttpErrorEnum;
 import com.ychat.common.user.service.LoginService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -17,7 +19,9 @@ import java.util.stream.Collectors;
 /**
  * 提取 Token 拦截器
  */
+@Order(-2)
 @Component
+@Slf4j
 public class TokenInterceptor implements HandlerInterceptor {
 
     public static final String TOKEN_HEADER = "Authorization";
@@ -40,6 +44,7 @@ public class TokenInterceptor implements HandlerInterceptor {
                 return false;
             }
         }
+        request.setAttribute(UID, validUid);
         return true;
     }
 
