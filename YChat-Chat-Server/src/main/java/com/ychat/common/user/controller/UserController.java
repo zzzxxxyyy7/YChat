@@ -26,7 +26,7 @@ public class UserController {
     @Autowired
     private UserDao userDao;
 
-    @GetMapping("/userInfo")
+    @GetMapping("/private/userInfo")
     @ApiOperation("获取用户信息")
     public ApiResult<UserInfoVo> userInfo(@RequestParam Long id) {
         User userInfo = userDao.getById(id);

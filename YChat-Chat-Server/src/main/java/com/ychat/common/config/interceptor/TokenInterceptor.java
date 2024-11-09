@@ -34,7 +34,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             request.setAttribute("uid", validUid);
         } else {
             boolean privateURI = isPrivateURI(request, response);
-            if (!privateURI) {
+            if (privateURI) {
                 HttpErrorEnum.ACCESS_DENIED.sendHttpError(response);
                 return false;
             }
@@ -51,7 +51,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         String[] URIArray = requestURI.split("/");
         List<String> URIList = Arrays.stream(URIArray).collect(Collectors.toList());
-        return !URIList.contains("private");
+        return URIList.contains("private");
     }
 
     private String getToken(HttpServletRequest request) {
