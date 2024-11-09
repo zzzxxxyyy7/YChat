@@ -6,12 +6,12 @@ import com.ychat.common.front.Response.ApiResult;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.vo.UserInfoVo;
+import com.ychat.common.utils.Request.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -28,8 +28,8 @@ public class UserController {
 
     @GetMapping("/private/userInfo")
     @ApiOperation("获取用户信息")
-    public ApiResult<UserInfoVo> userInfo(@RequestParam Long id) {
-        User userInfo = userDao.getById(id);
+    public ApiResult<UserInfoVo> userInfo() {
+        User userInfo = userDao.getById(RequestHolder.get().getUid());
         UserInfoVo userInfoVo = new UserInfoVo();
         BeanUtil.copyProperties(userInfo , userInfoVo);
         return ApiResult.success(userInfoVo);
