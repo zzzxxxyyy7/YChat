@@ -1,10 +1,19 @@
 package com.ychat.common.user.service.adapter;
 
 import cn.hutool.core.util.RandomUtil;
+import com.ychat.common.Enums.YesOrNoEnum;
+import com.ychat.common.user.domain.entity.ItemConfig;
 import com.ychat.common.user.domain.entity.User;
+import com.ychat.common.user.domain.entity.UserBackpack;
+import com.ychat.common.user.domain.vo.BadgeResp;
 import com.ychat.common.user.domain.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Description: 用户适配器
@@ -41,5 +50,23 @@ public class UserAdapter {
         userInfoVo.setAvatar(user.getAvatar());
         userInfoVo.setModifyNameChance(modifyNameChance);
         return userInfoVo;
+    }
+
+    public static List<BadgeResp> buildBadgeRespList(List<ItemConfig> badgeList, List<UserBackpack> userBackpackList, Long itemId) {
+        // 用户已经拥有的 ID
+        Set<Long> obtainIds = userBackpackList.stream().map(UserBackpack::getItemId).collect(Collectors.toSet());
+
+        return badgeList.stream().map(badge -> {
+            BadgeResp badgeResp = new BadgeResp();
+            badgeResp.setId(badge.getId());
+            badgeResp.setImg(badge.getImg());
+            badgeResp.setDescribe(badge.getDescribe());
+            badgeResp.setObtain(obtainIds.contains(badge.getId()) ? YesOrNoEnum.YES.getStatus() : YesOrNoEnum.NO.getStatus());
+            badgeResp.setWearing(badge.getId().equals(itemId) ? YesOrNoEnum.YES.getStatus() : YesOrNoEnum.NO.getStatus());
+            return badgeResp;
+        })
+                .sorted(Comparator.comparing(BadgeResp::getWearing , Comparator.reverseOrder())
+                .thenComparing(BadgeResp::getObtain , Comparator.reverseOrder()))
+                .collect(Collectors.toList());
     }
 }

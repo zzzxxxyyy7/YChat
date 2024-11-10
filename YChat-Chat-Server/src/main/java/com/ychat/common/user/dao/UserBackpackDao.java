@@ -6,8 +6,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ychat.common.Enums.YesOrNoEnum;
 import com.ychat.common.user.domain.entity.UserBackpack;
 import com.ychat.common.user.mapper.UserBackpackMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -19,9 +20,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpack> {
-
-    @Autowired
-    private UserBackpackMapper userBackpackMapper;
 
     public int getModifyNameChance(Long uid, Long itemId) {
         return lambdaQuery()
@@ -45,6 +43,16 @@ public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpac
      * @param firstValidItem
      */
     public boolean useItem(UserBackpack firstValidItem) {
-        return userBackpackMapper.useItem(firstValidItem);
+        UserBackpack update = new UserBackpack();
+        update.setId(firstValidItem.getId());
+        update.setStatus(YesOrNoEnum.YES.getStatus());
+        return updateById(update);
+    }
+
+    public List<UserBackpack> getByItemIds(Long uid, List<Long> itemIds) {
+        return lambdaQuery().eq(UserBackpack::getUid, uid)
+                .in(UserBackpack::getItemId, itemIds)
+                .eq(UserBackpack::getStatus, YesOrNoEnum.NO.getStatus())
+                .list();
     }
 }

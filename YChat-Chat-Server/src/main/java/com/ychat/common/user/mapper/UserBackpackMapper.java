@@ -1,7 +1,8 @@
 package com.ychat.common.user.mapper;
 
-import com.ychat.common.user.domain.entity.UserBackpack;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ychat.common.user.domain.entity.UserBackpack;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,7 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-09
  */
+@Mapper
 public interface UserBackpackMapper extends BaseMapper<UserBackpack> {
 
-    boolean useItem(UserBackpack firstValidItem);
 }

@@ -54,7 +54,7 @@
             <dependency>
                 <groupId>com.Y</groupId>
                 <artifactId>YChat-Common-Starter</artifactId>
-                <version>${version}</version>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>

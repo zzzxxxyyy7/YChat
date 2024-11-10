@@ -12,9 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
- * <p>
  * 用户表
- * </p>
  *
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-04

@@ -35,5 +35,10 @@ public interface IUserService {
      */
     void modifyName(Long uid, ModifyNameReq req);
 
+    /**
+     * 获取徽章列表
+     * @param uid
+     * @return
+     */
     List<BadgeResp> badges(Long uid);
 }

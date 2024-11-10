@@ -10,9 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>
  * 功能物品配置表
- * </p>
  *
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-09
@@ -27,7 +25,7 @@ public class ItemConfig implements Serializable {
     /**
      * id
      */
-      @TableId("id")
+    @TableId("id")
     private Long id;
 
     /**
@@ -45,7 +43,7 @@ public class ItemConfig implements Serializable {
     /**
      * 物品功能描述
      */
-    @TableField("describe")
+    @TableField("`describe`")
     private String describe;
 
     /**

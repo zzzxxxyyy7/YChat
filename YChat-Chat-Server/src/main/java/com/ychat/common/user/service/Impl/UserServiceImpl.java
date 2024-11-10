@@ -1,9 +1,11 @@
 package com.ychat.common.user.service.Impl;
 
 import com.ychat.common.Enums.ItemEnum;
+import com.ychat.common.Enums.ItemTypeEnum;
 import com.ychat.common.Exception.BusinessException;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.dto.ModifyNameReq;
+import com.ychat.common.user.domain.entity.ItemConfig;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.entity.UserBackpack;
 import com.ychat.common.user.domain.vo.BadgeResp;
@@ -11,6 +13,7 @@ import com.ychat.common.user.domain.vo.UserInfoVo;
 import com.ychat.common.user.service.IUserBackpackService;
 import com.ychat.common.user.service.IUserService;
 import com.ychat.common.user.service.adapter.UserAdapter;
+import com.ychat.common.user.service.cache.ItemCache;
 import com.ychat.common.utils.Assert.AssertUtil;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -18,9 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Rhss
@@ -38,6 +41,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private RedissonClient redissonClient;
+
+    @Autowired
+    private ItemCache itemCache;
 
     @Override
     @Transactional
@@ -90,7 +96,14 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public List<BadgeResp> badges(Long uid) {
-        return Collections.emptyList();
+        // 拿到徽章列表
+        List<ItemConfig> badgeList = itemCache.getByType(ItemTypeEnum.BADGE.getType());
+        // 查询用户背包中所拥有的徽章
+        List<UserBackpack> userBackpackList = userBackpackService.getByItemIds(uid , badgeList.stream().map(ItemConfig::getId).collect(Collectors.toList()));
+        // 拿到用户当前佩戴的徽章
+        User user = userDao.getById(uid);
+        Long itemId = user.getItemId();
+        return UserAdapter.buildBadgeRespList(badgeList, userBackpackList, itemId);
     }
 }
 

@@ -7,6 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+
 @Component
 @Slf4j
 public class UserBackpackService implements IUserBackpackService {
@@ -27,5 +30,10 @@ public class UserBackpackService implements IUserBackpackService {
     @Override
     public boolean useItem(UserBackpack firstValidItem) {
         return userBackpackDao.useItem(firstValidItem);
+    }
+
+    @Override
+    public List<UserBackpack> getByItemIds(Long uid, List<Long> ItemIds) {
+        return userBackpackDao.getByItemIds(uid, ItemIds);
     }
 }

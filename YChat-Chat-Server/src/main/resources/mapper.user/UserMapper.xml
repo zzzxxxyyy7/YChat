@@ -25,10 +25,4 @@
         lastOptTime,ipInfo,itemId,
         status,createTime,updateTime
     </sql>
-
-    <update id="modifyName">
-        UPDATE user
-        SET name = #{name}
-        WHERE id = #{uid}
-    </update>
 </mapper>

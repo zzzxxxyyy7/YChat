@@ -2,6 +2,8 @@ package com.ychat.common.user.service;
 
 import com.ychat.common.user.domain.entity.UserBackpack;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户背包表 服务类
@@ -17,4 +19,6 @@ public interface IUserBackpackService {
     UserBackpack getFirstValidItem(Long uid, Long itemId);
 
     boolean useItem(UserBackpack firstValidItem);
+
+    List<UserBackpack> getByItemIds(Long uid, List<Long> ItemIds);
 }
