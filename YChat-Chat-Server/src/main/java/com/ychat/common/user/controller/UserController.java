@@ -1,11 +1,10 @@
 package com.ychat.common.user.controller;
 
 
-import cn.hutool.core.bean.BeanUtil;
 import com.ychat.common.front.Response.ApiResult;
 import com.ychat.common.user.dao.UserDao;
-import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.vo.UserInfoVo;
+import com.ychat.common.user.service.IUserService;
 import com.ychat.common.utils.Request.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,15 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @Autowired
+    private IUserService userService;
+
+    @Autowired
     private UserDao userDao;
 
     @GetMapping("/private/userInfo")
     @ApiOperation("获取用户信息")
     public ApiResult<UserInfoVo> userInfo() {
-        User userInfo = userDao.getById(RequestHolder.get().getUid());
-        UserInfoVo userInfoVo = new UserInfoVo();
-        BeanUtil.copyProperties(userInfo , userInfoVo);
-        return ApiResult.success(userInfoVo);
+        return ApiResult.success(userService.getUserInfo(RequestHolder.get().getUid()));
     }
 }
 

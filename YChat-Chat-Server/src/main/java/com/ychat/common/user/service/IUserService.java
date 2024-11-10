@@ -1,6 +1,7 @@
 package com.ychat.common.user.service;
 
 import com.ychat.common.user.domain.entity.User;
+import com.ychat.common.user.domain.vo.UserInfoVo;
 
 /**
  * <p>
@@ -14,8 +15,14 @@ public interface IUserService {
 
     /**
      * 用户注册，需要获得id
-     *
      * @param user
      */
     Long register(User user);
+
+    /**
+     * 获取用户信息
+     * @param uid
+     * @return
+     */
+    UserInfoVo getUserInfo(Long uid);
 }

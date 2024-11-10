@@ -16,4 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpack> {
 
+    public int getModifyNameChance(Long uid, Long id) {
+        return 0;
+    }
 }
