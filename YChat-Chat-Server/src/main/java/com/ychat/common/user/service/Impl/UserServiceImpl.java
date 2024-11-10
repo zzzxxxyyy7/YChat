@@ -1,19 +1,26 @@
 package com.ychat.common.user.service.Impl;
 
 import com.ychat.common.Enums.ItemEnum;
+import com.ychat.common.Exception.BusinessException;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.dto.ModifyNameReq;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.entity.UserBackpack;
+import com.ychat.common.user.domain.vo.BadgeResp;
 import com.ychat.common.user.domain.vo.UserInfoVo;
 import com.ychat.common.user.service.IUserBackpackService;
 import com.ychat.common.user.service.IUserService;
 import com.ychat.common.user.service.adapter.UserAdapter;
 import com.ychat.common.utils.Assert.AssertUtil;
-import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Rhss
@@ -28,6 +35,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private IUserBackpackService userBackpackService;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Override
     @Transactional
@@ -45,20 +55,43 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifyName(Long uid, ModifyNameReq req) {
-        //判断名字是不是重复
-        String newName = req.getName();
-        AssertUtil.isFalse(StringUtils.isEmpty(newName), "名字不能为空");
-        AssertUtil.isFalse(newName.length() > 6, "名字不能超过6个字哦");
-        //AssertUtil.isFalse(sensitiveWordBs.hasSensitiveWord(newName), "名字中包含敏感词，请重新输入"); // 判断名字中有没有敏感词
-        User oldUser = userDao.getByName(newName);
-        AssertUtil.isEmpty(oldUser, "名字已经被抢占了，请换一个哦~~");
-        //判断改名卡够不够
-        UserBackpack firstValidItem = userBackpackService.getFirstValidItem(uid, ItemEnum.MODIFY_NAME_CARD.getId());
-        AssertUtil.isNotEmpty(firstValidItem, "改名次数不够了，等后续活动送改名卡哦");
+        User oldUser = userDao.getByName(req.getName());
+        AssertUtil.isEmpty(oldUser, "名字已经被占用");
 
+        // 使用 Redisson 获取分布式锁
+        RLock lock = redissonClient.getLock("modifyName:uid:" + uid);
+        try {
+            // 尝试加锁，设置锁的过期时间为5秒，防止长时间占用
+            if (lock.tryLock(10, 5, TimeUnit.SECONDS)) {
+                // 判断改名卡是否足够
+                UserBackpack firstValidItem = userBackpackService.getFirstValidItem(uid, ItemEnum.MODIFY_NAME_CARD.getId());
+
+                // TODO 改名卡发放
+                AssertUtil.isNotEmpty(firstValidItem, "改名卡不足，请等待活动发放");
+
+                // 使用改名卡
+                boolean isUsed = userBackpackService.useItem(firstValidItem);
+                if (!isUsed) {
+                    userDao.modifyName(uid, req.getName());
+                }
+            } else {
+                throw new BusinessException("操作过于频繁，请稍后再试");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("锁等待被中断");
+        } finally {
+            // 确保在操作结束后释放锁
+            lock.unlock();
+        }
     }
 
+    @Override
+    public List<BadgeResp> badges(Long uid) {
+        return Collections.emptyList();
+    }
 }
 
 

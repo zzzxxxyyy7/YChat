@@ -2,6 +2,9 @@ package com.ychat.common.Exception;
 
 import lombok.Data;
 
+/**
+ * Business 业务异常
+ */
 @Data
 public class BusinessException extends RuntimeException {
     private static final long serialVersionUID = 1L;

@@ -2,13 +2,13 @@ package com.ychat.common.user.service;
 
 import com.ychat.common.user.domain.dto.ModifyNameReq;
 import com.ychat.common.user.domain.entity.User;
+import com.ychat.common.user.domain.vo.BadgeResp;
 import com.ychat.common.user.domain.vo.UserInfoVo;
 
+import java.util.List;
+
 /**
- * <p>
  * 用户表 服务类
- * </p>
- *
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-04
  */
@@ -35,4 +35,5 @@ public interface IUserService {
      */
     void modifyName(Long uid, ModifyNameReq req);
 
+    List<BadgeResp> badges(Long uid);
 }

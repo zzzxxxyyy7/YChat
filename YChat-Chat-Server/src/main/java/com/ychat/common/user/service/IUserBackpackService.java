@@ -16,5 +16,5 @@ public interface IUserBackpackService {
 
     UserBackpack getFirstValidItem(Long uid, Long itemId);
 
-    boolean invalidItem(Long id);
+    boolean useItem(UserBackpack firstValidItem);
 }

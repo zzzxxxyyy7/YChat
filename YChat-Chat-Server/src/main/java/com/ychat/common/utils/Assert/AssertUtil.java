@@ -39,7 +39,7 @@ public class AssertUtil {
     public static <T> void fastFailValidate(T obj) {
         Set<ConstraintViolation<T>> constraintViolations = failFastValidator.validate(obj);
         if (constraintViolations.size() > 0) {
-            throwException(CommonErrorEnum.PARAM_VALID, constraintViolations.iterator().next().getMessage());
+            throwException(CommonErrorEnum.PARAM_INVALID, constraintViolations.iterator().next().getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class AssertUtil {
                 errorMsg.append(violation.getPropertyPath().toString()).append(":").append(violation.getMessage()).append(",");
             }
             //去掉最后一个逗号
-            throwException(CommonErrorEnum.PARAM_VALID, errorMsg.toString().substring(0, errorMsg.length() - 1));
+            throwException(CommonErrorEnum.PARAM_INVALID, errorMsg.toString().substring(0, errorMsg.length() - 1));
         }
     }
 
@@ -103,28 +103,28 @@ public class AssertUtil {
         }
     }
 
-    //如果是true，则抛异常
+    // 如果是true，则抛异常
     public static void isFalse(boolean expression, ErrorEnum errorEnum, Object... args) {
         if (expression) {
             throwException(errorEnum, args);
         }
     }
 
-    //如果不是非空对象，则抛异常
+    // 如果不是非空对象，则抛异常
     public static void isNotEmpty(Object obj, String msg) {
         if (isEmpty(obj)) {
             throwException(msg);
         }
     }
 
-    //如果不是非空对象，则抛异常
+    // 如果不是非空对象，则抛异常
     public static void isNotEmpty(Object obj, ErrorEnum errorEnum, Object... args) {
         if (isEmpty(obj)) {
             throwException(errorEnum, args);
         }
     }
 
-    //如果不是非空对象，则抛异常
+    // 如果不是非空对象，则抛异常
     public static void isEmpty(Object obj, String msg) {
         if (!isEmpty(obj)) {
             throwException(msg);
@@ -157,6 +157,5 @@ public class AssertUtil {
         }
         throw new BusinessException(errorEnum.getErrorCode(), MessageFormat.format(errorEnum.getErrorMsg(), arg));
     }
-
 
 }

@@ -25,7 +25,7 @@ public class UserBackpackService implements IUserBackpackService {
     }
 
     @Override
-    public boolean invalidItem(Long id) {
-        return false;
+    public boolean useItem(UserBackpack firstValidItem) {
+        return userBackpackDao.useItem(firstValidItem);
     }
 }
