@@ -1,4 +1,4 @@
-package com.ychat.common.Error;
+package com.ychat.common.Exception;
 
 public interface ErrorEnum {
 

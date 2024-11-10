@@ -2,6 +2,7 @@ package com.ychat.common.user.service.adapter;
 
 import cn.hutool.core.util.RandomUtil;
 import com.ychat.common.user.domain.entity.User;
+import com.ychat.common.user.domain.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 
@@ -31,5 +32,14 @@ public class UserAdapter {
             user.setName(userInfo.getNickname());
         }
         return user;
+    }
+
+    public static UserInfoVo buildUserInfoVo(User user, int modifyNameChance) {
+        UserInfoVo userInfoVo = new UserInfoVo();
+        userInfoVo.setId(user.getId());
+        userInfoVo.setName(user.getName());
+        userInfoVo.setAvatar(user.getAvatar());
+        userInfoVo.setModifyNameChance(modifyNameChance);
+        return userInfoVo;
     }
 }

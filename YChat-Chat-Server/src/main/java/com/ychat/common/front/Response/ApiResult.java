@@ -1,6 +1,6 @@
 package com.ychat.common.front.Response;
 
-import com.ychat.common.Error.ErrorEnum;
+import com.ychat.common.Exception.ErrorEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

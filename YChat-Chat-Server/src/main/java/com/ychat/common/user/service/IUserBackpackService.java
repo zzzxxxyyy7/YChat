@@ -1,5 +1,7 @@
 package com.ychat.common.user.service;
 
+import com.ychat.common.user.domain.entity.UserBackpack;
+
 /**
  * <p>
  * 用户背包表 服务类
@@ -11,4 +13,8 @@ package com.ychat.common.user.service;
 public interface IUserBackpackService {
 
     int getModifyNameChance(Long uid, Long itemId);
+
+    UserBackpack getFirstValidItem(Long uid, Long itemId);
+
+    boolean invalidItem(Long id);
 }

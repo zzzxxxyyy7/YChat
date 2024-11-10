@@ -1,5 +1,6 @@
 package com.ychat.common.user.service;
 
+import com.ychat.common.user.domain.dto.ModifyNameReq;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.vo.UserInfoVo;
 
@@ -25,4 +26,13 @@ public interface IUserService {
      * @return
      */
     UserInfoVo getUserInfo(Long uid);
+
+    /**
+     * 修改用户名
+     *
+     * @param uid
+     * @param req
+     */
+    void modifyName(Long uid, ModifyNameReq req);
+
 }

@@ -1,4 +1,4 @@
-package com.ychat.common.Error;
+package com.ychat.common.Exception;
 
 import cn.hutool.http.ContentType;
 import cn.hutool.json.JSONUtil;

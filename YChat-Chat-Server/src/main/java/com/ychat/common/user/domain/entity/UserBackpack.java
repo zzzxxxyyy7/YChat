@@ -28,7 +28,7 @@ public class UserBackpack implements Serializable {
     /**
      * id
      */
-      @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -66,6 +66,5 @@ public class UserBackpack implements Serializable {
      */
     @TableField("update_time")
     private Date updateTime;
-
 
 }

@@ -1,4 +1,4 @@
-package com.ychat.common.Error;
+package com.ychat.common.Exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

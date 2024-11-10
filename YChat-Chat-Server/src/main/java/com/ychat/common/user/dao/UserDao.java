@@ -21,4 +21,8 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
         LambdaQueryWrapper<User> wrapper = new QueryWrapper<User>().lambda().eq(User::getOpenId, openId);
         return getOne(wrapper);
     }
+
+    public User getByName(String Name) {
+        return lambdaQuery().eq(User::getName, Name).one();
+    }
 }
