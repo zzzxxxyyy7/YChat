@@ -1,7 +1,8 @@
 package com.ychat.common.user.service;
 
 import com.ychat.common.user.domain.entity.ItemConfig;
-import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IItemConfigService {
 
+    List<ItemConfig> getByType(Integer type);
 }

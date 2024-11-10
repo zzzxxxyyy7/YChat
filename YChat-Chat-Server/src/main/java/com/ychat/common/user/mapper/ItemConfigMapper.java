@@ -3,6 +3,8 @@ package com.ychat.common.user.mapper;
 import com.ychat.common.user.domain.entity.ItemConfig;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
  * <p>
  * 功能物品配置表 Mapper 接口
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ItemConfigMapper extends BaseMapper<ItemConfig> {
 
+    List<ItemConfig> getByType(Integer type);
 }
