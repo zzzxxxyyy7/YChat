@@ -10,6 +10,7 @@ import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.entity.UserBackpack;
 import com.ychat.common.user.domain.vo.BadgeResp;
 import com.ychat.common.user.domain.vo.UserInfoVo;
+import com.ychat.common.user.service.IItemConfigService;
 import com.ychat.common.user.service.IUserBackpackService;
 import com.ychat.common.user.service.IUserService;
 import com.ychat.common.user.service.adapter.UserAdapter;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -44,6 +46,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private ItemCache itemCache;
+
+    @Autowired
+    private IItemConfigService iItemConfigService;
 
     @Override
     @Transactional
@@ -104,6 +109,17 @@ public class UserServiceImpl implements IUserService {
         User user = userDao.getById(uid);
         Long itemId = user.getItemId();
         return UserAdapter.buildBadgeRespList(badgeList, userBackpackList, itemId);
+    }
+
+    @Override
+    public void wearingBadge(Long uid, Long itemId) {
+        // 确保有徽章
+        UserBackpack userBackpack = userBackpackService.getFirstValidItem(uid, itemId);
+        AssertUtil.isNotEmpty(userBackpack, "未持有该徽章");
+        // 确定这个是徽章
+        ItemConfig itemConfig = iItemConfigService.getById(userBackpack.getItemId());
+        AssertUtil.equal(itemConfig.getType(), ItemTypeEnum.BADGE.getType(), "佩戴的物品不是徽章");
+        userDao.wearingBadge(uid, itemId);
     }
 }
 

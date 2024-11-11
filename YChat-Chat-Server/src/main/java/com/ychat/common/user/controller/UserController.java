@@ -3,6 +3,7 @@ package com.ychat.common.user.controller;
 
 import com.ychat.common.front.Response.ApiResult;
 import com.ychat.common.user.domain.dto.ModifyNameReq;
+import com.ychat.common.user.domain.dto.WearingBadgeReq;
 import com.ychat.common.user.domain.vo.BadgeResp;
 import com.ychat.common.user.domain.vo.UserInfoVo;
 import com.ychat.common.user.service.IUserService;
@@ -44,6 +45,13 @@ public class UserController {
     @ApiOperation("可选徽章预览")
     public ApiResult<List<BadgeResp>> badges() {
         return ApiResult.success(userService.badges(RequestHolder.get().getUid()));
+    }
+
+    @PostMapping("/private/wearBadge")
+    @ApiOperation("佩戴徽章")
+    public ApiResult<List<BadgeResp>> wearingBadge(@Valid @RequestBody WearingBadgeReq req) {
+        userService.wearingBadge(RequestHolder.get().getUid(), req.getItemId());
+        return ApiResult.success();
     }
 }
 

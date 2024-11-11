@@ -20,4 +20,9 @@ public class ItemConfigServiceImpl implements IItemConfigService {
     public List<ItemConfig> getByType(Integer type) {
         return itemConfigDao.getByType(type);
     }
+
+    @Override
+    public ItemConfig getById(Long itemId) {
+        return itemConfigDao.getById(itemId);
+    }
 }

@@ -15,4 +15,6 @@ import java.util.List;
 public interface IItemConfigService {
 
     List<ItemConfig> getByType(Integer type);
+
+    ItemConfig getById(Long itemId);
 }

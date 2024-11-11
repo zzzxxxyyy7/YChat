@@ -41,4 +41,6 @@ public interface IUserService {
      * @return
      */
     List<BadgeResp> badges(Long uid);
+
+    void wearingBadge(Long uid, Long itemId);
 }
