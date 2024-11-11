@@ -1,5 +1,6 @@
 package com.ychat.common.user.service;
 
+import com.ychat.common.Enums.IdempotentEnum;
 import com.ychat.common.user.domain.entity.UserBackpack;
 
 import java.util.List;
@@ -21,4 +22,11 @@ public interface IUserBackpackService {
     boolean useItem(UserBackpack firstValidItem);
 
     List<UserBackpack> getByItemIds(Long uid, List<Long> ItemIds);
+
+    /**
+     * 获取物品 - 幂等接口
+     * @param uid 用户 ID
+     * @param itemId 物品 ID
+     */
+    void acquireItem(Long uid, Long itemId, IdempotentEnum idempotentEnum, String businessId);
 }
