@@ -1,8 +1,11 @@
 package com.ychat.common.user.controller;
 
+import com.ychat.common.Enums.IdempotentEnum;
 import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.config.ThreadPool.YChatUncaughtExceptionHandler;
+import com.ychat.common.front.Response.ApiResult;
 import com.ychat.common.user.dao.UserDao;
+import com.ychat.common.user.service.Impl.UserBackpackService;
 import com.ychat.common.utils.jwt.JwtUtils;
 import com.ychat.common.utils.redis.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +30,9 @@ public class TestController {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private UserBackpackService userBackpackService;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -89,5 +95,12 @@ public class TestController {
         System.out.println(userTokenKey);
         RedisUtils.set(userTokenKey, token, 9999, TimeUnit.DAYS);
         return "永久测试 Token 生成成功: " + token;
+    }
+
+    @GetMapping("/acquireItem")
+    public ApiResult<?> getAcquireItem(Long uid, Long itemId) {
+        // 获取改名卡
+        userBackpackService.acquireItem(uid, itemId, IdempotentEnum.ITEM_ID, "5");
+        return ApiResult.success();
     }
 }

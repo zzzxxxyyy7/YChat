@@ -7,6 +7,7 @@ import com.ychat.common.config.Redis.RedissonConfig;
 import com.ychat.common.user.dao.UserBackpackDao;
 import com.ychat.common.user.domain.entity.UserBackpack;
 import com.ychat.common.user.service.IUserBackpackService;
+import com.ychat.common.utils.Services.LockService;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -23,6 +24,9 @@ public class UserBackpackService implements IUserBackpackService {
 
     @Autowired
     private UserBackpackDao userBackpackDao;
+
+    @Autowired
+    private LockService lockService;
 
     @Autowired
     private RedissonClient redissonClient;

@@ -60,6 +60,5 @@ public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpac
         return lambdaQuery()
                 .eq(UserBackpack::getIdempotent, idempotent)
                 .one();
-
     }
 }

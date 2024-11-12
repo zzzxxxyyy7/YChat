@@ -3,6 +3,7 @@ package com.ychat.common.user.service.Impl;
 import com.ychat.common.Enums.ItemEnum;
 import com.ychat.common.Enums.ItemTypeEnum;
 import com.ychat.common.Exception.BusinessException;
+import com.ychat.common.Exception.CommonErrorEnum;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.dto.ModifyNameReq;
 import com.ychat.common.user.domain.entity.ItemConfig;
@@ -88,7 +89,7 @@ public class UserServiceImpl implements IUserService {
                     userDao.modifyName(uid, req.getName());
                 }
             } else {
-                throw new BusinessException("操作过于频繁，请稍后再试");
+                throw new BusinessException(CommonErrorEnum.LOCK_LIMIT);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
