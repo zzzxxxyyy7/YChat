@@ -3,6 +3,7 @@ package com.ychat.common.user.service.Impl;
 import com.ychat.common.Enums.ItemEnum;
 import com.ychat.common.Enums.ItemTypeEnum;
 import com.ychat.common.Exception.BusinessException;
+import com.ychat.common.user.Event.UserRegisterEvent;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.dto.ModifyNameReq;
 import com.ychat.common.user.domain.entity.ItemConfig;
@@ -19,10 +20,10 @@ import com.ychat.common.utils.Assert.AssertUtil;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -50,11 +51,15 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private IItemConfigService iItemConfigService;
 
+    @Autowired
+    private ApplicationEventPublisher appEventPublisher;
+
     @Override
     @Transactional
     public Long register(User newUser) {
         userDao.save(newUser);
-        // TODO 注册用户通知
+        // 当前这个类(this) , 发布了这个事件
+        appEventPublisher.publishEvent(new UserRegisterEvent(this, newUser));
         return newUser.getId();
     }
 

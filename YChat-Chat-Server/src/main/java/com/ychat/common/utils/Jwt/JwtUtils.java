@@ -1,4 +1,4 @@
-package com.ychat.common.utils.jwt;
+package com.ychat.common.utils.Jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

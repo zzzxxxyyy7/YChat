@@ -1,4 +1,4 @@
-package com.ychat.common.utils.redis;
+package com.ychat.common.utils.Redis;
 
 import cn.hutool.extra.spring.SpringUtil;
 import lombok.extern.slf4j.Slf4j;

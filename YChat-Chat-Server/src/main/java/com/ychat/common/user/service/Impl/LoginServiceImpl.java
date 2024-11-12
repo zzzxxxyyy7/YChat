@@ -2,8 +2,8 @@ package com.ychat.common.user.service.Impl;
 
 import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.user.service.LoginService;
-import com.ychat.common.utils.jwt.JwtUtils;
-import com.ychat.common.utils.redis.RedisUtils;
+import com.ychat.common.utils.Jwt.JwtUtils;
+import com.ychat.common.utils.Redis.RedisUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

@@ -3,7 +3,6 @@ package com.ychat.common.user.service.Impl;
 import com.ychat.common.Enums.IdempotentEnum;
 import com.ychat.common.Enums.YesOrNoEnum;
 import com.ychat.common.Exception.BusinessException;
-import com.ychat.common.config.Redis.RedissonConfig;
 import com.ychat.common.user.dao.UserBackpackDao;
 import com.ychat.common.user.domain.entity.UserBackpack;
 import com.ychat.common.user.service.IUserBackpackService;
@@ -13,7 +12,6 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
