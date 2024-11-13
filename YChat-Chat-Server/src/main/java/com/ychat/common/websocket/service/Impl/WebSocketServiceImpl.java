@@ -3,9 +3,12 @@ package com.ychat.common.websocket.service.Impl;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.ychat.common.user.Event.UserOnlineEvent;
 import com.ychat.common.user.dao.UserDao;
+import com.ychat.common.user.domain.entity.IpInfo;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.service.LoginService;
+import com.ychat.common.websocket.NettyUtils;
 import com.ychat.common.websocket.config.SafeSnowflake;
 import com.ychat.common.websocket.domain.dto.WSChannelExtraDTO;
 import com.ychat.common.websocket.domain.vo.resp.WSBaseResp;
@@ -18,10 +21,12 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,6 +49,9 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private ApplicationEventPublisher appEventPublisher;
 
     // 缓存五分钟
     private static final Duration EXPIRE_TIME = Duration.ofMinutes(5);
@@ -168,9 +176,14 @@ public class WebSocketServiceImpl implements WebSocketService {
         WSChannelExtraDTO wsChannelExtraDTO = ONLINE_WS_MAP.get(ctx);
         // 更新 channel -> null --> channel -> uid 的关系, 保存用户登录成功的状态
         wsChannelExtraDTO.setUid(user.getId());
-        // todo 用户上线成功状态事件变更
         // 统一推送用户上线消息
         sendMsg(ctx, webSocketAdapter.getRespLoginSuccess(user , message));
+        // 发送用户上线成功事件
+        user.setLastOptTime(new Date());
+        IpInfo ipInfo = new IpInfo();
+        user.refreshIp(NettyUtils.getAttr(ctx, NettyUtils.USER_IP));
+        user.setIpInfo(ipInfo);
+        appEventPublisher.publishEvent(new UserOnlineEvent(this, user));
     }
 
 }
