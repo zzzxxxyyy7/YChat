@@ -110,7 +110,7 @@ public class AssertUtil {
         }
     }
 
-    // 如果不是非空对象，则抛异常
+    // 必须非空，否则抛异常
     public static void isNotEmpty(Object obj, String msg) {
         if (isEmpty(obj)) {
             throwException(msg);

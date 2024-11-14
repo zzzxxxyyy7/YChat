@@ -51,4 +51,3 @@ public class BlackController {
         return ApiResult.success();
     }
 }
-
