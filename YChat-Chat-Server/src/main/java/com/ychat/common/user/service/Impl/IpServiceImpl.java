@@ -15,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sound.midi.Soundbank;
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -54,7 +56,7 @@ public class IpServiceImpl implements IpService {
         });
     }
 
-    private IpDetail TryGetIpDetailOrNullTreeTimes(String ip) {
+    private static IpDetail TryGetIpDetailOrNullTreeTimes(String ip) {
         // 频控、尝试三次获取Ip
         for (int i = 0; i < 3; i++) {
             IpDetail ipDetail = getIpDetailOrNull(ip);
@@ -71,13 +73,34 @@ public class IpServiceImpl implements IpService {
         return null;
     }
 
-    private IpDetail getIpDetailOrNull(String ip) {
+    private static IpDetail getIpDetailOrNull(String ip) {
         String body = HttpUtil.get("https://ip.taobao.com/outGetIpInfo?ip=" + ip + "&accessKey=alibaba-inc");
         try {
             ApiResult<IpDetail> result = JSONUtil.toBean(body, new TypeReference<ApiResult<IpDetail>>() {
             }, false);
             return result.getData();
-        } catch (Exception ignored) {}
-        return null;
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * 吞吐量测试
+     * 第100次成功，且耗时：176534
+     * @param args
+     */
+    public static void main(String[] args) {
+        Date begin = new Date();
+        for (int i = 1 ; i <= 100 ; ++i) {
+            int finalI = i;
+            EXECUTOR.execute(() -> {
+                IpDetail ipDetail = TryGetIpDetailOrNullTreeTimes("118.85.133.4");
+                if (Objects.nonNull(ipDetail)) {
+                    Date end = new Date();
+                    System.out.printf("第%d次成功，且耗时：%s%n", finalI, end.getTime() - begin.getTime());
+                    System.out.println(ipDetail);
+                }
+            });
+        }
     }
 }
