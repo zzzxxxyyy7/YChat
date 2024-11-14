@@ -16,12 +16,10 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMemberResp {
+
     @ApiModelProperty("uid")
     private Long uid;
 
-    /**
-     * @see com.abin.mallchat.common.user.domain.enums.ChatActiveStatusEnum
-     */
     @ApiModelProperty("在线状态 1在线 2离线")
     private Integer activeStatus;
 
