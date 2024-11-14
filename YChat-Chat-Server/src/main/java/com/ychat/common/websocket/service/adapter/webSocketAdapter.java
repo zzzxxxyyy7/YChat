@@ -1,5 +1,6 @@
 package com.ychat.common.websocket.service.adapter;
 
+import com.ychat.common.Enums.YesOrNoEnum;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.websocket.domain.enums.WSRespTypeEnum;
 import com.ychat.common.websocket.domain.vo.resp.WSBaseResp;
@@ -27,7 +28,7 @@ public class webSocketAdapter {
      * @param token
      * @return
      */
-    public static WSBaseResp<?> getRespLoginSuccess(User user, String token) {
+    public static WSBaseResp<?> getRespLoginSuccess(User user, String token, boolean roleIsAdmin) {
         WSBaseResp<WSLoginSuccess> wsBaseResp = new WSBaseResp<>();
         wsBaseResp.setType(WSRespTypeEnum.LOGIN_SUCCESS.getType());
         WSLoginSuccess wsLoginSuccess = WSLoginSuccess.builder()
@@ -35,6 +36,7 @@ public class webSocketAdapter {
                 .name(user.getName())
                 .token(token)
                 .uid(user.getId())
+                .power(roleIsAdmin ? YesOrNoEnum.YES.getStatus() : YesOrNoEnum.NO.getStatus())
                 .build();
         wsBaseResp.setData(wsLoginSuccess);
         return wsBaseResp;

@@ -1,9 +1,8 @@
 package com.ychat.common.user.dao;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ychat.common.user.domain.entity.Black;
 import com.ychat.common.user.mapper.BlackMapper;
-import com.ychat.common.user.service.IBlackService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +14,6 @@ import org.springframework.stereotype.Service;
  * @since 2024-11-14
  */
 @Service
-public class BlackDao extends ServiceImpl<BlackMapper, Black> implements IBlackService {
+public class BlackDao extends ServiceImpl<BlackMapper, Black> {
 
 }

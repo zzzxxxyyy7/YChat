@@ -1,7 +1,8 @@
 package com.ychat.common.user.service;
 
 import com.ychat.common.user.domain.entity.UserRole;
-import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-14
  */
-public interface IUserRoleService extends IService<UserRole> {
+public interface IUserRoleService {
 
+    List<UserRole> listByUid(Long uid);
 }

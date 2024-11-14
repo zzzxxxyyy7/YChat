@@ -1,6 +1,6 @@
 spring:
   profiles:
-    #运行的环境
+    # 运行环境
     active: test
   application:
     name: ychat

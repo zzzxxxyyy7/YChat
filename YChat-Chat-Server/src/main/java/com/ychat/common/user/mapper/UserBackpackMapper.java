@@ -5,9 +5,7 @@ import com.ychat.common.user.domain.entity.UserBackpack;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * <p>
  * 用户背包表 Mapper 接口
- * </p>
  *
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-09

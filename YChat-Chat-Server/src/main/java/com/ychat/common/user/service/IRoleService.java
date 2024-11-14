@@ -1,16 +1,29 @@
 package com.ychat.common.user.service;
 
-import com.ychat.common.user.domain.entity.Role;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ychat.common.Enums.RoleEnum;
+
+import java.util.Set;
 
 /**
- * <p>
  * 角色表 服务类
- * </p>
  *
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-14
  */
-public interface IRoleService extends IService<Role> {
+public interface IRoleService  {
 
+    /**
+     * 是否有某个权限，临时做法
+     *
+     * @return
+     */
+    boolean hasRole(Long uid, RoleEnum roleEnum);
+
+    /**
+     * 是否是管理员
+     *
+     * @param roleSet
+     * @return
+     */
+    boolean isAdmin(Set<Long> roleSet);
 }

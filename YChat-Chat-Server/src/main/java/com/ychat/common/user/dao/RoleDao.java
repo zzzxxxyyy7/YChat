@@ -1,9 +1,8 @@
 package com.ychat.common.user.dao;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ychat.common.user.domain.entity.Role;
 import com.ychat.common.user.mapper.RoleMapper;
-import com.ychat.common.user.service.IRoleService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +14,6 @@ import org.springframework.stereotype.Service;
  * @since 2024-11-14
  */
 @Service
-public class RoleDao extends ServiceImpl<RoleMapper, Role> implements IRoleService {
+public class RoleDao extends ServiceImpl<RoleMapper, Role> {
 
 }

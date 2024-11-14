@@ -1,16 +1,16 @@
 package com.ychat.common.user.service;
 
-import com.ychat.common.user.domain.entity.Black;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ychat.common.user.domain.dto.BlackReq;
 
 /**
- * <p>
- * 黑名单 服务类
- * </p>
+ * 黑名单服务类
  *
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-14
  */
-public interface IBlackService extends IService<Black> {
+public interface IBlackService {
 
+    void blackUid(BlackReq req);
+
+    void BlackIp(String ip);
 }

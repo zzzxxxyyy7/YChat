@@ -3,10 +3,11 @@ package com.ychat.common.websocket.service.Impl;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.ychat.common.Enums.RoleEnum;
 import com.ychat.common.user.Event.UserOnlineEvent;
 import com.ychat.common.user.dao.UserDao;
-import com.ychat.common.user.domain.entity.IpInfo;
 import com.ychat.common.user.domain.entity.User;
+import com.ychat.common.user.service.IRoleService;
 import com.ychat.common.user.service.LoginService;
 import com.ychat.common.websocket.NettyUtils;
 import com.ychat.common.websocket.config.SafeSnowflake;
@@ -52,6 +53,9 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     @Autowired
     private ApplicationEventPublisher appEventPublisher;
+
+    @Autowired
+    private IRoleService roleService;
 
     // 缓存五分钟
     private static final Duration EXPIRE_TIME = Duration.ofMinutes(5);
@@ -111,17 +115,12 @@ public class WebSocketServiceImpl implements WebSocketService {
     public void scanLoginSuccess(Integer loginCode, Long uid) {
         // 确认连接是否在这个服务节点上
         Channel ctx = WAIT_LOGIN_MAP.getIfPresent(loginCode);
-
-        if (null == ctx) {
-            return;
-        }
+        if (null == ctx) return;
 
         WAIT_LOGIN_MAP.invalidate(loginCode);
-
         User user = userDao.getById(uid);
 
         String token = loginService.login(uid);
-
         putLoginSuccessMessage(ctx, user, token);
     }
 
@@ -140,11 +139,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     public void waitAuthorize(Integer loginCode) {
         // 确认连接是否在这个服务节点上
         Channel ctx = WAIT_LOGIN_MAP.getIfPresent(loginCode);
-
-        if (null == ctx) {
-            return;
-        }
-
+        if (null == ctx) return;
         sendMsg(ctx, webSocketAdapter.getRespLoginSuccess());
     }
 
@@ -176,8 +171,8 @@ public class WebSocketServiceImpl implements WebSocketService {
         WSChannelExtraDTO wsChannelExtraDTO = ONLINE_WS_MAP.get(ctx);
         // 更新 channel -> null --> channel -> uid 的关系, 保存用户登录成功的状态
         wsChannelExtraDTO.setUid(user.getId());
-        // 统一推送用户上线消息
-        sendMsg(ctx, webSocketAdapter.getRespLoginSuccess(user , message));
+        // 往 Channel 写入用户上线消息
+        sendMsg(ctx, webSocketAdapter.getRespLoginSuccess(user , message, roleService.hasRole(user.getId(), RoleEnum.CHAT_MANAGER)));
         // 发送用户上线成功事件
         user.setLastOptTime(new Date());
         user.refreshIp(NettyUtils.getAttr(ctx, NettyUtils.USER_IP));

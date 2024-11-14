@@ -55,6 +55,11 @@ public class UserServiceImpl implements IUserService {
     private ApplicationEventPublisher appEventPublisher;
 
     @Override
+    public User getById(Long uid) {
+        return getById(Long.valueOf(uid));
+    }
+
+    @Override
     @Transactional
     public Long register(User newUser) {
         userDao.save(newUser);

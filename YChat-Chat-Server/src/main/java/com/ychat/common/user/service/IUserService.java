@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface IUserService {
 
+    User getById(Long uid);
+
     /**
      * 用户注册，需要获得id
      * @param user
@@ -42,5 +44,10 @@ public interface IUserService {
      */
     List<BadgeResp> badges(Long uid);
 
+    /**
+     * 佩戴徽章
+     * @param uid
+     * @param itemId
+     */
     void wearingBadge(Long uid, Long itemId);
 }
