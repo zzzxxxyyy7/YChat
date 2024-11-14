@@ -12,6 +12,7 @@ import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.service.IpService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-public class IpServiceImpl implements IpService {
+public class IpServiceImpl implements IpService , DisposableBean {
 
     @Autowired
     private UserDao userDao;
@@ -35,9 +36,25 @@ public class IpServiceImpl implements IpService {
             new LinkedBlockingQueue<>(500),
             new NamedThreadFactory("refresh-ipDetail", null, false));
 
+    /**
+     * 优雅停机，线程回调，销毁线程池
+     * @throws Exception
+     */
+    @Override
+    public void destroy() throws Exception {
+        EXECUTOR.shutdown();
+        if (!EXECUTOR.awaitTermination(30, TimeUnit.SECONDS)) {
+            // 线程池中线程都执行完，再执行以下代码
+            if (log.isErrorEnabled()) {
+                log.error("线程池优雅停机失败");
+            }
+        }
+    }
+
     @Override
     public void refreshIpDetailAsync(Long uid) {
         EXECUTOR.execute(() -> {
+            log.info("开始执行 IpDetail 刷新工作");
             User user = userDao.getById(uid);
             IpInfo ipInfo = user.getIpInfo();
             if (null == ipInfo) return ;

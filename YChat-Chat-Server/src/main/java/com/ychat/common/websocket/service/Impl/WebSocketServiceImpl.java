@@ -180,9 +180,7 @@ public class WebSocketServiceImpl implements WebSocketService {
         sendMsg(ctx, webSocketAdapter.getRespLoginSuccess(user , message));
         // 发送用户上线成功事件
         user.setLastOptTime(new Date());
-        IpInfo ipInfo = new IpInfo();
         user.refreshIp(NettyUtils.getAttr(ctx, NettyUtils.USER_IP));
-        user.setIpInfo(ipInfo);
         appEventPublisher.publishEvent(new UserOnlineEvent(this, user));
     }
 
