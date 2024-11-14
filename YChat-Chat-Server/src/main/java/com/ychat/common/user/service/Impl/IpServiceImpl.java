@@ -44,9 +44,8 @@ public class IpServiceImpl implements IpService , DisposableBean {
     public void destroy() throws Exception {
         EXECUTOR.shutdown();
         if (!EXECUTOR.awaitTermination(30, TimeUnit.SECONDS)) {
-            // 线程池中线程都执行完，再执行以下代码
             if (log.isErrorEnabled()) {
-                log.error("线程池优雅停机失败");
+                log.error("Timed out while waiting for executor [{}] to terminate", EXECUTOR);
             }
         }
     }
