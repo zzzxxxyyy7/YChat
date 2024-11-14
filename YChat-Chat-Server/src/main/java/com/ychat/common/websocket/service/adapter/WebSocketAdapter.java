@@ -4,11 +4,12 @@ import com.ychat.common.Enums.YesOrNoEnum;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.websocket.domain.enums.WSRespTypeEnum;
 import com.ychat.common.websocket.domain.vo.resp.WSBaseResp;
+import com.ychat.common.websocket.domain.vo.resp.WSBlack;
 import com.ychat.common.websocket.domain.vo.resp.WSLoginSuccess;
 import com.ychat.common.websocket.domain.vo.resp.WSLoginUrl;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
-public class webSocketAdapter {
+public class WebSocketAdapter {
 
     /**
      * 获取登录二维码
@@ -53,6 +54,21 @@ public class webSocketAdapter {
         WSBaseResp<String> resp = new WSBaseResp<>();
         resp.setType(WSRespTypeEnum.INVALIDATE_TOKEN.getType());
         resp.setData("Token 无效或者已过期，请重新登录");
+        return resp;
+    }
+
+    /**
+     * 返回用户加入黑名单消息到 Channel
+     * @param user
+     * @return
+     */
+    public static WSBaseResp<?> buildBlack(User user) {
+        WSBaseResp<WSBlack> resp = new WSBaseResp<>();
+        resp.setType(WSRespTypeEnum.BLACK.getType());
+        WSBlack wsBlack = WSBlack.builder()
+                .uid(user.getId())
+                .build();
+        resp.setData(wsBlack);
         return resp;
     }
 }

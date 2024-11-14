@@ -22,6 +22,11 @@ public class ThreadPoolConfig implements AsyncConfigurer {
      */
     public static final String YCHAT_EXECUTOR = "yChatExecutor";
 
+    /**
+     * 推送 WebSocket 消息专用线程池
+     */
+    public static final String WS_EXECUTOR = "wsExecutor";
+
     @Override
     public Executor getAsyncExecutor() {
         return yChatExecutor();
@@ -39,6 +44,24 @@ public class ThreadPoolConfig implements AsyncConfigurer {
         executor.setThreadNamePrefix("ychat-executor-");
         // 满了调用线程执行，认为重要任务
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // 设置线程工厂执行异常捕获
+        executor.setThreadFactory(new YChatThreadFactory(executor));
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean(WS_EXECUTOR)
+    @Primary
+    public ThreadPoolTaskExecutor wsExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        // 线程池优雅停机，Bean Destory 的时候会被 Spring 回调，执行最后的逻辑处理再退出
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setCorePoolSize(16);
+        executor.setMaxPoolSize(16);
+        executor.setQueueCapacity(1000);
+        executor.setThreadNamePrefix("websocket-executor-");
+        // 满了调用线程执行，认为重要任务
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
         // 设置线程工厂执行异常捕获
         executor.setThreadFactory(new YChatThreadFactory(executor));
         executor.initialize();

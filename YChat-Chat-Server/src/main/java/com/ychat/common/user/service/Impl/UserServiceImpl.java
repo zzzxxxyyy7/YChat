@@ -56,7 +56,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User getById(Long uid) {
-        return getById(Long.valueOf(uid));
+        return userDao.getById(uid);
     }
 
     @Override

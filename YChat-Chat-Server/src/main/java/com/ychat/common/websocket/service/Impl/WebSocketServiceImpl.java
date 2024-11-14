@@ -14,7 +14,7 @@ import com.ychat.common.websocket.config.SafeSnowflake;
 import com.ychat.common.websocket.domain.dto.WSChannelExtraDTO;
 import com.ychat.common.websocket.domain.vo.resp.WSBaseResp;
 import com.ychat.common.websocket.service.WebSocketService;
-import com.ychat.common.websocket.service.adapter.webSocketAdapter;
+import com.ychat.common.websocket.service.adapter.WebSocketAdapter;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,10 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -56,6 +58,13 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     @Autowired
     private IRoleService roleService;
+
+    /**
+     * 引入线程池优化推送群体消息
+     */
+    @Autowired
+    @Qualifier("wsExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     // 缓存五分钟
     private static final Duration EXPIRE_TIME = Duration.ofMinutes(5);
@@ -91,7 +100,7 @@ public class WebSocketServiceImpl implements WebSocketService {
         WAIT_LOGIN_MAP.asMap().put(code, ctx);
         // 获取二维码，有效期五分钟
         WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.getQrcodeService().qrCodeCreateTmpTicket(code, (int) EXPIRE_TIME.getSeconds());
-        sendUrlMsg(ctx, webSocketAdapter.getRespLoginUrl(wxMpQrCodeTicket));
+        sendUrlMsg(ctx, WebSocketAdapter.getRespLoginUrl(wxMpQrCodeTicket));
     }
 
     private void sendUrlMsg(Channel channel, WSBaseResp<?> resp) {
@@ -140,7 +149,7 @@ public class WebSocketServiceImpl implements WebSocketService {
         // 确认连接是否在这个服务节点上
         Channel ctx = WAIT_LOGIN_MAP.getIfPresent(loginCode);
         if (null == ctx) return;
-        sendMsg(ctx, webSocketAdapter.getRespLoginSuccess());
+        sendMsg(ctx, WebSocketAdapter.getRespLoginSuccess());
     }
 
     /**
@@ -158,7 +167,7 @@ public class WebSocketServiceImpl implements WebSocketService {
             putLoginSuccessMessage(ctx, user, token);
         } else {
             // token 失效
-            sendMsg(ctx, webSocketAdapter.getRespLoginFail());
+            sendMsg(ctx, WebSocketAdapter.getRespLoginFail());
         }
     }
 
@@ -172,11 +181,22 @@ public class WebSocketServiceImpl implements WebSocketService {
         // 更新 channel -> null --> channel -> uid 的关系, 保存用户登录成功的状态
         wsChannelExtraDTO.setUid(user.getId());
         // 往 Channel 写入用户上线消息
-        sendMsg(ctx, webSocketAdapter.getRespLoginSuccess(user , message, roleService.hasRole(user.getId(), RoleEnum.CHAT_MANAGER)));
+        sendMsg(ctx, WebSocketAdapter.getRespLoginSuccess(user , message, roleService.hasRole(user.getId(), RoleEnum.CHAT_MANAGER)));
         // 发送用户上线成功事件
         user.setLastOptTime(new Date());
         user.refreshIp(NettyUtils.getAttr(ctx, NettyUtils.USER_IP));
         appEventPublisher.publishEvent(new UserOnlineEvent(this, user));
     }
 
+    /**
+     * 发送消息给所有用户，单机才可以这么做，集群需要加一层路由服务
+     * @param msg
+     */
+    @Override
+    public void sendMsgToAll(WSBaseResp<?> msg) {
+        // 线程池批量推送优化
+        ONLINE_WS_MAP.forEach((ctx, ext) -> {
+            threadPoolTaskExecutor.execute(() -> sendMsg(ctx, msg));
+        });
+    }
 }

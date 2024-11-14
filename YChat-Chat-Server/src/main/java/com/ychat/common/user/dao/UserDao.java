@@ -3,6 +3,7 @@ package com.ychat.common.user.dao;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ychat.common.Enums.YesOrNoEnum;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,13 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
         lambdaUpdate()
                 .eq(User::getId, uid)
                 .set(User::getItemId, itemId)
+                .update();
+    }
+
+    public void invalidUid(Long id) {
+        lambdaUpdate()
+                .eq(User::getId, id)
+                .set(User::getStatus, YesOrNoEnum.YES.getStatus())
                 .update();
     }
 }
