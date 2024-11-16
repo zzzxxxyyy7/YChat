@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024-11-04
  */
 @RestController
-@RequestMapping("/black")
+@RequestMapping("/black/private")
 @Api(tags = "用户相关")
 public class BlackController {
 
@@ -27,13 +27,7 @@ public class BlackController {
     @Autowired
     private IBlackService blacksService;
 
-    @GetMapping("/private/test")
-    @ApiOperation("测试")
-    public ApiResult<Void> test() {
-        return ApiResult.success();
-    }
-
-    @PostMapping("/private/blackUid")
+    @PostMapping("/blackUid")
     @ApiOperation("拉黑uid")
     public ApiResult<?> blackUid(@RequestBody BlackReq req) {
         Long uid = RequestHolder.get().getUid();
@@ -43,7 +37,7 @@ public class BlackController {
         return ApiResult.success("拉黑成功");
     }
 
-    @PostMapping("/private/blackIp")
+    @PostMapping("/blackIp")
     @ApiOperation("拉黑Ip")
     public ApiResult<?> blackIp(@RequestBody BlackReq req) {
         Long uid = RequestHolder.get().getUid();
