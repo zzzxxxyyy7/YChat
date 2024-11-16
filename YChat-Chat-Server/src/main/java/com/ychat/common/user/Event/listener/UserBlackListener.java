@@ -3,6 +3,7 @@ package com.ychat.common.user.Event.listener;
 import com.ychat.common.user.Event.UserBlackEvent;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.entity.User;
+import com.ychat.common.user.service.cache.UserCache;
 import com.ychat.common.websocket.service.WebSocketService;
 import com.ychat.common.websocket.service.adapter.WebSocketAdapter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,15 @@ public class UserBlackListener {
     private UserDao userDao;
 
     @Autowired
+    private UserCache userCache;
+
+    @Autowired
     private WebSocketService webSocketService;
 
+    /**
+     * 拉黑用户后，通知其他 Channel
+     * @param event
+     */
     @Async
     @TransactionalEventListener(classes = UserBlackEvent.class, phase = TransactionPhase.AFTER_COMMIT)
     public void sendBlackMsg(UserBlackEvent event) {
@@ -38,5 +46,15 @@ public class UserBlackListener {
     @TransactionalEventListener(classes = UserBlackEvent.class, phase = TransactionPhase.AFTER_COMMIT)
     public void changeUserStatus(UserBlackEvent event) {
         userDao.invalidUid(event.getUser().getId());
+    }
+
+    /**
+     * 用户被拉黑后，刷新被拉黑用户缓存
+     * @param event
+     */
+    @Async
+    @TransactionalEventListener(classes = UserBlackEvent.class, phase = TransactionPhase.AFTER_COMMIT)
+    public void refreshCache(UserBlackEvent event) {
+        userCache.evictBlackMap();
     }
 }
