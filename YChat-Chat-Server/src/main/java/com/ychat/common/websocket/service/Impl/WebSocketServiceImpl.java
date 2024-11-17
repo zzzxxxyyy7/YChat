@@ -3,7 +3,7 @@ package com.ychat.common.websocket.service.Impl;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.ychat.common.Enums.RoleEnum;
+import Constants.Enums.RoleEnum;
 import com.ychat.common.user.Event.UserOnlineEvent;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.entity.User;

@@ -1,21 +1,17 @@
 package com.ychat.common.user.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 /**
- * <p>
- * 用户申请表
- * </p>
- *
- * @author <a href="https://github.com/zongzibinbin">Rhss</a>
- * @since 2024-11-17
+ * 好友申请表
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -27,7 +23,7 @@ public class UserApply implements Serializable {
     /**
      * id
      */
-      @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**

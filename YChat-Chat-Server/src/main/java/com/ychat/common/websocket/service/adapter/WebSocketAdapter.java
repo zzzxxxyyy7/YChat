@@ -1,12 +1,9 @@
 package com.ychat.common.websocket.service.adapter;
 
-import com.ychat.common.Enums.YesOrNoEnum;
+import Constants.Enums.YesOrNoEnum;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.websocket.domain.enums.WSRespTypeEnum;
-import com.ychat.common.websocket.domain.vo.resp.WSBaseResp;
-import com.ychat.common.websocket.domain.vo.resp.WSBlack;
-import com.ychat.common.websocket.domain.vo.resp.WSLoginSuccess;
-import com.ychat.common.websocket.domain.vo.resp.WSLoginUrl;
+import com.ychat.common.websocket.domain.vo.resp.*;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
 public class WebSocketAdapter {
@@ -70,5 +67,17 @@ public class WebSocketAdapter {
                 .build();
         resp.setData(wsBlack);
         return resp;
+    }
+
+    /**
+     * 当发生一条好友申请的时候，返回好友申请消息到 Channel
+     * @param resp
+     * @return
+     */
+    public static WSBaseResp<WSFriendApply> buildApplySend(WSFriendApply resp) {
+        WSBaseResp<WSFriendApply> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.APPLY.getType());
+        wsBaseResp.setData(resp);
+        return wsBaseResp;
     }
 }

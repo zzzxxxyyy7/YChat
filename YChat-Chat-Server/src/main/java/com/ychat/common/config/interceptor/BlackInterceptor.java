@@ -1,9 +1,9 @@
 package com.ychat.common.config.interceptor;
 
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.ychat.common.Enums.BlackTypeEnum;
-import com.ychat.common.Exception.HttpErrorEnum;
-import com.ychat.common.front.Request.RequestInfo;
+import Constants.Enums.BlackTypeEnum;
+import Constants.Enums.HttpErrorEnum;
+import Constants.front.Request.RequestInfo;
 import com.ychat.common.user.service.cache.UserCache;
 import com.ychat.common.utils.Request.RequestHolder;
 import lombok.extern.slf4j.Slf4j;

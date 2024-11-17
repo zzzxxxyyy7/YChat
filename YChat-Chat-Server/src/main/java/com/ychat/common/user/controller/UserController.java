@@ -1,7 +1,7 @@
 package com.ychat.common.user.controller;
 
 
-import com.ychat.common.front.Response.ApiResult;
+import Constants.front.Response.ApiResult;
 import com.ychat.common.user.domain.dto.ModifyNameReq;
 import com.ychat.common.user.domain.dto.WearingBadgeReq;
 import com.ychat.common.user.domain.vo.BadgeResp;

@@ -1,5 +1,6 @@
 package com.ychat.common.user.domain.vo;
 
+import Constants.Enums.ChatActiveStatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class FriendResp {
     private Long uid;
 
     /**
-     * @see com.ychat.common.Enums.ChatActiveStatusEnum
+     * @see ChatActiveStatusEnum
      */
     @ApiModelProperty("在线状态 1在线 2离线")
     private Integer activeStatus;

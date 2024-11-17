@@ -1,11 +1,11 @@
 package com.ychat.common.user.controller;
 
 
-import com.ychat.common.front.Request.CursorPageBaseReq;
-import com.ychat.common.front.Request.PageBaseReq;
-import com.ychat.common.front.Response.ApiResult;
-import com.ychat.common.front.Response.CursorPageBaseResp;
-import com.ychat.common.front.Response.PageBaseResp;
+import Constants.front.Request.CursorPageBaseReq;
+import Constants.front.Request.PageBaseReq;
+import Constants.front.Response.ApiResult;
+import com.ychat.common.utils.Request.CursorPageBaseResp;
+import Constants.front.Response.PageBaseResp;
 import com.ychat.common.user.domain.dto.FriendApplyReq;
 import com.ychat.common.user.domain.dto.FriendApproveReq;
 import com.ychat.common.user.domain.dto.FriendCheckReq;
@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/userFriend")
+@RequestMapping("/userFriend/private")
 @Api(tags = "好友相关接口")
 @Slf4j
 public class UserFriendController {

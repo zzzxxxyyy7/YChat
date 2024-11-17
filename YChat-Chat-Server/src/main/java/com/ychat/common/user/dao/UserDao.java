@@ -3,10 +3,12 @@ package com.ychat.common.user.dao;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ychat.common.Enums.YesOrNoEnum;
+import Constants.Enums.YesOrNoEnum;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -52,10 +54,26 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
                 .update();
     }
 
+    /**
+     * 更新账号状态，即禁用账号
+     * @param id
+     */
     public void invalidUid(Long id) {
         lambdaUpdate()
                 .eq(User::getId, id)
                 .set(User::getStatus, YesOrNoEnum.YES.getStatus())
                 .update();
+    }
+
+    /**
+     * 获取好友列表
+     * @param uids
+     * @return
+     */
+    public List<User> getFriendList(List<Long> uids) {
+        return lambdaQuery()
+                .in(User::getId, uids)
+                .select(User::getId, User::getActiveStatus, User::getName, User::getAvatar)
+                .list();
     }
 }

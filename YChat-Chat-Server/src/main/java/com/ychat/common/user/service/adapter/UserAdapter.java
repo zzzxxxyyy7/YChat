@@ -1,7 +1,7 @@
 package com.ychat.common.user.service.adapter;
 
 import cn.hutool.core.util.RandomUtil;
-import com.ychat.common.Enums.YesOrNoEnum;
+import Constants.Enums.YesOrNoEnum;
 import com.ychat.common.user.domain.entity.ItemConfig;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.entity.UserBackpack;

@@ -1,7 +1,7 @@
 package com.ychat.common.user.controller;
 
-import com.ychat.common.Enums.RoleEnum;
-import com.ychat.common.front.Response.ApiResult;
+import Constants.Enums.RoleEnum;
+import Constants.front.Response.ApiResult;
 import com.ychat.common.user.domain.dto.BlackReq;
 import com.ychat.common.user.service.IBlackService;
 import com.ychat.common.user.service.IRoleService;

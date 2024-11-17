@@ -1,7 +1,7 @@
 package com.ychat.common.user.service.Impl;
 
-import com.ychat.common.Enums.BlackTypeEnum;
-import com.ychat.common.Exception.BusinessException;
+import Constants.Enums.BlackTypeEnum;
+import Constants.Exception.BusinessException;
 import com.ychat.common.user.Event.UserBlackEvent;
 import com.ychat.common.user.dao.BlackDao;
 import com.ychat.common.user.domain.dto.BlackReq;

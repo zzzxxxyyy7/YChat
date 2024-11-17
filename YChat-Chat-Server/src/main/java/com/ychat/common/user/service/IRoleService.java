@@ -1,6 +1,6 @@
 package com.ychat.common.user.service;
 
-import com.ychat.common.Enums.RoleEnum;
+import Constants.Enums.RoleEnum;
 
 import java.util.Set;
 

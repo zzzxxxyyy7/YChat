@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.ychat.common.Enums.BlackTypeEnum;
+import Constants.Enums.BlackTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

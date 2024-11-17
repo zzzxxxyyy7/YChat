@@ -1,10 +1,10 @@
 package com.ychat.common.utils.Assert;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.ychat.common.Enums.BusinessErrorEnum;
-import com.ychat.common.Exception.BusinessException;
-import com.ychat.common.Exception.CommonErrorEnum;
-import com.ychat.common.Exception.ErrorEnum;
+import Constants.Enums.BusinessErrorEnum;
+import Constants.Exception.BusinessException;
+import Constants.Enums.CommonErrorEnum;
+import Constants.Enums.ErrorEnum;
 import org.hibernate.validator.HibernateValidator;
 
 import javax.validation.ConstraintViolation;

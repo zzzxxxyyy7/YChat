@@ -1,8 +1,8 @@
 package com.ychat.common.user.service.Impl;
 
-import com.ychat.common.Enums.ItemEnum;
-import com.ychat.common.Enums.ItemTypeEnum;
-import com.ychat.common.Exception.BusinessException;
+import Constants.Enums.ItemEnum;
+import Constants.Enums.ItemTypeEnum;
+import Constants.Exception.BusinessException;
 import com.ychat.common.user.Event.UserRegisterEvent;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.dto.ModifyNameReq;
@@ -89,7 +89,6 @@ public class UserServiceImpl implements IUserService {
                 // 判断改名卡是否足够
                 UserBackpack firstValidItem = userBackpackService.getFirstValidItem(uid, ItemEnum.MODIFY_NAME_CARD.getId());
 
-                // TODO 改名卡发放
                 AssertUtil.isNotEmpty(firstValidItem, "改名卡不足，请等待活动发放");
 
                 // 使用改名卡

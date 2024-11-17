@@ -1,7 +1,7 @@
 package com.ychat.common.config.interceptor;
 
 import cn.hutool.extra.servlet.ServletUtil;
-import com.ychat.common.front.Request.RequestInfo;
+import Constants.front.Request.RequestInfo;
 import com.ychat.common.utils.Request.RequestHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
