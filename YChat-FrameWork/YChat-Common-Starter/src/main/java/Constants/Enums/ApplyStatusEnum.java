@@ -10,7 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ApplyStatusEnum {
 
-    WAIT_APPROVAL(1, "待审批"),
+    WAIT_APPROVAL(1, "暂未同意"),
 
     AGREE(2, "同意");
 

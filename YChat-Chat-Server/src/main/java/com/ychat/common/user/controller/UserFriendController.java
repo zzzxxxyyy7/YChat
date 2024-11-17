@@ -37,14 +37,14 @@ public class UserFriendController {
     @ApiOperation("批量判断是否是自己好友")
     public ApiResult<FriendCheckResp> check(@Valid FriendCheckReq request) {
         Long uid = RequestHolder.get().getUid();
-        return ApiResult.success(userFriendService.check(uid, request));
+        return ApiResult.success(userFriendService.checkIsMyFriends(uid, request));
     }
 
     @PostMapping("/apply")
-    @ApiOperation("申请好友")
+    @ApiOperation("发送好友申请")
     public ApiResult<Void> apply(@Valid @RequestBody FriendApplyReq request) {
         Long uid = RequestHolder.get().getUid();
-        userFriendService.apply(uid, request);
+        userFriendService.sendFriendApply(uid, request);
         return ApiResult.success();
     }
 

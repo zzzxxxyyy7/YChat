@@ -18,5 +18,4 @@ public class WSFriendApply {
     @ApiModelProperty("申请未读数")
     private Integer unreadCount;
 
-
 }

@@ -17,7 +17,7 @@ import static Constants.Enums.ApplyStatusEnum.WAIT_APPROVAL;
 import static Constants.Enums.ApplyTypeEnum.ADD_FRIEND;
 
 /**
- * Description: 好友适配器
+ * Description: 好友申请记录适配器
  */
 public class FriendAdapter {
 

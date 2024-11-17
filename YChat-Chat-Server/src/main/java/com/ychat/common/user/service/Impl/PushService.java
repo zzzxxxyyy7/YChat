@@ -18,6 +18,6 @@ public class PushService {
 //    }
 
     public void sendPushMsg(WSBaseResp<?> msg) {
-
+        // TODO 推送有新的好友申请记录到客户端
     }
 }

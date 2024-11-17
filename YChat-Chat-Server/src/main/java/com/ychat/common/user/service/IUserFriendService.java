@@ -30,7 +30,7 @@ public interface IUserFriendService {
      * @param uid     uid
      * @return {@link FriendCheckResp}
      */
-    FriendCheckResp check(Long uid, FriendCheckReq request);
+    FriendCheckResp checkIsMyFriends(Long uid, FriendCheckReq request);
 
     /**
      * 应用
@@ -39,7 +39,7 @@ public interface IUserFriendService {
      * @param request 请求
      * @param uid     uid
      */
-    void apply(Long uid, FriendApplyReq request);
+    void sendFriendApply(Long uid, FriendApplyReq request);
 
     /**
      * 分页查询好友申请

@@ -72,7 +72,6 @@ public class UserFriendServiceImpl implements IUserFriendService {
 
 
     /**
-     * 检查
      * 检查是否是自己好友
      *
      * @param uid     uid
@@ -80,8 +79,8 @@ public class UserFriendServiceImpl implements IUserFriendService {
      * @return {@link FriendCheckResp}
      */
     @Override
-    public FriendCheckResp check(Long uid, FriendCheckReq request) {
-        List<UserFriend> friendList = userFriendDao.judgeIsMyFriends(uid, request.getUidList());
+    public FriendCheckResp checkIsMyFriends(Long uid, FriendCheckReq request) {
+        List<UserFriend> friendList = userFriendDao.checkIsMyFriends(uid, request.getUidList());
         Set<Long> friendUidSet = friendList.stream().map(UserFriend::getFriendUid).collect(Collectors.toSet());
 
         List<FriendCheckResp.FriendCheck> friendCheckList = request.getUidList().stream().map(friendUid -> {
@@ -95,39 +94,41 @@ public class UserFriendServiceImpl implements IUserFriendService {
     }
 
     /**
-     * 申请好友
+     * 发送好友申请
      *
      * @param request 请求
      */
     @Override
-    public void apply(Long uid, FriendApplyReq request) {
-
-        // 是否有好友关系
-        UserFriend friend = userFriendDao.judgeIsMyFriend(uid, request.getTargetUid());
-        AssertUtil.isEmpty(friend, "你们已经是好友了");
-
-        // 是否已经存在申请记录（避免重复申请）
-        UserApply selfApproving = userApplyDao.getFriendApproving(uid, request.getTargetUid());
-        if (Objects.nonNull(selfApproving)) {
-            log.info("已有好友申请记录,uid:{}, targetId:{}", uid, request.getTargetUid());
-            return;
-        }
-
-        // 对方是否申请过我的好友，如果有，直接同意申请
-        UserApply friendApproving = userApplyDao.getFriendApproving(request.getTargetUid(), uid);
-        if (Objects.nonNull(friendApproving)) {
-            ((IUserFriendService) AopContext.currentProxy()).applyApprove(uid, new FriendApproveReq(friendApproving.getId()));
-            return;
-        }
+    public void sendFriendApply(Long uid, FriendApplyReq request) {
 
         // 使用 Redisson 获取分布式锁
         RLock lock = redissonClient.getLock("applyFriend:uid:" + uid);
+
         try {
             // 尝试加锁，设置锁的过期时间为5秒，防止长时间占用
             if (lock.tryLock(10, 5, TimeUnit.SECONDS)) {
+                // 是否有好友关系
+                UserFriend friend = userFriendDao.checkIsMyFriend(uid, request.getTargetUid());
+                AssertUtil.isEmpty(friend, "你们已经是好友了");
+
+                // 是否已经存在好友申请记录但是暂未同意（避免重复申请）
+                UserApply selfApproving = userApplyDao.getFriendApproving(uid, request.getTargetUid());
+                if (Objects.nonNull(selfApproving)) {
+                    log.info("已经申请过了,uid:{}, targetId:{}", uid, request.getTargetUid());
+                    return;
+                }
+
+                // 对方是否申请过我的好友，如果有，直接同意申请
+                UserApply friendApproving = userApplyDao.getFriendApproving(request.getTargetUid(), uid);
+                if (Objects.nonNull(friendApproving)) {
+                    ((IUserFriendService) AopContext.currentProxy()).applyApprove(uid, new FriendApproveReq(friendApproving.getId()));
+                    return;
+                }
+
                 // 初始化一条申请记录 -- 待审批、未读
                 UserApply newUserApply = FriendAdapter.buildFriendApply(uid, request);
                 userApplyDao.save(newUserApply);
+
                 //申请事件
                 applicationEventPublisher.publishEvent(new UserApplyEvent(this, newUserApply));
             }
@@ -144,7 +145,7 @@ public class UserFriendServiceImpl implements IUserFriendService {
     }
 
     /**
-     * 获取好友申请列表 - 普通翻页
+     * 获取好友申请记录列表 - 普通翻页
      * @param uid
      * @param request 请求
      * @return

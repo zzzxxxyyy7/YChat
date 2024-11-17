@@ -28,7 +28,7 @@ public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
      * @param uidList
      * @return
      */
-    public List<UserFriend> judgeIsMyFriends(Long uid, List<Long> uidList) {
+    public List<UserFriend> checkIsMyFriends(Long uid, List<Long> uidList) {
         return lambdaQuery().eq(UserFriend::getUid, uid)
                 .in(UserFriend::getFriendUid, uidList)
                 .list();
@@ -41,7 +41,7 @@ public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
      * @param targetUid
      * @return
      */
-    public UserFriend judgeIsMyFriend(Long uid, Long targetUid) {
+    public UserFriend checkIsMyFriend(Long uid, Long targetUid) {
         return lambdaQuery().eq(UserFriend::getUid, uid)
                 .eq(UserFriend::getFriendUid, targetUid)
                 .one();

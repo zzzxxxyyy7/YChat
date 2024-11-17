@@ -1,4 +1,4 @@
-package com.ychat.common.user.controller;
+package com.ychat.common.TestApi.Controller;
 
 import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.config.ThreadPool.YChatUncaughtExceptionHandler;

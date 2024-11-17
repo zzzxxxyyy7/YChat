@@ -15,8 +15,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 /**
  * 好友申请监听器
  */
-@Slf4j
 @Component
+@Slf4j
 public class UserApplyListener {
 
     @Autowired
@@ -29,9 +29,9 @@ public class UserApplyListener {
     @TransactionalEventListener(classes = UserApplyEvent.class, fallbackExecution = true)
     public void notifyFriend(UserApplyEvent event) {
         UserApply userApply = event.getUserApply();
-        // 获取当前目标好友申请未读数量
+        // 获取申请目标当前的好友申请未读数量
         Integer unReadCount = userApplyDao.getUnReadCount(userApply.getTargetId());
-        // 推送客户端
+        // 推送申请目标（即TargetId）的客户端
         pushService.sendPushMsg(WebSocketAdapter.buildApplySend(new WSFriendApply(userApply.getUid(), unReadCount)));
     }
 
