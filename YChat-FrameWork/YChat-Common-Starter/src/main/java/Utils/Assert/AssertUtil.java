@@ -1,4 +1,4 @@
-package com.ychat.common.utils.Assert;
+package Utils.Assert;
 
 import cn.hutool.core.util.ObjectUtil;
 import Constants.Enums.BusinessErrorEnum;

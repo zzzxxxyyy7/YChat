@@ -37,11 +37,12 @@ public class JwtUtils {
      */
     public String createToken(Long uid) {
         // build token
-        String token = JWT.create()
+        // 只存一个uid信息，其他的自己去redis查
+        // signature
+        return JWT.create()
                 .withClaim(UID_CLAIM, uid) // 只存一个uid信息，其他的自己去redis查
                 .withClaim(CREATE_TIME, new Date())
-                .sign(Algorithm.HMAC256(secret)); // signature
-        return token;
+                .sign(Algorithm.HMAC256(secret));
     }
 
     public static void main(String[] args) {

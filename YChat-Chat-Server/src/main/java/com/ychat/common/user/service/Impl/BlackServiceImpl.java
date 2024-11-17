@@ -10,7 +10,7 @@ import com.ychat.common.user.domain.entity.IpInfo;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.service.IBlackService;
 import com.ychat.common.user.service.IUserService;
-import com.ychat.common.utils.Assert.AssertUtil;
+import Utils.Assert.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;

@@ -16,7 +16,7 @@ import com.ychat.common.user.service.IUserBackpackService;
 import com.ychat.common.user.service.IUserService;
 import com.ychat.common.user.service.adapter.UserAdapter;
 import com.ychat.common.user.service.cache.ItemCache;
-import com.ychat.common.utils.Assert.AssertUtil;
+import Utils.Assert.AssertUtil;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;

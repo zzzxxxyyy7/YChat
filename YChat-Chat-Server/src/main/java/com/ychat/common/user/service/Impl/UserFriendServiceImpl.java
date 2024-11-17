@@ -25,7 +25,7 @@ import com.ychat.common.user.domain.vo.FriendUnreadResp;
 import com.ychat.common.user.service.IRoomFriendService;
 import com.ychat.common.user.service.IUserFriendService;
 import com.ychat.common.user.service.adapter.FriendAdapter;
-import com.ychat.common.utils.Assert.AssertUtil;
+import Utils.Assert.AssertUtil;
 import com.ychat.common.utils.Request.CursorPageBaseResp;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;

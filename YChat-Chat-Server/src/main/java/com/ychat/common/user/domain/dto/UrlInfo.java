@@ -1,14 +1,10 @@
-package com.ychat.common.utils.Chat;
+package com.ychat.common.user.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * @author zhaoqichao
- * @date 2023/7/3 16:12
- */
 @Data
 @Builder
 @AllArgsConstructor

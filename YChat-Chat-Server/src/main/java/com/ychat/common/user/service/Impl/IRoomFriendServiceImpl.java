@@ -8,7 +8,7 @@ import com.ychat.common.user.domain.entity.Room;
 import com.ychat.common.user.domain.entity.RoomFriend;
 import com.ychat.common.user.service.IRoomFriendService;
 import com.ychat.common.user.service.adapter.ChatAdapter;
-import com.ychat.common.utils.Assert.AssertUtil;
+import Utils.Assert.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

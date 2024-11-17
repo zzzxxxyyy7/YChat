@@ -5,7 +5,7 @@ import Constants.front.Response.ApiResult;
 import com.ychat.common.user.domain.dto.BlackReq;
 import com.ychat.common.user.service.IBlackService;
 import com.ychat.common.user.service.IRoleService;
-import com.ychat.common.utils.Assert.AssertUtil;
+import Utils.Assert.AssertUtil;
 import com.ychat.common.utils.Request.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
