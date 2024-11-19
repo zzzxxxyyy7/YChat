@@ -2,13 +2,13 @@ package com.ychat.common.user.service.Impl;
 
 import Constants.Enums.NormalOrNoEnum;
 import Constants.Enums.RoomTypeEnum;
+import Utils.Assert.AssertUtil;
 import com.ychat.common.user.dao.RoomDao;
 import com.ychat.common.user.dao.RoomFriendDao;
 import com.ychat.common.user.domain.entity.Room;
 import com.ychat.common.user.domain.entity.RoomFriend;
 import com.ychat.common.user.service.IRoomFriendService;
 import com.ychat.common.user.service.adapter.ChatAdapter;
-import Utils.Assert.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,8 +30,8 @@ public class IRoomFriendServiceImpl implements IRoomFriendService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RoomFriend createFriendRoom(List<Long> uidList) {
-        AssertUtil.isNotEmpty(uidList, "房间创建失败，好友数量不对");
-        AssertUtil.equal(uidList.size(), 2, "房间创建失败，好友数量不对");
+        AssertUtil.isNotEmpty(uidList, "房间创建失败，不能创建空会话");
+        AssertUtil.equal(uidList.size(), 2, "房间创建失败，单聊会话有且只能有俩人");
         String key = ChatAdapter.generateRoomKey(uidList);
 
         RoomFriend roomFriend = roomFriendDao.getByKey(key);
@@ -52,9 +52,9 @@ public class IRoomFriendServiceImpl implements IRoomFriendService {
     }
 
     private Room createRoom(RoomTypeEnum typeEnum) {
-        Room insert = ChatAdapter.buildRoom(typeEnum);
-        roomDao.save(insert);
-        return insert;
+        Room newRoom = ChatAdapter.buildRoom(typeEnum);
+        roomDao.save(newRoom);
+        return newRoom;
     }
 
     /**

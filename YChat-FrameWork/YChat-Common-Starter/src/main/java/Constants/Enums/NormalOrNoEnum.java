@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 public enum NormalOrNoEnum {
-    NORMAL(0, "正常"),
-    NOT_NORMAL(1, "不正常"),
+    NORMAL(0, "启用"),
+    NOT_NORMAL(1, "禁用"),
     ;
 
     private final Integer status;

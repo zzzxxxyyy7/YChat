@@ -196,7 +196,7 @@ public class UserFriendServiceImpl implements IUserFriendService {
                 userApplyDao.agree(request.getApplyId());
 
                 // 创建双方好友关系
-                createFriend(uid, userApply.getUid());
+                createUserFriend(uid, userApply.getUid());
 
                 //创建一个聊天房间
                 RoomFriend roomFriend = roomService.createFriendRoom(Arrays.asList(uid, userApply.getUid()));
@@ -216,7 +216,12 @@ public class UserFriendServiceImpl implements IUserFriendService {
 
     }
 
-    private void createFriend(Long uid, Long targetUid) {
+    /**
+     * 创建一条好友记录
+     * @param uid
+     * @param targetUid
+     */
+    private void createUserFriend(Long uid, Long targetUid) {
         UserFriend userFriend1 = new UserFriend();
         userFriend1.setUid(uid);
         userFriend1.setFriendUid(targetUid);
@@ -226,11 +231,16 @@ public class UserFriendServiceImpl implements IUserFriendService {
         userFriendDao.saveBatch(Lists.newArrayList(userFriend1, userFriend2));
     }
 
+    /**
+     * 删除好友
+     * @param uid       uid
+     * @param friendUid 朋友uid
+     */
     @Override
     public void deleteFriend(Long uid, Long friendUid) {
         List<UserFriend> userFriends = userFriendDao.getUserFriend(uid, friendUid);
         if (CollectionUtil.isEmpty(userFriends)) {
-            log.info("{} 和 {}没有好友关系", uid, friendUid);
+            log.info("{} 和 {} 没有好友关系", uid, friendUid);
             return;
         }
 
@@ -242,7 +252,7 @@ public class UserFriendServiceImpl implements IUserFriendService {
     }
 
     /**
-     * 获取用户好友列表 - 游标翻页
+     * 获取用户好友列表 - 游标翻页 - 解决深翻页问题
      * @param uid
      * @param request
      * @return
