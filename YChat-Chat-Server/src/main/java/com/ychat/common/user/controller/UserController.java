@@ -3,10 +3,12 @@ package com.ychat.common.user.controller;
 
 import Constants.front.Response.ApiResult;
 import com.ychat.common.user.domain.dto.SummeryInfoDTO;
+import com.ychat.common.user.domain.dto.req.ItemInfoReq;
 import com.ychat.common.user.domain.dto.req.ModifyNameReq;
 import com.ychat.common.user.domain.dto.req.SummeryInfoReq;
 import com.ychat.common.user.domain.dto.req.WearingBadgeReq;
 import com.ychat.common.user.domain.vo.BadgeResp;
+import com.ychat.common.user.domain.vo.ItemInfoVo;
 import com.ychat.common.user.domain.vo.UserInfoVo;
 import com.ychat.common.user.service.IUserService;
 import com.ychat.common.utils.Request.RequestHolder;
@@ -61,5 +63,12 @@ public class UserController {
     public ApiResult<List<SummeryInfoDTO>> getSummeryUserInfo(@Valid @RequestBody SummeryInfoReq req) {
         return ApiResult.success(userService.getSummeryUserInfo(req));
     }
+
+    @PostMapping("/public/badges/batch")
+    @ApiOperation("徽章聚合信息-返回的代表需要刷新的")
+    public ApiResult<List<ItemInfoVo>> getItemInfo(@Valid @RequestBody ItemInfoReq req) {
+        return ApiResult.success(userService.getItemInfo(req));
+    }
+
 }
 

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
-
 /**
  * Description: 删除好友DTO
  */

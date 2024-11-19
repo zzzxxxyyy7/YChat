@@ -7,12 +7,14 @@ import Utils.Assert.AssertUtil;
 import com.ychat.common.user.Event.UserRegisterEvent;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.dto.SummeryInfoDTO;
+import com.ychat.common.user.domain.dto.req.ItemInfoReq;
 import com.ychat.common.user.domain.dto.req.ModifyNameReq;
 import com.ychat.common.user.domain.dto.req.SummeryInfoReq;
 import com.ychat.common.user.domain.entity.ItemConfig;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.entity.UserBackpack;
 import com.ychat.common.user.domain.vo.BadgeResp;
+import com.ychat.common.user.domain.vo.ItemInfoVo;
 import com.ychat.common.user.domain.vo.UserInfoVo;
 import com.ychat.common.user.service.IItemConfigService;
 import com.ychat.common.user.service.IUserBackpackService;
@@ -28,12 +30,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author Rhss
@@ -198,18 +200,36 @@ public class UserServiceImpl implements IUserService {
      * @return
      */
     private List<Long> getNeedSyncUidList(List<SummeryInfoReq.infoReq> reqList) {
-        List<Long> needSyncUidList = new ArrayList<>();
         List<Long> userModifyTime = userCache.getUserModifyTime(reqList.stream().map(SummeryInfoReq.infoReq::getUid).collect(Collectors.toList()));
-        for (int i = 0; i < reqList.size(); i++) {
-            SummeryInfoReq.infoReq infoReq = reqList.get(i);
-            Long modifyTime = userModifyTime.get(i);
-            if (Objects.isNull(infoReq.getLastModifyTime()) || (Objects.nonNull(modifyTime) && modifyTime > infoReq.getLastModifyTime())) {
-                needSyncUidList.add(infoReq.getUid());
-            }
-        }
-        return needSyncUidList;
+        return IntStream.range(0, reqList.size())
+                .filter(i -> {
+                    SummeryInfoReq.infoReq infoReq = reqList.get(i);
+                    Long modifyTime = userModifyTime.get(i);
+                    return Objects.isNull(infoReq.getLastModifyTime()) ||
+                            (Objects.nonNull(modifyTime) && modifyTime > infoReq.getLastModifyTime());
+                })
+                .mapToObj(i -> reqList.get(i).getUid()).collect(Collectors.toList());
     }
 
+    /**
+     * 徽章的缓存命中率很高
+     * @param req
+     * @return
+     */
+    @Override
+    public List<ItemInfoVo> getItemInfo(ItemInfoReq req) {
+        return req.getReqList().stream().map(a -> {
+            ItemConfig itemConfig = itemCache.getById(a.getItemId());
+            if (Objects.nonNull(a.getLastModifyTime()) && a.getLastModifyTime() >= itemConfig.getUpdateTime().getTime()) {
+                return ItemInfoVo.skip(a.getItemId());
+            }
+            ItemInfoVo dto = new ItemInfoVo();
+            dto.setItemId(itemConfig.getId());
+            dto.setImg(itemConfig.getImg());
+            dto.setDescribe(itemConfig.getDescribe());
+            return dto;
+        }).collect(Collectors.toList());
+    }
 }
 
 

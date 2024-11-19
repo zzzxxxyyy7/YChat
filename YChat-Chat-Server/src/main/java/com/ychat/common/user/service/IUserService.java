@@ -1,10 +1,12 @@
 package com.ychat.common.user.service;
 
 import com.ychat.common.user.domain.dto.SummeryInfoDTO;
+import com.ychat.common.user.domain.dto.req.ItemInfoReq;
 import com.ychat.common.user.domain.dto.req.ModifyNameReq;
 import com.ychat.common.user.domain.dto.req.SummeryInfoReq;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.vo.BadgeResp;
+import com.ychat.common.user.domain.vo.ItemInfoVo;
 import com.ychat.common.user.domain.vo.UserInfoVo;
 
 import javax.validation.Valid;
@@ -61,4 +63,13 @@ public interface IUserService {
      * @return
      */
     List<SummeryInfoDTO> getSummeryUserInfo(@Valid SummeryInfoReq req);
+
+    /**
+     * 获取徽章汇总信息
+     *
+     * @param req
+     * @return
+     */
+    List<ItemInfoVo> getItemInfo(@Valid ItemInfoReq req);
+
 }

@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * <p>
  * 功能物品配置表 服务实现类
- * </p>
  *
  * @author <a href="https://github.com/zongzibinbin">Rhss</a>
  * @since 2024-11-09
