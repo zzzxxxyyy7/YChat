@@ -10,6 +10,7 @@ import com.ychat.common.user.domain.entity.IpDetail;
 import com.ychat.common.user.domain.entity.IpInfo;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.service.IpService;
+import com.ychat.common.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
@@ -30,6 +31,9 @@ public class IpServiceImpl implements IpService , DisposableBean {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private UserCache userCache;
+
     private static final ExecutorService EXECUTOR = new ThreadPoolExecutor(1, 1,
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<>(500),
@@ -49,6 +53,10 @@ public class IpServiceImpl implements IpService , DisposableBean {
         }
     }
 
+    /**
+     * 异步更新用户 Ip Detail
+     * @param uid
+     */
     @Override
     public void refreshIpDetailAsync(Long uid) {
         EXECUTOR.execute(() -> {
@@ -65,6 +73,7 @@ public class IpServiceImpl implements IpService , DisposableBean {
                 update.setId(uid);
                 update.setIpInfo(ipInfo);
                 userDao.updateById(update);
+                userCache.userInfoChange(uid);
             } else {
                 log.error("get ip detail fail ip:{},uid:{}", ip, uid);
             }

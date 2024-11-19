@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import Constants.front.Request.CursorPageBaseReq;
-import com.ychat.common.utils.Redis.RedisUtils;
+import Utils.Redis.RedisUtils;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import java.util.Date;
@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 
 /**
  * Description: 游标分页工具类
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-03-28
  */
 public class CursorUtils {
 

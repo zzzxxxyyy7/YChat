@@ -1,6 +1,6 @@
 package com.ychat.common.user.service;
 
-import com.ychat.common.user.domain.dto.BlackReq;
+import com.ychat.common.user.domain.dto.req.BlackReq;
 import com.ychat.common.user.domain.entity.User;
 
 /**

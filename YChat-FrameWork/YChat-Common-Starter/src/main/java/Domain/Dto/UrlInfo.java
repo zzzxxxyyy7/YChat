@@ -1,4 +1,4 @@
-package com.ychat.common.user.domain.dto;
+package Domain.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

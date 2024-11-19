@@ -1,6 +1,6 @@
 package com.ychat.common.user.service.adapter;
 
-import com.ychat.common.user.domain.dto.FriendApplyReq;
+import com.ychat.common.user.domain.dto.req.FriendApplyReq;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.entity.UserApply;
 import com.ychat.common.user.domain.entity.UserFriend;

@@ -1,4 +1,4 @@
-package com.ychat.common.utils.Redis;
+package Utils.Redis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

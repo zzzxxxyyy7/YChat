@@ -1,4 +1,4 @@
-package com.ychat.common.user.domain.dto;
+package com.ychat.common.user.domain.dto.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

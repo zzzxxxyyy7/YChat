@@ -4,7 +4,7 @@ import Constants.Enums.BlackTypeEnum;
 import Constants.Exception.BusinessException;
 import com.ychat.common.user.Event.UserBlackEvent;
 import com.ychat.common.user.dao.BlackDao;
-import com.ychat.common.user.domain.dto.BlackReq;
+import com.ychat.common.user.domain.dto.req.BlackReq;
 import com.ychat.common.user.domain.entity.Black;
 import com.ychat.common.user.domain.entity.IpInfo;
 import com.ychat.common.user.domain.entity.User;

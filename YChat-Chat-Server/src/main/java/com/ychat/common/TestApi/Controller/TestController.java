@@ -1,10 +1,11 @@
 package com.ychat.common.TestApi.Controller;
 
+import Constants.front.Response.ApiResult;
 import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.config.ThreadPool.YChatUncaughtExceptionHandler;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.utils.Jwt.JwtUtils;
-import com.ychat.common.utils.Redis.RedisUtils;
+import Utils.Redis.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -42,8 +43,8 @@ public class TestController {
     private ThreadPoolTaskExecutor executor;
 
     @GetMapping("/user")
-    public String userTest() {
-        return userDao.getById("11000").toString();
+    public ApiResult<?> userTest() {
+        return ApiResult.success(userDao.getById("11000"));
     }
 
     @GetMapping("/redissonClient")

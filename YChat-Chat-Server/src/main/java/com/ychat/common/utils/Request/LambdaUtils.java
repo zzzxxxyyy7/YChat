@@ -20,11 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-08-02
- */
 public class LambdaUtils {
     /**
      * 字段映射

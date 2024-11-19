@@ -2,7 +2,7 @@ package com.ychat.common.user.domain.entity.msg;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.ychat.common.user.domain.dto.UrlInfo;
+import Domain.Dto.UrlInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

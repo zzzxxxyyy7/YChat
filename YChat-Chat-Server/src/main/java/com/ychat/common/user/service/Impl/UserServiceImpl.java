@@ -3,9 +3,12 @@ package com.ychat.common.user.service.Impl;
 import Constants.Enums.ItemEnum;
 import Constants.Enums.ItemTypeEnum;
 import Constants.Exception.BusinessException;
+import Utils.Assert.AssertUtil;
 import com.ychat.common.user.Event.UserRegisterEvent;
 import com.ychat.common.user.dao.UserDao;
-import com.ychat.common.user.domain.dto.ModifyNameReq;
+import com.ychat.common.user.domain.dto.SummeryInfoDTO;
+import com.ychat.common.user.domain.dto.req.ModifyNameReq;
+import com.ychat.common.user.domain.dto.req.SummeryInfoReq;
 import com.ychat.common.user.domain.entity.ItemConfig;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.entity.UserBackpack;
@@ -16,7 +19,8 @@ import com.ychat.common.user.service.IUserBackpackService;
 import com.ychat.common.user.service.IUserService;
 import com.ychat.common.user.service.adapter.UserAdapter;
 import com.ychat.common.user.service.cache.ItemCache;
-import Utils.Assert.AssertUtil;
+import com.ychat.common.user.service.cache.UserCache;
+import com.ychat.common.user.service.cache.UserSummaryCache;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +28,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -54,11 +61,22 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private ApplicationEventPublisher appEventPublisher;
 
+    @Autowired
+    private UserCache userCache;
+
+    @Autowired
+    private UserSummaryCache userSummaryCache;
+
     @Override
     public User getById(Long uid) {
         return userDao.getById(uid);
     }
 
+    /**
+     * 注册用户
+     * @param newUser
+     * @return
+     */
     @Override
     @Transactional
     public Long register(User newUser) {
@@ -68,6 +86,11 @@ public class UserServiceImpl implements IUserService {
         return newUser.getId();
     }
 
+    /**
+     * 获取用户信息
+     * @param uid
+     * @return
+     */
     @Override
     public UserInfoVo getUserInfo(Long uid) {
         User user = userDao.getById(uid);
@@ -75,6 +98,11 @@ public class UserServiceImpl implements IUserService {
         return UserAdapter.buildUserInfoVo(user , modifyNameChance);
     }
 
+    /**
+     * 修改用户名
+     * @param uid
+     * @param req
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void modifyName(Long uid, ModifyNameReq req) {
@@ -95,6 +123,7 @@ public class UserServiceImpl implements IUserService {
                 boolean isUsed = userBackpackService.useItem(firstValidItem);
                 if (!isUsed) {
                     userDao.modifyName(uid, req.getName());
+                    userCache.userInfoChange(uid);
                 }
             } else {
                 throw new BusinessException("操作过于频繁，请稍后再试");
@@ -108,6 +137,11 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    /**
+     * 获取用户当前的徽章
+     * @param uid
+     * @return
+     */
     @Override
     public List<BadgeResp> badges(Long uid) {
         // 拿到徽章列表
@@ -120,6 +154,11 @@ public class UserServiceImpl implements IUserService {
         return UserAdapter.buildBadgeRespList(badgeList, userBackpackList, itemId);
     }
 
+    /**
+     * 佩戴徽章
+     * @param uid
+     * @param itemId
+     */
     @Override
     public void wearingBadge(Long uid, Long itemId) {
         // 确保有徽章
@@ -129,7 +168,48 @@ public class UserServiceImpl implements IUserService {
         ItemConfig itemConfig = iItemConfigService.getById(userBackpack.getItemId());
         AssertUtil.equal(itemConfig.getType(), ItemTypeEnum.BADGE.getType(), "佩戴的物品不是徽章");
         userDao.wearingBadge(uid, itemId);
+        userCache.userInfoChange(uid);
     }
+
+    /**
+     * 批量获取用户详情信息
+     * @param req
+     * @return
+     */
+    @Override
+    public List<SummeryInfoDTO> getSummeryUserInfo(SummeryInfoReq req) {
+
+        //需要前端同步的uid
+        List<Long> uidList = getNeedSyncUidList(req.getReqList());
+
+        //加载用户信息
+        Map<Long, SummeryInfoDTO> batch = userSummaryCache.getBatch(uidList);
+
+        return req.getReqList()
+                .stream()
+                .map(a -> batch.containsKey(a.getUid()) ? batch.get(a.getUid()) : SummeryInfoDTO.skip(a.getUid()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 获取需要异步更新的用户数据
+     * @param reqList
+     * @return
+     */
+    private List<Long> getNeedSyncUidList(List<SummeryInfoReq.infoReq> reqList) {
+        List<Long> needSyncUidList = new ArrayList<>();
+        List<Long> userModifyTime = userCache.getUserModifyTime(reqList.stream().map(SummeryInfoReq.infoReq::getUid).collect(Collectors.toList()));
+        for (int i = 0; i < reqList.size(); i++) {
+            SummeryInfoReq.infoReq infoReq = reqList.get(i);
+            Long modifyTime = userModifyTime.get(i);
+            if (Objects.isNull(infoReq.getLastModifyTime()) || (Objects.nonNull(modifyTime) && modifyTime > infoReq.getLastModifyTime())) {
+                needSyncUidList.add(infoReq.getUid());
+            }
+        }
+        return needSyncUidList;
+    }
+
 }
 
 

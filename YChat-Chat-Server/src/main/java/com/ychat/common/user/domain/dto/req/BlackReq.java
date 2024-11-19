@@ -1,4 +1,4 @@
-package com.ychat.common.user.domain.dto;
+package com.ychat.common.user.domain.dto.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -6,20 +6,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-
-
 /**
- * Description: 好友申请Dto
+ * Description: 拉黑目标
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FriendApproveReq {
+public class BlackReq {
 
-    @NotNull
-    @ApiModelProperty("申请id")
-    private Long applyId;
+    @ApiModelProperty("拉黑目标uid")
+    private Long uid;
 
+    @ApiModelProperty("拉黑目标ip")
+    private String ip;
 }

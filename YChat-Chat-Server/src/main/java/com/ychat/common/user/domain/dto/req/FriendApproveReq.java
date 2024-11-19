@@ -1,4 +1,4 @@
-package com.ychat.common.user.domain.dto;
+package com.ychat.common.user.domain.dto.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -10,16 +10,16 @@ import javax.validation.constraints.NotNull;
 
 
 /**
- * Description: 删除好友DTO
+ * Description: 好友申请Dto
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FriendDeleteReq {
+public class FriendApproveReq {
 
     @NotNull
-    @ApiModelProperty("好友uid")
-    private Long targetUid;
+    @ApiModelProperty("申请id")
+    private Long applyId;
 
 }
