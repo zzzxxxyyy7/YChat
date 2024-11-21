@@ -148,8 +148,10 @@ public class UserServiceImpl implements IUserService {
     public List<BadgeResp> badges(Long uid) {
         // 拿到徽章列表
         List<ItemConfig> badgeList = itemCache.getByType(ItemTypeEnum.BADGE.getType());
+
         // 查询用户背包中所拥有的徽章
         List<UserBackpack> userBackpackList = userBackpackService.getByItemIds(uid , badgeList.stream().map(ItemConfig::getId).collect(Collectors.toList()));
+
         // 拿到用户当前佩戴的徽章
         User user = userDao.getById(uid);
         Long itemId = user.getItemId();
@@ -166,6 +168,7 @@ public class UserServiceImpl implements IUserService {
         // 确保有徽章
         UserBackpack userBackpack = userBackpackService.getFirstValidItem(uid, itemId);
         AssertUtil.isNotEmpty(userBackpack, "未持有该徽章");
+
         // 确定这个是徽章
         ItemConfig itemConfig = iItemConfigService.getById(userBackpack.getItemId());
         AssertUtil.equal(itemConfig.getType(), ItemTypeEnum.BADGE.getType(), "佩戴的物品不是徽章");
@@ -181,10 +184,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<SummeryInfoDTO> getSummeryUserInfo(SummeryInfoReq req) {
 
-        //需要前端同步的uid
+        // 拿到需要更新的uid
         List<Long> uidList = getNeedSyncUidList(req.getReqList());
 
-        //加载用户信息
+        // 加载用户信息
         Map<Long, SummeryInfoDTO> batch = userSummaryCache.getBatch(uidList);
 
         return req.getReqList()
@@ -230,10 +233,5 @@ public class UserServiceImpl implements IUserService {
             return dto;
         }).collect(Collectors.toList());
     }
+
 }
-
-
-
-
-
-
