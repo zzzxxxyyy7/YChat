@@ -69,7 +69,7 @@ public class UserCache {
      */
     public void userInfoChange(Long uid) {
         delUserInfo(uid);
-        //删除UserSummaryCache，前端下次懒加载的时候可以获取到最新的数据
+        //  删除UserSummaryCache，前端下次懒加载的时候可以获取到最新的数据
         userSummaryCache.delete(uid);
         refreshUserModifyTime(uid);
     }
@@ -79,7 +79,7 @@ public class UserCache {
      * @param uid
      */
     public void delUserInfo(Long uid) {
-        String key = RedisKeyBuilder.getKey(RedisKeyBuilder.USER_INFO_MODIFY_STRING, uid);
+        String key = RedisKeyBuilder.getKey(RedisKeyBuilder.USER_INFO_STRING, uid);
         RedisUtils.del(key);
     }
 

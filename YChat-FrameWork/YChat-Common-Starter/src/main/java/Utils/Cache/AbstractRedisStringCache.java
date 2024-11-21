@@ -50,7 +50,7 @@ public abstract class AbstractRedisStringCache<IN, OUT> implements BatchCache<IN
             }
         }
         Map<IN, OUT> load = new HashMap<>();
-        //不足的重新加载进redis
+        // 不足的重新加载进redis
         if (CollectionUtil.isNotEmpty(loadReqs)) {
             //批量load
             load = load(loadReqs);

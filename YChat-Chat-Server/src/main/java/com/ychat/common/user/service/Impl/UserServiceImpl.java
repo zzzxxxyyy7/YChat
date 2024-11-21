@@ -123,7 +123,7 @@ public class UserServiceImpl implements IUserService {
 
                 // 使用改名卡
                 boolean isUsed = userBackpackService.useItem(firstValidItem);
-                if (!isUsed) {
+                if (isUsed) {
                     userDao.modifyName(uid, req.getName());
                     userCache.userInfoChange(uid);
                 }

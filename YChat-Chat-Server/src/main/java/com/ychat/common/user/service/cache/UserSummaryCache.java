@@ -30,7 +30,7 @@ public class UserSummaryCache extends AbstractRedisStringCache<Long, SummeryInfo
 
     @Override
     protected String getKey(Long uid) {
-        return RedisKeyBuilder.getKey(RedisKeyBuilder.USER_INFO_MODIFY_STRING, uid);
+        return RedisKeyBuilder.getKey(RedisKeyBuilder.USER_INFO_SUMMARY_STRING, uid);
     }
 
     @Override
@@ -39,17 +39,18 @@ public class UserSummaryCache extends AbstractRedisStringCache<Long, SummeryInfo
     }
 
     @Override
-    protected Map<Long, SummeryInfoDTO> load(List<Long> uidList) { //后续可优化徽章信息也异步加载
-        //用户基本信息
+    protected Map<Long, SummeryInfoDTO> load(List<Long> uidList) { // 后续可优化徽章信息也异步加载
+
+        // 用户基本信息
         Map<Long, User> userMap = userInfoCache.getBatch(uidList);
 
-        //用户徽章信息
+        // 用户徽章信息
         List<ItemConfig> itemConfigs = itemCache.getByType(ItemTypeEnum.BADGE.getType());
         List<Long> itemIds = itemConfigs.stream().map(ItemConfig::getId).collect(Collectors.toList());
         List<UserBackpack> backpacks = userBackpackDao.getByItemIds(uidList, itemIds);
         Map<Long, List<UserBackpack>> userBadgeMap = backpacks.stream().collect(Collectors.groupingBy(UserBackpack::getUid));
 
-        //用户最后一次更新时间
+        // 用户最后一次更新时间
         return uidList.stream().map(uid -> {
             SummeryInfoDTO summeryInfoDTO = new SummeryInfoDTO();
             User user = userMap.get(uid);
