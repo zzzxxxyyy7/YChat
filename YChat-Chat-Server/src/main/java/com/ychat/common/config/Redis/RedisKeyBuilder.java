@@ -32,6 +32,11 @@ public class RedisKeyBuilder {
      */
     public static final String ROOM_INFO_STRING = "roomInfo:roomId_%d";
 
+    /**
+     * 群聊会话详情
+     */
+    public static final String GROUP_INFO_STRING = "groupInfo:roomId_%d";
+
 
 
     /**

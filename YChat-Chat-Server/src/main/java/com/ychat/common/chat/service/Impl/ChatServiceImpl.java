@@ -5,10 +5,15 @@ import Utils.Assert.AssertUtil;
 import com.ychat.common.chat.domain.dto.ChatMessageReq;
 import com.ychat.common.chat.service.ChatService;
 import com.ychat.common.chat.service.cache.RoomCache;
-import com.ychat.common.user.Event.MessageSendEvent;
+import com.ychat.common.chat.service.cache.RoomGroupCache;
+import com.ychat.common.chat.service.handler.AbstractMsgHandler;
+import com.ychat.common.chat.service.factory.MsgHandlerFactory;
+import com.ychat.common.user.dao.GroupMemberDao;
 import com.ychat.common.user.dao.RoomFriendDao;
+import com.ychat.common.user.domain.entity.GroupMember;
 import com.ychat.common.user.domain.entity.Room;
 import com.ychat.common.user.domain.entity.RoomFriend;
+import com.ychat.common.user.domain.entity.RoomGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -31,6 +36,11 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     private RoomFriendDao roomFriendDao;
 
+    @Autowired
+    private RoomGroupCache roomGroupCache;
+
+    @Autowired
+    private GroupMemberDao groupMemberDao;
 
     /**
      * 大群聊 ID 默认是 1
@@ -41,7 +51,9 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     public Long sendMsg(ChatMessageReq request, Long uid) {
         check(request, uid);
-//        AbstractMsgHandler<?> msgHandler = MsgHandlerFactory.getStrategyNoNull(request.getMsgType());
+
+        // 根据消息类型拿到对应的消息处理器
+        AbstractMsgHandler<?> msgHandler = MsgHandlerFactory.getStrategyNoNull(request.getMsgType());
 //        Long msgId = msgHandler.checkAndSaveMsg(request, uid);
         //发布消息发送事件
 //        applicationEventPublisher.publishEvent(new MessageSendEvent(this, msgId));
@@ -59,11 +71,11 @@ public class ChatServiceImpl implements ChatService {
             AssertUtil.equal(NormalOrNoEnum.NORMAL.getStatus(), roomFriend.getStatus(), "您已经被对方拉黑");
             AssertUtil.isTrue(uid.equals(roomFriend.getUid1()) || uid.equals(roomFriend.getUid2()), "您已经被对方拉黑");
         }
-//        if (room.isRoomGroup()) {
-//            RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
-//            GroupMember member = groupMemberDao.getMember(roomGroup.getId(), uid);
-//            AssertUtil.isNotEmpty(member, "您已经被移除该群");
-//        }
+        if (room.isRoomGroup()) {
+            RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
+            GroupMember member = groupMemberDao.getMember(roomGroup.getId(), uid);
+            AssertUtil.isNotEmpty(member, "您已经被移除该群");
+        }
 
     }
 

@@ -8,4 +8,5 @@ public interface IpService {
      * @param uid
      */
     void refreshIpDetailAsync(Long uid);
+
 }
