@@ -1,4 +1,4 @@
-package com.ychat.common.user.service;
+package com.ychat.common.chat.service;
 
 /**
  * Description: 消息处理类

@@ -1,7 +1,7 @@
 package com.ychat.common.user.service.adapter;
 
 import Constants.Enums.MessageTypeEnum;
-import com.ychat.common.user.dao.ChatMessageReq;
+import com.ychat.common.chat.domain.dto.ChatMessageReq;
 import com.ychat.common.user.domain.dto.req.TextMsgReq;
 
 /**

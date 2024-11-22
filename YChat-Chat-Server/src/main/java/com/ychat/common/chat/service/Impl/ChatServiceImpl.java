@@ -1,6 +1,6 @@
-package com.ychat.common.user.service.Impl;
+package com.ychat.common.chat.service.Impl;
 
-import com.ychat.common.user.service.ChatService;
+import com.ychat.common.chat.service.ChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
