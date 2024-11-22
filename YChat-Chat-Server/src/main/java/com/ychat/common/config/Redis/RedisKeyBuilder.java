@@ -27,6 +27,11 @@ public class RedisKeyBuilder {
      */
     public static final String USER_TOKEN_STRING = "userToken:uid_%d";
 
+    /**
+     * 会话详情
+     */
+    public static final String ROOM_INFO_STRING = "roomInfo:roomId_%d";
+
 
 
     /**

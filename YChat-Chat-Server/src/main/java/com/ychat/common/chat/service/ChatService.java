@@ -1,5 +1,7 @@
 package com.ychat.common.chat.service;
 
+import com.ychat.common.chat.domain.dto.ChatMessageReq;
+
 /**
  * Description: 消息处理类
  */
@@ -10,6 +12,6 @@ public interface ChatService {
      *
      * @param request
      */
-    //Long sendMsg(ChatMessageReq request, Long uid);
+    Long sendMsg(ChatMessageReq request, Long uid);
 
 }

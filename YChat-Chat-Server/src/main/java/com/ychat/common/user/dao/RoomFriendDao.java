@@ -6,6 +6,8 @@ import com.ychat.common.user.domain.entity.RoomFriend;
 import com.ychat.common.user.mapper.RoomFriendMapper;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 单聊会话表 服务实现类
  */
@@ -25,5 +27,11 @@ public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
                 .eq(RoomFriend::getId, id)
                 .set(RoomFriend::getStatus, NormalOrNoEnum.NORMAL.getStatus())
                 .update();
+    }
+
+    public RoomFriend getByRoomId(Long roomID) {
+        return lambdaQuery()
+                .eq(RoomFriend::getRoomId, roomID)
+                .one();
     }
 }
