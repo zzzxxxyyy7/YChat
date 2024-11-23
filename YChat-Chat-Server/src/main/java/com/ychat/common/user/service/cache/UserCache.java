@@ -1,8 +1,11 @@
 package com.ychat.common.user.service.cache;
 
+import cn.hutool.core.collection.CollUtil;
 import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.user.dao.BlackDao;
+import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.entity.Black;
+import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.entity.UserRole;
 import com.ychat.common.user.service.IUserRoleService;
 import Utils.Redis.RedisUtils;
@@ -12,6 +15,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +24,9 @@ import java.util.stream.Collectors;
  */
 @Component
 public class UserCache {
+
+    @Autowired
+    private UserDao userDao;
 
     @Autowired
     private BlackDao blackDao;
@@ -101,4 +108,34 @@ public class UserCache {
         String key = RedisKeyBuilder.getKey(RedisKeyBuilder.USER_INFO_MODIFY_STRING, uid);
         RedisUtils.set(key, new Date().getTime());
     }
+
+    /**
+     * 获取用户信息，盘路缓存模式
+     */
+    public User getUserInfo(Long uid) {//todo 后期做二级缓存
+        return getUserInfoBatch(Collections.singleton(uid)).get(uid);
+    }
+
+    /**
+     * 获取用户信息，盘路缓存模式
+     */
+    public Map<Long, User> getUserInfoBatch(Set<Long> uids) {
+        //批量组装key
+        List<String> keys = uids.stream().map(a -> RedisKeyBuilder.getKey(RedisKeyBuilder.USER_INFO_STRING, a)).collect(Collectors.toList());
+        //批量get
+        List<User> mget = RedisUtils.mget(keys, User.class);
+        Map<Long, User> map = mget.stream().filter(Objects::nonNull).collect(Collectors.toMap(User::getId, Function.identity()));
+        //发现差集——还需要load更新的uid
+        List<Long> needLoadUidList = uids.stream().filter(a -> !map.containsKey(a)).collect(Collectors.toList());
+        if (CollUtil.isNotEmpty(needLoadUidList)) {
+            //批量load
+            List<User> needLoadUserList = userDao.listByIds(needLoadUidList);
+            Map<String, User> redisMap = needLoadUserList.stream().collect(Collectors.toMap(a -> RedisKeyBuilder.getKey(RedisKeyBuilder.USER_INFO_STRING, a.getId()), Function.identity()));
+            RedisUtils.mset(redisMap, 5 * 60);
+            //加载回redis
+            map.putAll(needLoadUserList.stream().collect(Collectors.toMap(User::getId, Function.identity())));
+        }
+        return map;
+    }
+
 }

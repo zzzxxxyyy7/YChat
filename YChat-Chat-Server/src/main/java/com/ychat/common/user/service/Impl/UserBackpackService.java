@@ -1,7 +1,7 @@
 package com.ychat.common.user.service.Impl;
 
-import Constants.Enums.IdempotentEnum;
-import Constants.Enums.YesOrNoEnum;
+import Constants.Enums.Impl.IdempotentEnum;
+import Constants.Enums.Impl.YesOrNoEnum;
 import Constants.Exception.BusinessException;
 import com.ychat.common.user.dao.UserBackpackDao;
 import com.ychat.common.user.domain.entity.UserBackpack;

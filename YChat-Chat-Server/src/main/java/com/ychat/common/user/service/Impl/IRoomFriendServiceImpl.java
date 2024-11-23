@@ -1,7 +1,7 @@
 package com.ychat.common.user.service.Impl;
 
-import Constants.Enums.NormalOrNoEnum;
-import Constants.Enums.RoomTypeEnum;
+import Constants.Enums.Impl.NormalOrNoEnum;
+import Constants.Enums.Impl.RoomTypeEnum;
 import Utils.Assert.AssertUtil;
 import com.ychat.common.user.dao.RoomDao;
 import com.ychat.common.user.dao.RoomFriendDao;

@@ -1,12 +1,10 @@
 package com.ychat.common.user.dao;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import Constants.Enums.NormalOrNoEnum;
+import Constants.Enums.Impl.NormalOrNoEnum;
 import com.ychat.common.user.domain.entity.RoomFriend;
 import com.ychat.common.user.mapper.RoomFriendMapper;
 import org.springframework.stereotype.Service;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * 单聊会话表 服务实现类

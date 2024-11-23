@@ -1,6 +1,6 @@
 package com.ychat.common.user.service.Impl;
 
-import Constants.Enums.BlackTypeEnum;
+import Constants.Enums.Impl.BlackTypeEnum;
 import Constants.Exception.BusinessException;
 import com.ychat.common.user.Event.UserBlackEvent;
 import com.ychat.common.user.dao.BlackDao;
@@ -78,4 +78,5 @@ public class BlackServiceImpl implements IBlackService {
         black.setType(BlackTypeEnum.IP.getType());
         blackDao.save(black);
     }
+
 }

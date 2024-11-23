@@ -1,7 +1,7 @@
 package com.ychat.common.user.domain.entity;
 
-import Constants.Enums.HotFlagEnum;
-import Constants.Enums.RoomTypeEnum;
+import Constants.Enums.Impl.HotFlagEnum;
+import Constants.Enums.Impl.RoomTypeEnum;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

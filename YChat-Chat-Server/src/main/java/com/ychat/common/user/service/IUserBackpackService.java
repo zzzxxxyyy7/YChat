@@ -1,6 +1,6 @@
 package com.ychat.common.user.service;
 
-import Constants.Enums.IdempotentEnum;
+import Constants.Enums.Impl.IdempotentEnum;
 import com.ychat.common.user.domain.entity.UserBackpack;
 
 import java.util.List;

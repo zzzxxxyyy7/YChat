@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static Constants.Enums.ApplyReadStatusEnum.UNREAD;
-import static Constants.Enums.ApplyStatusEnum.WAIT_APPROVAL;
-import static Constants.Enums.ApplyTypeEnum.ADD_FRIEND;
+import static Constants.Enums.Impl.ApplyReadStatusEnum.UNREAD;
+import static Constants.Enums.Impl.ApplyStatusEnum.WAIT_APPROVAL;
+import static Constants.Enums.Impl.ApplyTypeEnum.ADD_FRIEND;
 
 /**
  * Description: 好友申请记录适配器

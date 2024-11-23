@@ -1,7 +1,7 @@
 package com.ychat.common.user.Event.listener;
 
-import Constants.Enums.IdempotentEnum;
-import Constants.Enums.ItemEnum;
+import Constants.Enums.Impl.IdempotentEnum;
+import Constants.Enums.Impl.ItemEnum;
 import com.ychat.common.user.Event.UserRegisterEvent;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.entity.User;

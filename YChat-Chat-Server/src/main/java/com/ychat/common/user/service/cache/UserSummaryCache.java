@@ -1,6 +1,6 @@
 package com.ychat.common.user.service.cache;
 
-import Constants.Enums.ItemTypeEnum;
+import Constants.Enums.Impl.ItemTypeEnum;
 import Utils.Cache.AbstractRedisStringCache;
 import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.user.dao.UserBackpackDao;

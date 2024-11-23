@@ -1,6 +1,6 @@
 package com.ychat.common.user.service.Impl;
 
-import Constants.Enums.RoleEnum;
+import Constants.Enums.Impl.RoleEnum;
 import com.ychat.common.user.service.IRoleService;
 import com.ychat.common.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;

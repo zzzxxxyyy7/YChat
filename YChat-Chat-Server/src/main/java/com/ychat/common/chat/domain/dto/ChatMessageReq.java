@@ -32,7 +32,6 @@ public class ChatMessageReq {
     @NotNull
     private Integer msgType;
 
-
     /**
      * @see com.ychat.common.chat.domain.entity.msg
      */

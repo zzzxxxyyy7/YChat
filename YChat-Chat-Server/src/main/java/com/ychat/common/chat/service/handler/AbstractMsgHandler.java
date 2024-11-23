@@ -1,6 +1,6 @@
 package com.ychat.common.chat.service.handler;
 
-import Constants.Enums.MessageTypeEnum;
+import Constants.Enums.Impl.MessageTypeEnum;
 import Utils.Assert.AssertUtil;
 import cn.hutool.core.bean.BeanUtil;
 import com.ychat.common.chat.domain.dto.ChatMessageReq;
@@ -35,7 +35,7 @@ public abstract class AbstractMsgHandler<Req> {
     /**
      * 消息类型
      */
-    public abstract MessageTypeEnum getMsgTypeEnum();
+    abstract MessageTypeEnum getMsgTypeEnum();
 
     protected void checkMsg(Req body, Long roomId, Long uid) {
 

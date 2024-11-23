@@ -1,9 +1,9 @@
 package com.ychat.common.chat.service.adapter;
 
-import Constants.Enums.MessageMarkTypeEnum;
-import Constants.Enums.MessageStatusEnum;
-import Constants.Enums.MessageTypeEnum;
-import Constants.Enums.YesOrNoEnum;
+import Constants.Enums.Impl.MessageMarkTypeEnum;
+import Constants.Enums.Impl.MessageStatusEnum;
+import Constants.Enums.Impl.MessageTypeEnum;
+import Constants.Enums.Impl.YesOrNoEnum;
 import cn.hutool.core.bean.BeanUtil;
 import com.ychat.common.chat.domain.dto.ChatMessageReq;
 import com.ychat.common.chat.domain.vo.ChatMessageResp;

@@ -1,7 +1,7 @@
 package com.ychat.common.chat.service.handler;
 
 
-import Constants.Enums.MessageTypeEnum;
+import Constants.Enums.Impl.MessageTypeEnum;
 import com.ychat.common.chat.domain.entity.msg.EmojisMsgDTO;
 import com.ychat.common.chat.domain.entity.msg.MessageExtra;
 import com.ychat.common.user.dao.MessageDao;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * 表情消息处理器
+ * Emojis 表情消息
  */
 @Component
 @Slf4j

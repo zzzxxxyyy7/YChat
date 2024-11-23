@@ -1,7 +1,7 @@
 package com.ychat.common.user.service.Impl;
 
-import Constants.Enums.ItemEnum;
-import Constants.Enums.ItemTypeEnum;
+import Constants.Enums.Impl.ItemEnum;
+import Constants.Enums.Impl.ItemTypeEnum;
 import Constants.Exception.BusinessException;
 import Utils.Assert.AssertUtil;
 import com.ychat.common.user.Event.UserRegisterEvent;

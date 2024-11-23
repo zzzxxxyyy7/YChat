@@ -43,7 +43,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static Constants.Enums.ApplyStatusEnum.WAIT_APPROVAL;
+import static Constants.Enums.Impl.ApplyStatusEnum.WAIT_APPROVAL;
 
 @Service
 @Slf4j

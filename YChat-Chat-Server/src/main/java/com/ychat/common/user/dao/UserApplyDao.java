@@ -3,17 +3,17 @@ package com.ychat.common.user.dao;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import Constants.Enums.ApplyStatusEnum;
-import Constants.Enums.ApplyTypeEnum;
+import Constants.Enums.Impl.ApplyStatusEnum;
+import Constants.Enums.Impl.ApplyTypeEnum;
 import com.ychat.common.user.domain.entity.UserApply;
 import com.ychat.common.user.mapper.UserApplyMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static Constants.Enums.ApplyReadStatusEnum.READ;
-import static Constants.Enums.ApplyReadStatusEnum.UNREAD;
-import static Constants.Enums.ApplyStatusEnum.AGREE;
+import static Constants.Enums.Impl.ApplyReadStatusEnum.READ;
+import static Constants.Enums.Impl.ApplyReadStatusEnum.UNREAD;
+import static Constants.Enums.Impl.ApplyStatusEnum.AGREE;
 
 /**
  * 用户申请表 服务实现类
