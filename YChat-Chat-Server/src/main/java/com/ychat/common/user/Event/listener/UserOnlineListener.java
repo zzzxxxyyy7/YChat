@@ -1,6 +1,6 @@
 package com.ychat.common.user.Event.listener;
 
-import Constants.Enums.Impl.UserActiveStatusEnum;
+import com.ychat.common.Constants.Enums.Impl.UserActiveStatusEnum;
 import com.ychat.common.user.Event.UserOnlineEvent;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.entity.User;

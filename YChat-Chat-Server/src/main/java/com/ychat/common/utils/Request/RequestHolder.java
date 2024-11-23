@@ -1,6 +1,6 @@
 package com.ychat.common.utils.Request;
 
-import Constants.front.Request.RequestInfo;
+import com.ychat.common.Constants.front.Request.RequestInfo;
 
 /**
  * 请求上下文

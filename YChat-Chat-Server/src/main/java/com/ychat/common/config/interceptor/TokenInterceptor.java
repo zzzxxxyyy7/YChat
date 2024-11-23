@@ -1,6 +1,6 @@
 package com.ychat.common.config.interceptor;
 
-import Constants.Enums.Impl.HttpErrorEnum;
+import com.ychat.common.Constants.Enums.Impl.HttpErrorEnum;
 import com.ychat.common.user.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

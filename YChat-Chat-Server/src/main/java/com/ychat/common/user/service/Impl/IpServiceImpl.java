@@ -4,7 +4,7 @@ import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.thread.NamedThreadFactory;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
-import Constants.front.Response.ApiResult;
+import com.ychat.common.Constants.front.Response.ApiResult;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.entity.IpDetail;
 import com.ychat.common.user.domain.entity.IpInfo;

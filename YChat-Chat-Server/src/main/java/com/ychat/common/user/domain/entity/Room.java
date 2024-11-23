@@ -1,11 +1,10 @@
 package com.ychat.common.user.domain.entity;
 
-import Constants.Enums.Impl.HotFlagEnum;
-import Constants.Enums.Impl.RoomTypeEnum;
+import com.ychat.common.Constants.Enums.Impl.HotFlagEnum;
+import com.ychat.common.Constants.Enums.Impl.RoomTypeEnum;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import java.util.Date;

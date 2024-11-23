@@ -4,9 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.google.common.collect.Lists;
-import Constants.front.Request.CursorPageBaseReq;
-import Constants.front.Request.PageBaseReq;
-import Constants.front.Response.PageBaseResp;
+import com.ychat.common.Constants.front.Request.CursorPageBaseReq;
+import com.ychat.common.Constants.front.Request.PageBaseReq;
+import com.ychat.common.Constants.front.Response.PageBaseResp;
 import com.ychat.common.user.Event.UserApplyEvent;
 import com.ychat.common.user.dao.UserApplyDao;
 import com.ychat.common.user.dao.UserDao;
@@ -25,7 +25,7 @@ import com.ychat.common.user.domain.vo.FriendUnreadResp;
 import com.ychat.common.user.service.IRoomFriendService;
 import com.ychat.common.user.service.IUserFriendService;
 import com.ychat.common.user.service.adapter.FriendAdapter;
-import Utils.Assert.AssertUtil;
+import com.ychat.common.utils.Assert.AssertUtil;
 import com.ychat.common.utils.Request.CursorPageBaseResp;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -43,7 +43,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static Constants.Enums.Impl.ApplyStatusEnum.WAIT_APPROVAL;
+import static com.ychat.common.Constants.Enums.Impl.ApplyStatusEnum.WAIT_APPROVAL;
 
 @Service
 @Slf4j

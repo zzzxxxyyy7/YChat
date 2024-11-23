@@ -1,9 +1,8 @@
 package com.ychat.common.user.dao;
 
-import Constants.Enums.Impl.NormalOrNoEnum;
+import com.ychat.common.Constants.Enums.Impl.NormalOrNoEnum;
 import com.ychat.common.user.domain.entity.MessageMark;
 import com.ychat.common.user.mapper.MessageMarkMapper;
-import com.ychat.common.user.service.IMessageMarkService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package com.ychat.common.chat.service.handler;
 
 
-import Constants.Enums.Impl.MessageTypeEnum;
+import com.ychat.common.Constants.Enums.Impl.MessageTypeEnum;
 import com.ychat.common.chat.domain.entity.msg.EmojisMsgDTO;
 import com.ychat.common.chat.domain.entity.msg.MessageExtra;
 import com.ychat.common.user.dao.MessageDao;

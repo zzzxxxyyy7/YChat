@@ -1,6 +1,6 @@
 package com.ychat.common.chat.Controller;
 
-import Constants.front.Response.ApiResult;
+import com.ychat.common.Constants.front.Response.ApiResult;
 import com.ychat.common.chat.domain.vo.ChatMessageResp;
 import com.ychat.common.chat.domain.dto.ChatMessageReq;
 import com.ychat.common.chat.service.ChatService;

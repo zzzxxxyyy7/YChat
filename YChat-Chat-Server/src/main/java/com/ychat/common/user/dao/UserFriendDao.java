@@ -1,7 +1,7 @@
 package com.ychat.common.user.dao;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import Constants.front.Request.CursorPageBaseReq;
+import com.ychat.common.Constants.front.Request.CursorPageBaseReq;
 import com.ychat.common.user.domain.entity.UserFriend;
 import com.ychat.common.user.mapper.UserFriendMapper;
 import com.ychat.common.utils.Request.CursorPageBaseResp;

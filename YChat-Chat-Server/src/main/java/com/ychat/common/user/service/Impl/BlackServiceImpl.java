@@ -1,7 +1,7 @@
 package com.ychat.common.user.service.Impl;
 
-import Constants.Enums.Impl.BlackTypeEnum;
-import Constants.Exception.BusinessException;
+import com.ychat.common.Constants.Enums.Impl.BlackTypeEnum;
+import com.ychat.common.Constants.Exception.BusinessException;
 import com.ychat.common.user.Event.UserBlackEvent;
 import com.ychat.common.user.dao.BlackDao;
 import com.ychat.common.user.domain.dto.req.BlackReq;
@@ -10,7 +10,7 @@ import com.ychat.common.user.domain.entity.IpInfo;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.service.IBlackService;
 import com.ychat.common.user.service.IUserService;
-import Utils.Assert.AssertUtil;
+import com.ychat.common.utils.Assert.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;

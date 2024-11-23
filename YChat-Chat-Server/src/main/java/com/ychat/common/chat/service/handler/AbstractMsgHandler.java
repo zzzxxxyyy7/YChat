@@ -1,7 +1,7 @@
 package com.ychat.common.chat.service.handler;
 
-import Constants.Enums.Impl.MessageTypeEnum;
-import Utils.Assert.AssertUtil;
+import com.ychat.common.Constants.Enums.Impl.MessageTypeEnum;
+import com.ychat.common.utils.Assert.AssertUtil;
 import cn.hutool.core.bean.BeanUtil;
 import com.ychat.common.chat.domain.dto.ChatMessageReq;
 import com.ychat.common.chat.service.adapter.MessageAdapter;

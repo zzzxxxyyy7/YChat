@@ -1,7 +1,7 @@
 package com.ychat.common.user.dao;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import Constants.Enums.Impl.NormalOrNoEnum;
+import com.ychat.common.Constants.Enums.Impl.NormalOrNoEnum;
 import com.ychat.common.user.domain.entity.RoomFriend;
 import com.ychat.common.user.mapper.RoomFriendMapper;
 import org.springframework.stereotype.Service;

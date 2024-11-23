@@ -3,7 +3,7 @@ package com.ychat.common.user.dao;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import Constants.Enums.Impl.YesOrNoEnum;
+import com.ychat.common.Constants.Enums.Impl.YesOrNoEnum;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;

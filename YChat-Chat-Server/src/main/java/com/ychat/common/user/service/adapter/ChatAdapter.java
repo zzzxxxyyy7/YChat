@@ -1,8 +1,8 @@
 package com.ychat.common.user.service.adapter;
 
-import Constants.Enums.Impl.HotFlagEnum;
-import Constants.Enums.Impl.NormalOrNoEnum;
-import Constants.Enums.Impl.RoomTypeEnum;
+import com.ychat.common.Constants.Enums.Impl.HotFlagEnum;
+import com.ychat.common.Constants.Enums.Impl.NormalOrNoEnum;
+import com.ychat.common.Constants.Enums.Impl.RoomTypeEnum;
 import com.ychat.common.user.domain.entity.Room;
 import com.ychat.common.user.domain.entity.RoomFriend;
 

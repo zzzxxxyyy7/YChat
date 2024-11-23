@@ -1,11 +1,11 @@
 package com.ychat.common.user.controller;
 
-import Constants.Enums.Impl.RoleEnum;
-import Constants.front.Response.ApiResult;
+import com.ychat.common.Constants.Enums.Impl.RoleEnum;
+import com.ychat.common.Constants.front.Response.ApiResult;
 import com.ychat.common.user.domain.dto.req.BlackReq;
 import com.ychat.common.user.service.IBlackService;
 import com.ychat.common.user.service.IRoleService;
-import Utils.Assert.AssertUtil;
+import com.ychat.common.utils.Assert.AssertUtil;
 import com.ychat.common.utils.Request.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

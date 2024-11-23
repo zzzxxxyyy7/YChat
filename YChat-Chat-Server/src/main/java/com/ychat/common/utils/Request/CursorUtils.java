@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import Constants.front.Request.CursorPageBaseReq;
+import com.ychat.common.Constants.front.Request.CursorPageBaseReq;
 import Utils.Redis.RedisUtils;
 import org.springframework.data.redis.core.ZSetOperations;
 

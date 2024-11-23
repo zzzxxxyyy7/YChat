@@ -1,6 +1,6 @@
 package com.ychat.common.websocket.service.adapter;
 
-import Constants.Enums.Impl.YesOrNoEnum;
+import com.ychat.common.Constants.Enums.Impl.YesOrNoEnum;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.websocket.domain.enums.WSRespTypeEnum;
 import com.ychat.common.websocket.domain.vo.resp.*;

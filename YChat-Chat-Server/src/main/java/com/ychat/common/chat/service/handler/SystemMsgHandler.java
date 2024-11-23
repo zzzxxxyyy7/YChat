@@ -1,6 +1,6 @@
 package com.ychat.common.chat.service.handler;
 
-import Constants.Enums.Impl.MessageTypeEnum;
+import com.ychat.common.Constants.Enums.Impl.MessageTypeEnum;
 import com.ychat.common.user.dao.MessageDao;
 import com.ychat.common.user.domain.entity.Message;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,9 @@
 package com.ychat.common.user.service;
 
-import Constants.front.Request.CursorPageBaseReq;
-import Constants.front.Request.PageBaseReq;
+import com.ychat.common.Constants.front.Request.CursorPageBaseReq;
+import com.ychat.common.Constants.front.Request.PageBaseReq;
 import com.ychat.common.utils.Request.CursorPageBaseResp;
-import Constants.front.Response.PageBaseResp;
+import com.ychat.common.Constants.front.Response.PageBaseResp;
 import com.ychat.common.user.domain.dto.req.FriendApplyReq;
 import com.ychat.common.user.domain.dto.req.FriendApproveReq;
 import com.ychat.common.user.domain.dto.req.FriendCheckReq;

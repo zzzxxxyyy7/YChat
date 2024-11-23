@@ -1,6 +1,6 @@
 package com.ychat.common.TestApi.Controller;
 
-import Constants.front.Response.ApiResult;
+import com.ychat.common.Constants.front.Response.ApiResult;
 import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.config.ThreadPool.YChatUncaughtExceptionHandler;
 import com.ychat.common.user.dao.UserDao;

@@ -1,6 +1,6 @@
 package com.ychat.common.user.domain.vo;
 
-import Constants.Enums.Impl.ChatActiveStatusEnum;
+import com.ychat.common.Constants.Enums.Impl.ChatActiveStatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

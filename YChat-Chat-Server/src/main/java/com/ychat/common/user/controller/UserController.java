@@ -1,7 +1,7 @@
 package com.ychat.common.user.controller;
 
 
-import Constants.front.Response.ApiResult;
+import com.ychat.common.Constants.front.Response.ApiResult;
 import com.ychat.common.user.domain.dto.SummeryInfoDTO;
 import com.ychat.common.user.domain.dto.req.ItemInfoReq;
 import com.ychat.common.user.domain.dto.req.ModifyNameReq;
