@@ -8,9 +8,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * 敏感词库
- *
- * @author ${author}
- * @since 2024-11-23
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -24,6 +21,5 @@ public class SensitiveWord implements Serializable {
      */
     @TableField("word")
     private String word;
-
 
 }

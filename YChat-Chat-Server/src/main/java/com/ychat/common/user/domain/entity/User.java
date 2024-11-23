@@ -13,9 +13,6 @@ import java.util.Date;
 
 /**
  * 用户表
- *
- * @author <a href="https://github.com/zongzibinbin">Rhss</a>
- * @since 2024-11-04
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -102,4 +99,5 @@ public class User implements Serializable {
         }
         ipInfo.refreshIp(ip);
     }
+
 }

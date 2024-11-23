@@ -14,9 +14,6 @@ import lombok.*;
 
 /**
  * 消息表
- *
- * @author ${author}
- * @since 2024-11-18
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

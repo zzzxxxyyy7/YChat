@@ -10,12 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>
  * 用户背包表
- * </p>
- *
- * @author <a href="https://github.com/zongzibinbin">Rhss</a>
- * @since 2024-11-09
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

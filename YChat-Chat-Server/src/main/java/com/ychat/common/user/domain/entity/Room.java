@@ -8,18 +8,14 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * <p>
  * 房间表
- * </p>
- *
- * @author ${author}
- * @since 2024-11-17
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -68,13 +64,13 @@ public class Room implements Serializable {
      * 创建时间
      */
     @TableField("create_time")
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * 修改时间
      */
     @TableField("update_time")
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
     @JsonIgnore
     public boolean isHotRoom() {

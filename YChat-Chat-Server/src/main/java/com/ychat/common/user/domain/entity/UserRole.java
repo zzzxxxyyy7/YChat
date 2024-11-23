@@ -9,14 +9,10 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
- * <p>
  * 用户角色关系表
- * </p>
- *
- * @author <a href="https://github.com/zongzibinbin">Rhss</a>
- * @since 2024-11-14
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -47,12 +43,12 @@ public class UserRole implements Serializable {
      * 创建时间
      */
     @TableField("create_time")
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * 修改时间
      */
     @TableField("update_time")
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
 }

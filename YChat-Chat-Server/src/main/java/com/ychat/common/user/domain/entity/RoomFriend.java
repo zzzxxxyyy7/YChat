@@ -9,14 +9,10 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
- * <p>
  * 单聊会话表
- * </p>
- *
- * @author <a href="https://github.com/zongzibinbin">Rhss</a>
- * @since 2024-11-17
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -65,12 +61,12 @@ public class RoomFriend implements Serializable {
      * 创建时间
      */
     @TableField("create_time")
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * 修改时间
      */
     @TableField("update_time")
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
 }

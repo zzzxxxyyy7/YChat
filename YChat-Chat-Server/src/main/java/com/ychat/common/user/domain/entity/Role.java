@@ -6,16 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * <p>
  * 角色表
- * </p>
- *
- * @author <a href="https://github.com/zongzibinbin">Rhss</a>
- * @since 2024-11-14
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -40,13 +37,12 @@ public class Role implements Serializable {
      * 创建时间
      */
     @TableField("create_time")
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * 修改时间
      */
     @TableField("update_time")
-    private LocalDateTime updateTime;
-
+    private Date updateTime;
 
 }

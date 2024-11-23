@@ -12,12 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * <p>
  * 群聊会话表
- * </p>
- *
- * @author ${author}
- * @since 2024-11-23
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -73,6 +68,5 @@ public class RoomGroup implements Serializable {
      */
     @TableField("update_time")
     private Date updateTime;
-
 
 }

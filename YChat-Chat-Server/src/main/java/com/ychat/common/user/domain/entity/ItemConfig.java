@@ -11,9 +11,6 @@ import java.util.Date;
 
 /**
  * 功能物品配置表
- *
- * @author <a href="https://github.com/zongzibinbin">Rhss</a>
- * @since 2024-11-09
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
