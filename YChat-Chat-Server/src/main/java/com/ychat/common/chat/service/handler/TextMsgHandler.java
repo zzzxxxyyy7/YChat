@@ -64,13 +64,14 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
     @Override
     protected void checkMsg(TextMsgReq body, Long roomId, Long uid) {
 
-        //校验下回复消息
+        // 校验该条消息是否是回复消息
         if (Objects.nonNull(body.getReplyMsgId())) {
             Message replyMsg = messageDao.getById(body.getReplyMsgId());
             AssertUtil.isNotEmpty(replyMsg, "回复消息不存在");
             AssertUtil.equal(replyMsg.getRoomId(), roomId, "只能回复相同会话内的消息");
         }
 
+        // 校验该条消息是否存在 @ 对象
         if (CollectionUtil.isNotEmpty(body.getAtUidList())) {
 
             // 前端传入的@用户列表可能会重复，需要去重
@@ -89,19 +90,19 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
     }
 
     @Override
-    public void saveMsg(Message msg, TextMsgReq body) {//插入文本内容
+    public void saveMsg(Message msg, TextMsgReq body) {
+        //插入文本内容
         MessageExtra extra = Optional.ofNullable(msg.getExtra()).orElse(new MessageExtra());
-        Message update = new Message();
-        update.setId(msg.getId());
-        update.setContent(sensitiveWordBs.filter(body.getContent()));
-        update.setExtra(extra);
+        Message updateMessage = new Message();
+        updateMessage.setId(msg.getId());
+        updateMessage.setContent(sensitiveWordBs.filter(body.getContent()));
+        updateMessage.setExtra(extra);
 
         // 如果有回复消息
         if (Objects.nonNull(body.getReplyMsgId())) {
             Integer gapCount = messageDao.getGapCount(msg.getRoomId(), body.getReplyMsgId(), msg.getId());
-            update.setGapCount(gapCount);
-            update.setReplyMsgId(body.getReplyMsgId());
-
+            updateMessage.setGapCount(gapCount);
+            updateMessage.setReplyMsgId(body.getReplyMsgId());
         }
 
         // 判断消息url跳转
@@ -111,10 +112,9 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
         // 艾特功能
         if (CollectionUtil.isNotEmpty(body.getAtUidList())) {
             extra.setAtUidList(body.getAtUidList());
-
         }
 
-        messageDao.updateById(update);
+        messageDao.updateById(updateMessage);
     }
 
     @Override

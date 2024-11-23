@@ -25,7 +25,7 @@ public class ChatController {
     @Autowired
     private ChatService chatService;
 
-    @PostMapping("/msg")
+    @PostMapping("/private/msg")
     @ApiOperation("发送消息")
     // 频控、暂时注释
 //    @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)

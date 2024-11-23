@@ -44,16 +44,17 @@ public abstract class AbstractMsgHandler<Req> {
     @Transactional
     public Long checkAndSaveMsg(ChatMessageReq request, Long uid) {
         Req body = this.toBean(request.getBody());
-        //统一校验
+        // 统一校验
         AssertUtil.allCheckValidateThrow(body);
-        //子类扩展校验
+        // 子类扩展校验
         checkMsg(body, request.getRoomId(), uid);
-        Message insert = MessageAdapter.buildMsgSave(request, uid);
-        //统一保存
-        messageDao.save(insert);
-        //子类扩展保存
-        saveMsg(insert, body);
-        return insert.getId();
+        // 将 Req 的 Body 转换为 Message 进行插入
+        Message newMessage = MessageAdapter.buildMsgSave(request, uid);
+        // 统一保存
+        messageDao.save(newMessage);
+        // 子类对先前 Message 做二次扩展自定义保存
+        saveMsg(newMessage, body);
+        return newMessage.getId();
     }
 
     private Req toBean(Object body) {

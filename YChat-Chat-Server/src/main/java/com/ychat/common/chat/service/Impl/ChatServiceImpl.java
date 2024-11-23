@@ -65,6 +65,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     @Transactional
     public Long sendMsg(ChatMessageReq request, Long uid) {
+        // 校验发送会话的合法性
         check(request, uid);
         // 根据消息类型拿到对应的消息处理器
         AbstractMsgHandler<?> msgHandler = MsgHandlerFactory.getStrategyNoNull(request.getMsgType());

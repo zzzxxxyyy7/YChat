@@ -20,15 +20,16 @@ import java.util.stream.Collectors;
  * Description: 消息适配器
  */
 public class MessageAdapter {
+
     public static final int CAN_CALLBACK_GAP_COUNT = 100;
 
     public static Message buildMsgSave(ChatMessageReq request, Long uid) {
 
         return Message.builder()
-                .fromUid(uid)
-                .roomId(request.getRoomId())
-                .type(request.getMsgType())
-                .status(MessageStatusEnum.NORMAL.getStatus())
+                .fromUid(uid) // 从哪个人发的
+                .roomId(request.getRoomId()) // 到哪个房间
+                .type(request.getMsgType()) // 属于哪一类的消息类型
+                .status(MessageStatusEnum.NORMAL.getStatus()) // 消息状态设置为正常
                 .build();
 
     }

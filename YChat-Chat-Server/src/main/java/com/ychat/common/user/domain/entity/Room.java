@@ -46,7 +46,7 @@ public class Room implements Serializable {
      * 群最后消息的更新时间（热点群不需要写扩散，只更新这里）
      */
     @TableField("active_time")
-    private LocalDateTime activeTime;
+    private Date activeTime;
 
     /**
      * 会话中的最后一条消息id
