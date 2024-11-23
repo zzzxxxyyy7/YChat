@@ -23,6 +23,7 @@ public abstract class AbstractMsgHandler<Req> {
     @Autowired
     private MessageDao messageDao;
 
+    // 获取泛型 Class 的方法
     private Class<Req> bodyClass;
 
     @PostConstruct
@@ -37,10 +38,17 @@ public abstract class AbstractMsgHandler<Req> {
      */
     abstract MessageTypeEnum getMsgTypeEnum();
 
+    // 可以重写，也可以不重写
     protected void checkMsg(Req body, Long roomId, Long uid) {
 
     }
 
+    /**
+     * 双重事务，默认传播行为即在上一个事务之后继续往下传递
+     * @param request
+     * @param uid
+     * @return
+     */
     @Transactional
     public Long checkAndSaveMsg(ChatMessageReq request, Long uid) {
         Req body = this.toBean(request.getBody());
@@ -64,6 +72,7 @@ public abstract class AbstractMsgHandler<Req> {
         return BeanUtil.toBean(body, bodyClass);
     }
 
+    // 子类必须重写
     protected abstract void saveMsg(Message message, Req body);
 
     /**
