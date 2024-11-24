@@ -1,4 +1,4 @@
-package com.ychat.common.config.wx;
+package com.ychat.common.config.WX;
 
 import cn.hutool.json.JSONUtil;
 import lombok.Data;

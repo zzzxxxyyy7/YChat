@@ -1,4 +1,4 @@
-package com.ychat.common.config.interceptor;
+package com.ychat.common.config.Interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

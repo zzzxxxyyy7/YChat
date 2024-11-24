@@ -1,4 +1,4 @@
-package com.ychat.common.config.interceptor;
+package com.ychat.common.config.Interceptor;
 
 import com.ychat.common.Constants.Enums.Impl.HttpErrorEnum;
 import com.ychat.common.user.service.LoginService;

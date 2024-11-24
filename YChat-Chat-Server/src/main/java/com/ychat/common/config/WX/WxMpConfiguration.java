@@ -1,4 +1,4 @@
-package com.ychat.common.config.wx;
+package com.ychat.common.config.WX;
 
 import com.ychat.common.user.service.handler.LogHandler;
 import com.ychat.common.user.service.handler.MsgHandler;

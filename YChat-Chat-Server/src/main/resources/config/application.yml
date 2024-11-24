@@ -18,7 +18,12 @@ spring:
       maximum-pool-size: 10
       minimum-idle: 5
       read-only: false
-
+  rabbitmq:
+    host: 139.224.188.112
+    port: 5672
+    username: admin
+    password: admin
+    virtualHost: /
   redis:
     # Redis服务器地址
     host: ${ychat.redis.host}

@@ -1,4 +1,4 @@
-package com.ychat.common.config.interceptor;
+package com.ychat.common.config.Interceptor;
 
 import cn.hutool.extra.servlet.ServletUtil;
 import com.ychat.common.Constants.front.Request.RequestInfo;
