@@ -23,7 +23,7 @@ public class SecureInvokeDTO {
     // 参数类型
     private String parameterTypes;
 
-    // 参数列表
+    // 入参列表
     private String args;
 
 }

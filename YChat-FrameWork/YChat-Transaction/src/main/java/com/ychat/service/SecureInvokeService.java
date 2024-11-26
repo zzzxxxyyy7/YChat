@@ -47,6 +47,7 @@ public class SecureInvokeService {
     }
 
     public void save(SecureInvokeRecord record) {
+        // 本地消息表入库记录暂存
         secureInvokeRecordDao.save(record);
     }
 
@@ -64,13 +65,9 @@ public class SecureInvokeService {
         secureInvokeRecordDao.updateById(update);
     }
 
-    private Date getNextRetryTime(Integer retryTimes) {//或者可以采用退避算法
-        double waitMinutes = Math.pow(RETRY_INTERVAL_MINUTES, retryTimes);//重试时间指数上升 2m 4m 8m 16m
+    private Date getNextRetryTime(Integer retryTimes) { // 或者可以采用退避算法
+        double waitMinutes = Math.pow(RETRY_INTERVAL_MINUTES, retryTimes); // 重试时间指数上升 2m 4m 8m 16m
         return DateUtil.offsetMinute(new Date(), (int) waitMinutes);
-    }
-
-    private void removeRecord(Long id) {
-        secureInvokeRecordDao.removeById(id);
     }
 
     public void invoke(SecureInvokeRecord record, boolean async) {
@@ -81,6 +78,7 @@ public class SecureInvokeService {
         }
         // 保存执行数据
         save(record);
+        // 注册一个事务后执行的行为
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @SneakyThrows
             @Override
@@ -95,6 +93,7 @@ public class SecureInvokeService {
         });
     }
 
+    // 异步执行 --> 本质是通过线程池执行
     public void doAsyncInvoke(SecureInvokeRecord record) {
         executor.execute(() -> {
             System.out.println(Thread.currentThread().getName());
@@ -102,8 +101,11 @@ public class SecureInvokeService {
         });
     }
 
+    // 执行本地记录表中落表的方法
     public void doInvoke(SecureInvokeRecord record) {
+        // 拿到方法 请求快照参数
         SecureInvokeDTO secureInvokeDTO = record.getSecureInvokeDTO();
+
         try {
             SecureInvokeHolder.setInvoking();
             Class<?> beanClass = Class.forName(secureInvokeDTO.getClassName());
@@ -124,6 +126,12 @@ public class SecureInvokeService {
             SecureInvokeHolder.invoked();
         }
     }
+
+    private void removeRecord(Long id) {
+        // 如果执行成功，从本地记录表移除记录
+        secureInvokeRecordDao.removeById(id);
+    }
+
 
     @NotNull
     private Object[] getArgs(SecureInvokeDTO secureInvokeDTO, List<Class<?>> parameterClasses) {

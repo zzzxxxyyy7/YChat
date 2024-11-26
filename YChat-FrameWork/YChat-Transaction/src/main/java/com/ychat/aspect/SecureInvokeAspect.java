@@ -39,6 +39,8 @@ public class SecureInvokeAspect {
     @Around("@annotation(secureInvoke)")
     public Object around(ProceedingJoinPoint joinPoint, SecureInvoke secureInvoke) throws Throwable {
         boolean async = secureInvoke.async();
+
+        // 拿到这个方法的执行是否在事务内（表明这俩个操作是否是分布式事务）
         boolean inTransaction = TransactionSynchronizationManager.isActualTransactionActive();
 
         // 非事务状态，直接执行，不做任何保证
@@ -46,8 +48,11 @@ public class SecureInvokeAspect {
             return joinPoint.proceed();
         }
 
+        // 拿到切面所拦截的方法
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        // 拿到方法的参数类型
         List<String> parameters = Stream.of(method.getParameterTypes()).map(Class::getName).collect(Collectors.toList());
+
         SecureInvokeDTO dto = SecureInvokeDTO.builder()
                 .args(JsonUtils.toStr(joinPoint.getArgs()))
                 .className(method.getDeclaringClass().getName())
@@ -61,6 +66,7 @@ public class SecureInvokeAspect {
                 .nextRetryTime(DateUtil.offsetMinute(new Date(), (int) SecureInvokeService.RETRY_INTERVAL_MINUTES))
                 .build();
 
+        // 切面封装好方法调用参数，交给对应服务类判断是异步还是同步执行
         secureInvokeService.invoke(record, async);
         return null;
     }
