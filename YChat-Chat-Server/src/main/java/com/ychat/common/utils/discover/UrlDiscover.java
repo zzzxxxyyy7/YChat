@@ -1,6 +1,6 @@
 package com.ychat.common.utils.discover;
 
-import Domain.Dto.UrlInfo;
+import com.ychat.Domain.Dto.UrlInfo;
 import cn.hutool.core.date.StopWatch;
 import org.jsoup.nodes.Document;
 

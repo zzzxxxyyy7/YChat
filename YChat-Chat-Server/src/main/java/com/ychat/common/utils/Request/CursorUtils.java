@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ychat.common.Constants.front.Request.CursorPageBaseReq;
-import Utils.Redis.RedisUtils;
+import com.ychat.Utils.Redis.RedisUtils;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import java.util.Date;

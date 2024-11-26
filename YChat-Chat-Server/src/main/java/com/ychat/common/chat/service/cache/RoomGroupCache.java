@@ -1,7 +1,7 @@
 package com.ychat.common.chat.service.cache;
 
 
-import Utils.Cache.AbstractRedisStringCache;
+import com.ychat.Utils.Cache.AbstractRedisStringCache;
 import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.user.dao.RoomGroupDao;
 import com.ychat.common.user.domain.entity.RoomGroup;

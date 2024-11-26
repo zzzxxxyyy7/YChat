@@ -3,7 +3,7 @@ package com.ychat.common.user.service.Impl;
 import com.ychat.common.utils.Jwt.JwtUtils;
 import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.user.service.LoginService;
-import Utils.Redis.RedisUtils;
+import com.ychat.Utils.Redis.RedisUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -83,4 +83,5 @@ public class LoginServiceImpl implements LoginService {
         // 构建 Redis Key
         return RedisKeyBuilder.getKey(RedisKeyBuilder.USER_TOKEN_STRING , uid);
     }
+
 }

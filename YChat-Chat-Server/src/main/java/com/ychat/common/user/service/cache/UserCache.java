@@ -8,7 +8,7 @@ import com.ychat.common.user.domain.entity.Black;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.user.domain.entity.UserRole;
 import com.ychat.common.user.service.IUserRoleService;
-import Utils.Redis.RedisUtils;
+import com.ychat.Utils.Redis.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;

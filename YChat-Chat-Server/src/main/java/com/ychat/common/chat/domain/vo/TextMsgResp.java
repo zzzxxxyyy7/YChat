@@ -1,6 +1,6 @@
 package com.ychat.common.chat.domain.vo;
 
-import Domain.Dto.UrlInfo;
+import com.ychat.Domain.Dto.UrlInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

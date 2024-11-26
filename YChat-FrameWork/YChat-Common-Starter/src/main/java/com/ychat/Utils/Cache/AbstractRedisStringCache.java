@@ -1,6 +1,6 @@
-package Utils.Cache;
+package com.ychat.Utils.Cache;
 
-import Utils.Redis.RedisUtils;
+import com.ychat.Utils.Redis.RedisUtils;
 import cn.hutool.core.collection.CollectionUtil;
 import org.springframework.data.util.Pair;
 

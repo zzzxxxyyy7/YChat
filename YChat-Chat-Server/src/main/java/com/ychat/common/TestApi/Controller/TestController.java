@@ -5,7 +5,7 @@ import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.config.ThreadPool.YChatUncaughtExceptionHandler;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.utils.Jwt.JwtUtils;
-import Utils.Redis.RedisUtils;
+import com.ychat.Utils.Redis.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;

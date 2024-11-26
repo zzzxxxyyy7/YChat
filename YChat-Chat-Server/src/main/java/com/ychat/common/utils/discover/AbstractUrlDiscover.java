@@ -1,6 +1,6 @@
 package com.ychat.common.utils.discover;
 
-import Domain.Dto.UrlInfo;
+import com.ychat.Domain.Dto.UrlInfo;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;

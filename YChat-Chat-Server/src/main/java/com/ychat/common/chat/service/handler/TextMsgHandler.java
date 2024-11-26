@@ -4,7 +4,7 @@ import com.ychat.common.Constants.Enums.Impl.MessageStatusEnum;
 import com.ychat.common.Constants.Enums.Impl.MessageTypeEnum;
 import com.ychat.common.Constants.Enums.Impl.RoleEnum;
 import com.ychat.common.Constants.Enums.Impl.YesOrNoEnum;
-import Domain.Dto.UrlInfo;
+import com.ychat.Domain.Dto.UrlInfo;
 import com.ychat.common.SensitiveWord.SensitiveWordBs;
 import com.ychat.common.utils.Assert.AssertUtil;
 import cn.hutool.core.collection.CollectionUtil;

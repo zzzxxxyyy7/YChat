@@ -1,6 +1,6 @@
 package com.ychat.common.user.service.cache;
 
-import Utils.Cache.AbstractRedisStringCache;
+import com.ychat.Utils.Cache.AbstractRedisStringCache;
 import com.ychat.common.config.Redis.RedisKeyBuilder;
 import com.ychat.common.user.dao.UserDao;
 import com.ychat.common.user.domain.entity.User;
