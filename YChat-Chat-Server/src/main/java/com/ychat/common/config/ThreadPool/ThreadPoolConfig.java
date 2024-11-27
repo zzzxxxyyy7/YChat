@@ -1,5 +1,6 @@
 package com.ychat.common.config.ThreadPool;
 
+import com.ychat.annotation.SecureInvokeConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,7 +16,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Configuration
 @EnableAsync
-public class ThreadPoolConfig implements AsyncConfigurer {
+public class ThreadPoolConfig implements AsyncConfigurer , SecureInvokeConfigurer {
 
     /**
      * 项目共用线程池
@@ -34,6 +35,11 @@ public class ThreadPoolConfig implements AsyncConfigurer {
 
     @Override
     public Executor getAsyncExecutor() {
+        return yChatExecutor();
+    }
+
+    @Override
+    public Executor getSecureInvokeExecutor() {
         return yChatExecutor();
     }
 

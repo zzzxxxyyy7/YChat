@@ -50,6 +50,7 @@ public class SecureInvokeAspect {
 
         // 拿到切面所拦截的方法
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+
         // 拿到方法的参数类型
         List<String> parameters = Stream.of(method.getParameterTypes()).map(Class::getName).collect(Collectors.toList());
 

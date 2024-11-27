@@ -19,9 +19,10 @@ public class SecureInvokeRecordDao extends ServiceImpl<SecureInvokeRecordMapper,
 
     public List<SecureInvokeRecord> getWaitRetryRecords() {
         Date now = new Date();
-        // 只查2分钟前的失败数据。避免刚入库的数据被查出来
-        DateTime afterTime = DateUtil.offsetMinute(now, -(int) SecureInvokeService.RETRY_INTERVAL_MINUTES);
+        // 只查 30 秒前的失败数据, 避免刚入库的数据被查出来
+        DateTime afterTime = DateUtil.offsetSecond(now, - (int) SecureInvokeService.RETRY_SEARCH_INTERVAL_SECONDS);
         return lambdaQuery()
+                // 状态为等待
                 .eq(SecureInvokeRecord::getStatus, SecureInvokeRecord.STATUS_WAIT)
                 .lt(SecureInvokeRecord::getNextRetryTime, new Date())
                 .lt(SecureInvokeRecord::getCreateTime, afterTime)

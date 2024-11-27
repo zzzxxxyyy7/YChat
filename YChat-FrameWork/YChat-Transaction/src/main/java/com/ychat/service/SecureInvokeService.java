@@ -11,10 +11,7 @@ import com.ychat.domain.entity.SecureInvokeRecord;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -34,12 +31,15 @@ public class SecureInvokeService {
 
     public static final double RETRY_INTERVAL_MINUTES = 2D;
 
+    public static final int RETRY_SEARCH_INTERVAL_SECONDS = 30;
+
     private final SecureInvokeRecordDao secureInvokeRecordDao;
 
     private final Executor executor;
 
     @Scheduled(cron = "*/5 * * * * ?")
     public void retry() {
+        // TODO 优化至查询缓存
         List<SecureInvokeRecord> secureInvokeRecords = secureInvokeRecordDao.getWaitRetryRecords();
         for (SecureInvokeRecord secureInvokeRecord : secureInvokeRecords) {
             doAsyncInvoke(secureInvokeRecord);
@@ -52,22 +52,25 @@ public class SecureInvokeService {
     }
 
     private void retryRecord(SecureInvokeRecord record, String errorMsg) {
+        // 首次执行失败也会保存，默认重试次数是 1
         Integer retryTimes = record.getRetryTimes() + 1;
         SecureInvokeRecord update = new SecureInvokeRecord();
         update.setId(record.getId());
         update.setFailReason(errorMsg);
-        update.setNextRetryTime(getNextRetryTime(retryTimes));
+        update.setNextRetryTime(getNextRetryTime());
+        // 大于最大重试次数
         if (retryTimes > record.getMaxRetryTimes()) {
+            // 改为重试失败，后续人为介入
             update.setStatus(SecureInvokeRecord.STATUS_FAIL);
         } else {
+            // 更新重试次数
             update.setRetryTimes(retryTimes);
         }
         secureInvokeRecordDao.updateById(update);
     }
 
-    private Date getNextRetryTime(Integer retryTimes) { // 或者可以采用退避算法
-        double waitMinutes = Math.pow(RETRY_INTERVAL_MINUTES, retryTimes); // 重试时间指数上升 2m 4m 8m 16m
-        return DateUtil.offsetMinute(new Date(), (int) waitMinutes);
+    private Date getNextRetryTime() {
+        return DateUtil.offsetSecond(new Date(), RETRY_SEARCH_INTERVAL_SECONDS);
     }
 
     public void invoke(SecureInvokeRecord record, boolean async) {
@@ -115,7 +118,7 @@ public class SecureInvokeService {
             Method method = ReflectUtil.getMethod(beanClass, secureInvokeDTO.getMethodName(), parameterClasses.toArray(new Class[]{}));
             Object[] args = getArgs(secureInvokeDTO, parameterClasses);
             // 执行方法
-            method.invoke(bean, args);
+            method.invoke(bean, args); // 第二次调用的时候，这次调用即继续走切面，由于不在事务内，方法会直接执行完成
             // 执行成功更新状态
             removeRecord(record.getId());
         } catch (Throwable e) {
@@ -131,7 +134,6 @@ public class SecureInvokeService {
         // 如果执行成功，从本地记录表移除记录
         secureInvokeRecordDao.removeById(id);
     }
-
 
     @NotNull
     private Object[] getArgs(SecureInvokeDTO secureInvokeDTO, List<Class<?>> parameterClasses) {
