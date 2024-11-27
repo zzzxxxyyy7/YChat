@@ -108,7 +108,7 @@ public class ChatServiceImpl implements ChatService {
         if (CollectionUtil.isEmpty(messages)) {
             return new ArrayList<>();
         }
-        //查询消息标志
+        // 查询消息标志
         List<MessageMark> msgMark = messageMarkDao.getValidMarkByMsgIdBatch(messages.stream().map(Message::getId).collect(Collectors.toList()));
         return MessageAdapter.buildMsgResp(messages, msgMark, receiveUid);
     }

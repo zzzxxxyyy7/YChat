@@ -5,15 +5,26 @@ import com.ychat.common.user.domain.entity.Room;
 import com.ychat.common.user.mapper.RoomMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
- * <p>
- * 房间表 服务实现类
- * </p>
- *
- * @author ${author}
- * @since 2024-11-17
+ * 会话表
  */
 @Service
 public class RoomDao extends ServiceImpl<RoomMapper, Room> {
+
+    /**
+     * 更新这个会话最新的一条消息记录
+     * @param roomId
+     * @param msgId
+     * @param msgTime
+     */
+    public void refreshActiveTime(Long roomId, Long msgId, Date msgTime) {
+        lambdaUpdate()
+                .eq(Room::getId, roomId)
+                .set(Room::getLastMsgId, msgId)
+                .set(Room::getActiveTime, msgTime)
+                .update();
+    }
 
 }
