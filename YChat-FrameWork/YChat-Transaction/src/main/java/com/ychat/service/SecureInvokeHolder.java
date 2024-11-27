@@ -2,6 +2,9 @@ package com.ychat.service;
 
 import java.util.Objects;
 
+/**
+ * 用来标识线程此时执行的方法是否在本地执行
+ */
 public class SecureInvokeHolder {
 
     private static final ThreadLocal<Boolean> INVOKE_THREAD_LOCAL = new ThreadLocal<>();
