@@ -70,7 +70,7 @@ public class ChatServiceImpl implements ChatService {
         // 根据消息类型拿到对应的消息处理器
         AbstractMsgHandler<?> msgHandler = MsgHandlerFactory.getStrategyNoNull(request.getMsgType());
         Long msgId = msgHandler.checkAndSaveMsg(request, uid);
-        //发布消息发送事件
+        // 发布消息发送事件
         applicationEventPublisher.publishEvent(new MessageSendEvent(this, msgId));
         return msgId;
     }
