@@ -177,6 +177,7 @@ public class UserCache {
      * @param optTime
      */
     public void offline(Long uid, Date optTime) {
+        // TODO JVM 停机后，用户仍然在线 --> 实现优雅停机
         String onlineKey = RedisKeyBuilder.getKey(RedisKeyBuilder.ONLINE_UID_ZET);
         String offlineKey = RedisKeyBuilder.getKey(RedisKeyBuilder.OFFLINE_UID_ZET);
         // 移除上线表
