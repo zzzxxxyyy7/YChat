@@ -29,7 +29,7 @@ public class PushMessageDTO implements Serializable {
     private List<Long> uidList;
 
     /**
-     * 推送类型 1个人 2全员
+     * 推送类型 1个人 2全部连接用户
      *
      * @see WSPushTypeEnum
      */

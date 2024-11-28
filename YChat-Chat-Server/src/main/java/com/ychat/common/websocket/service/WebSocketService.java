@@ -26,4 +26,20 @@ public interface WebSocketService {
      * @param msg
      */
     void sendMsgToAll(WSBaseResp<?> msg);
+
+    /**
+     * 推送消息给单个在线用户
+     * @param wsBaseResp
+     * @param uid
+     */
+    void sendToUid(WSBaseResp<?> wsBaseResp, Long uid);
+
+    /**
+     * 推动消息给所有在线的人
+     *
+     * @param wsBaseResp 发送的消息体
+     * @param skipUid    需要跳过的人
+     */
+    void sendToAllOnline(WSBaseResp<?> wsBaseResp, Long skipUid);
+
 }

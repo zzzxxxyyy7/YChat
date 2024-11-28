@@ -1,5 +1,6 @@
 package com.ychat.common.websocket.service.Impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -32,6 +33,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Description: 专门管理 websocket 逻辑，包括推拉流、连接建立等等
@@ -84,6 +86,11 @@ public class WebSocketServiceImpl implements WebSocketService {
             .expireAfterWrite(EXPIRE_TIME)
             .maximumSize(MAX_MUM_SIZE)
             .build();
+
+    /**
+     * 所有在线的用户和对应的socket
+     */
+    private static final ConcurrentHashMap<Long, CopyOnWriteArrayList<Channel>> ONLINE_UID_MAP = new ConcurrentHashMap<>();
 
     @Override
     public void saveChannel(Channel ctx) {
@@ -199,4 +206,27 @@ public class WebSocketServiceImpl implements WebSocketService {
             threadPoolTaskExecutor.execute(() -> sendMsg(ctx, msg));
         });
     }
+
+    @Override
+    public void sendToUid(WSBaseResp<?> wsBaseResp, Long uid) {
+        CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid);
+        if (CollectionUtil.isEmpty(channels)) {
+            log.info("用户：{}不在线", uid);
+            return;
+        }
+        channels.forEach(channel -> {
+            threadPoolTaskExecutor.execute(() -> sendMsg(channel, wsBaseResp));
+        });
+    }
+
+    @Override
+    public void sendToAllOnline(WSBaseResp<?> wsBaseResp, Long skipUid) {
+        ONLINE_WS_MAP.forEach((channel, ext) -> {
+            if (Objects.nonNull(skipUid) && Objects.equals(ext.getUid(), skipUid)) {
+                return;
+            }
+            threadPoolTaskExecutor.execute(() -> sendMsg(channel, wsBaseResp));
+        });
+    }
+
 }
