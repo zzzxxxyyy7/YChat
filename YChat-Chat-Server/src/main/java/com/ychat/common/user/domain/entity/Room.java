@@ -42,7 +42,7 @@ public class Room implements Serializable {
     private Integer hotFlag;
 
     /**
-     * 群最后消息的更新时间（热点群不需要写扩散，只更新这里）
+     * 会话最后消息的更新时间（热点群不需要写扩散，只更新这里）
      */
     @TableField("active_time")
     private Date activeTime;

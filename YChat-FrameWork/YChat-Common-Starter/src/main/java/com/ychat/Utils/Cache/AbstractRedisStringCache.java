@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Description: redis string类型的批量缓存框架
+ * Description: redis string 类型的批量缓存框架
  */
 public abstract class AbstractRedisStringCache<IN, OUT> implements BatchCache<IN, OUT> {
 
@@ -33,7 +33,7 @@ public abstract class AbstractRedisStringCache<IN, OUT> implements BatchCache<IN
 
     @Override
     public Map<IN, OUT> getBatch(List<IN> req) {
-        if (CollectionUtil.isEmpty(req)) {//防御性编程
+        if (CollectionUtil.isEmpty(req)) { // 防御性编程
             return new HashMap<>();
         }
         // 去重
@@ -82,4 +82,5 @@ public abstract class AbstractRedisStringCache<IN, OUT> implements BatchCache<IN
         List<String> keys = req.stream().map(this::getKey).collect(Collectors.toList());
         RedisUtils.del(keys);
     }
+
 }

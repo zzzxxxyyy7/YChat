@@ -1,6 +1,7 @@
 package com.ychat.common.websocket.service.adapter;
 
 import com.ychat.common.Constants.Enums.Impl.YesOrNoEnum;
+import com.ychat.common.chat.domain.vo.ChatMessageResp;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.websocket.domain.enums.WSRespTypeEnum;
 import com.ychat.common.websocket.domain.vo.resp.*;
@@ -80,4 +81,17 @@ public class WebSocketAdapter {
         wsBaseResp.setData(resp);
         return wsBaseResp;
     }
+
+    /**
+     * 封装新消息返回
+     * @param msgResp
+     * @return
+     */
+    public static WSBaseResp<ChatMessageResp> buildMsgSend(ChatMessageResp msgResp) {
+        WSBaseResp<ChatMessageResp> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.MESSAGE.getType());
+        wsBaseResp.setData(msgResp);
+        return wsBaseResp;
+    }
+
 }

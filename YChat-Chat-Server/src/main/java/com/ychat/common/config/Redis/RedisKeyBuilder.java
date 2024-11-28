@@ -37,7 +37,10 @@ public class RedisKeyBuilder {
      */
     public static final String GROUP_INFO_STRING = "groupInfo:roomId_%d";
 
-
+    /**
+     * 热门房间列表
+     */
+    public static final String HOT_ROOM_ZET = "hotRoom";
 
     /**
      * 构建 Key
