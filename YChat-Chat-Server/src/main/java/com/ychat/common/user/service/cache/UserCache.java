@@ -158,7 +158,7 @@ public class UserCache {
     }
 
     /**
-     * 用户上线，更新离线用户列表和在线用户列表
+     * 用户上线，新增在线用户并移除离线用户
      * @param uid
      * @param optTime
      */
@@ -169,6 +169,20 @@ public class UserCache {
         RedisUtils.zRemove(offlineKey, uid);
         // 更新上线表
         RedisUtils.zAdd(onlineKey, uid, optTime.getTime());
+    }
+
+    /**
+     * 用户下线，新增离线用户并移除在线用户
+     * @param uid
+     * @param optTime
+     */
+    public void offline(Long uid, Date optTime) {
+        String onlineKey = RedisKeyBuilder.getKey(RedisKeyBuilder.ONLINE_UID_ZET);
+        String offlineKey = RedisKeyBuilder.getKey(RedisKeyBuilder.OFFLINE_UID_ZET);
+        // 移除上线表
+        RedisUtils.zRemove(onlineKey, uid);
+        // 更新下线表
+        RedisUtils.zAdd(offlineKey, uid, optTime.getTime());
     }
 
 }

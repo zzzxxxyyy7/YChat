@@ -129,4 +129,23 @@ public class WebSocketAdapter {
         onlineOfflineNotify.setOnlineNum(memberStatistic.getOnlineNum());
     }
 
+    public WSBaseResp<?> buildOfflineNotifyResp(User user) {
+        WSBaseResp<WSOnlineOfflineNotify> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.ONLINE_OFFLINE_NOTIFY.getType());
+        WSOnlineOfflineNotify onlineOfflineNotify = new WSOnlineOfflineNotify();
+        onlineOfflineNotify.setChangeList(Collections.singletonList(buildOfflineInfo(user)));
+        assembleNum(onlineOfflineNotify);
+        wsBaseResp.setData(onlineOfflineNotify);
+        return wsBaseResp;
+    }
+
+    private static ChatMemberResp buildOfflineInfo(User user) {
+        ChatMemberResp info = new ChatMemberResp();
+        BeanUtil.copyProperties(user, info);
+        info.setUid(user.getId());
+        info.setActiveStatus(ChatActiveStatusEnum.OFFLINE.getStatus());
+        info.setLastOptTime(user.getLastOptTime());
+        return info;
+    }
+
 }
