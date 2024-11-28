@@ -43,6 +43,16 @@ public class RedisKeyBuilder {
     public static final String HOT_ROOM_ZET = "hotRoom";
 
     /**
+     * 在线用户列表
+     */
+    public static final String ONLINE_UID_ZET = "online";
+
+    /**
+     * 离线用户列表
+     */
+    public static final String OFFLINE_UID_ZET = "offline";
+
+    /**
      * 构建 Key
      * @param key
      * @param objects

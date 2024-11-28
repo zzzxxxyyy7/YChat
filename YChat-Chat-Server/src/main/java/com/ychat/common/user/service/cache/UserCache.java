@@ -19,8 +19,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Description: 用户相关缓存
- * 当用户登录后，缓存相关用户数据
+ * 用户相关缓存，当用户登录后，缓存相关用户数据
  */
 @Component
 public class UserCache {
@@ -120,22 +119,56 @@ public class UserCache {
      * 获取用户信息，盘路缓存模式
      */
     public Map<Long, User> getUserInfoBatch(Set<Long> uids) {
-        //批量组装key
+        // 批量组装 key
         List<String> keys = uids.stream().map(a -> RedisKeyBuilder.getKey(RedisKeyBuilder.USER_INFO_STRING, a)).collect(Collectors.toList());
-        //批量get
+        // 批量 get
         List<User> mget = RedisUtils.mget(keys, User.class);
         Map<Long, User> map = mget.stream().filter(Objects::nonNull).collect(Collectors.toMap(User::getId, Function.identity()));
-        //发现差集——还需要load更新的uid
+        // 发现差集——还需要 load 更新的 uid
         List<Long> needLoadUidList = uids.stream().filter(a -> !map.containsKey(a)).collect(Collectors.toList());
         if (CollUtil.isNotEmpty(needLoadUidList)) {
-            //批量load
+            // 批量 load
             List<User> needLoadUserList = userDao.listByIds(needLoadUidList);
             Map<String, User> redisMap = needLoadUserList.stream().collect(Collectors.toMap(a -> RedisKeyBuilder.getKey(RedisKeyBuilder.USER_INFO_STRING, a.getId()), Function.identity()));
             RedisUtils.mset(redisMap, 5 * 60);
-            //加载回redis
+            // 加载回 redis
             map.putAll(needLoadUserList.stream().collect(Collectors.toMap(User::getId, Function.identity())));
         }
         return map;
+    }
+
+    /**
+     * 判断用户是否在线
+     * @param uid
+     * @return
+     */
+    public boolean isOnline(Long uid) {
+        String onlineKey = RedisKeyBuilder.getKey(RedisKeyBuilder.ONLINE_UID_ZET);
+        // 判断 Key 这个集合是否有 Uid 这个成员
+        return RedisUtils.zIsMember(onlineKey, uid);
+    }
+
+    /**
+     * 获取在线人数
+     * @return
+     */
+    public Long getOnlineNum() {
+        String onlineKey = RedisKeyBuilder.getKey(RedisKeyBuilder.ONLINE_UID_ZET);
+        return RedisUtils.zCard(onlineKey);
+    }
+
+    /**
+     * 用户上线，更新离线用户列表和在线用户列表
+     * @param uid
+     * @param optTime
+     */
+    public void online(Long uid, Date optTime) {
+        String onlineKey = RedisKeyBuilder.getKey(RedisKeyBuilder.ONLINE_UID_ZET);
+        String offlineKey = RedisKeyBuilder.getKey(RedisKeyBuilder.OFFLINE_UID_ZET);
+        // 移除离线表
+        RedisUtils.zRemove(offlineKey, uid);
+        // 更新上线表
+        RedisUtils.zAdd(onlineKey, uid, optTime.getTime());
     }
 
 }

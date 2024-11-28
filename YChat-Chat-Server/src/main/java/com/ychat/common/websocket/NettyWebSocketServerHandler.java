@@ -2,6 +2,7 @@ package com.ychat.common.websocket;
 
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
+import com.ychat.common.websocket.domain.dto.WSAuthorize;
 import com.ychat.common.websocket.domain.enums.WSReqTypeEnum;
 import com.ychat.common.websocket.domain.vo.req.WSBaseReq;
 import com.ychat.common.websocket.service.WebSocketService;
@@ -31,19 +32,26 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
      * @throws Exception
      */
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         webSocketService = SpringUtil.getBean(WebSocketService.class);
-        // 保存 channel 的游客态
-        webSocketService.saveChannel(ctx.channel());
+    }
+
+    // 客户端离线
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) {
+        log.warn("客户端主动离线![{}]", ctx.channel().id());
+        userOffLine(ctx.channel());
     }
 
     /**
-     * 客户端主动下线
+     * Channel 取消绑定
+     *
      * @param ctx
      * @throws Exception
      */
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
+        log.warn("触发 channelInactive 掉线![{}]", ctx.channel().id());
         userOffLine(ctx.channel());
     }
 
@@ -55,22 +63,23 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        // 如果是空闲状态检测事件
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
             // 读空闲事件触发用户下线 -- 客户端被动下线
             if (idleStateEvent.state() == IdleState.READER_IDLE) {
                 userOffLine(ctx.channel());
             }
-        } else if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
+        } else if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) { // 如果遇到了握手事件
+            this.webSocketService.connect(ctx.channel());
             String token = NettyUtils.getAttr(ctx.channel(), NettyUtils.USER_TOKEN);
             /**
              * 如果这条 Channel 已经绑定了 token，则进行授权（即连接请求携带了 token 在 url 中）
              * 第一个登录的是不会携带 token 的，所以需要再判断
              */
             if (StringUtils.isNotBlank(token)) {
-                webSocketService.authorize(ctx.channel(), token);
+                webSocketService.authorize(ctx.channel(), new WSAuthorize(token));
             }
-            log.info("握手成功");
         }
         super.userEventTriggered(ctx, evt);
     }
@@ -100,7 +109,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
             case HEARTBEAT:
                 break;
             case AUTHORIZE:
-                this.webSocketService.authorize(ctx.channel() , wsBaseReq.getToken());
+                this.webSocketService.authorize(ctx.channel() , new WSAuthorize(wsBaseReq.getToken()));
                 break;
             case LOGIN:
                 this.webSocketService.handleLoginReq(ctx.channel());
@@ -113,11 +122,9 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
      * @param ctx
      */
     private void userOffLine(Channel ctx) {
-        String channelId = ctx.id().asLongText();
-        log.info("用户离线，channelId:{}", channelId);
-        // 清除 Channel 和 User 绑定的对应关系
-        webSocketService.offline(ctx);
+        this.webSocketService.removed(ctx);
         // 关闭 Channel 实现用户离线
         ctx.close();
     }
+
 }

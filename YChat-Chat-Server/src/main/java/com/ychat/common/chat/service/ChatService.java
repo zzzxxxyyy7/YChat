@@ -3,9 +3,10 @@ package com.ychat.common.chat.service;
 import com.ychat.common.chat.domain.dto.ChatMessageReq;
 import com.ychat.common.chat.domain.vo.ChatMessageResp;
 import com.ychat.common.user.domain.entity.Message;
+import com.ychat.common.websocket.domain.vo.resp.ChatMemberStatisticResp;
 
 /**
- * Description: 消息处理类
+ * 消息处理类
  */
 public interface ChatService {
 
@@ -25,7 +26,6 @@ public interface ChatService {
      */
     ChatMessageResp getMsgResp(Long msgId, Long receiveUid);
 
-
     /**
      * 根据消息获取消息前端展示的物料
      *
@@ -34,5 +34,11 @@ public interface ChatService {
      * @return
      */
     ChatMessageResp getMsgResp(Message message, Long receiveUid);
+
+    /**
+     * 获取在线人数
+     * @return
+     */
+    ChatMemberStatisticResp getMemberStatistic();
 
 }

@@ -10,6 +10,8 @@ public class NettyUtils {
 
     public static final AttributeKey<String> USER_IP = AttributeKey.valueOf("userIp");
 
+    public static AttributeKey<Long> USER_UID = AttributeKey.valueOf("uid");
+
     public static <T> void setAttr(Channel ctx, AttributeKey<T> key, T value) {
         Attribute<T> attr = ctx.attr(key);
         attr.set(value);

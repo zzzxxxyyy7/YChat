@@ -1,13 +1,24 @@
 package com.ychat.common.websocket.service.adapter;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.ychat.common.Constants.Enums.Impl.ChatActiveStatusEnum;
 import com.ychat.common.Constants.Enums.Impl.YesOrNoEnum;
 import com.ychat.common.chat.domain.vo.ChatMessageResp;
+import com.ychat.common.chat.service.ChatService;
 import com.ychat.common.user.domain.entity.User;
 import com.ychat.common.websocket.domain.enums.WSRespTypeEnum;
 import com.ychat.common.websocket.domain.vo.resp.*;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+
+@Component
 public class WebSocketAdapter {
+
+    @Autowired
+    private ChatService chatService;
 
     /**
      * 获取登录二维码
@@ -92,6 +103,30 @@ public class WebSocketAdapter {
         wsBaseResp.setType(WSRespTypeEnum.MESSAGE.getType());
         wsBaseResp.setData(msgResp);
         return wsBaseResp;
+    }
+
+    private static ChatMemberResp buildOnlineInfo(User user) {
+        ChatMemberResp info = new ChatMemberResp();
+        BeanUtil.copyProperties(user, info);
+        info.setUid(user.getId());
+        info.setActiveStatus(ChatActiveStatusEnum.ONLINE.getStatus());
+        info.setLastOptTime(user.getLastOptTime());
+        return info;
+    }
+
+    public WSBaseResp<?> buildOnlineNotifyResp(User user) {
+        WSBaseResp<WSOnlineOfflineNotify> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.ONLINE_OFFLINE_NOTIFY.getType());
+        WSOnlineOfflineNotify onlineOfflineNotify = new WSOnlineOfflineNotify();
+        onlineOfflineNotify.setChangeList(Collections.singletonList(buildOnlineInfo(user)));
+        assembleNum(onlineOfflineNotify);
+        wsBaseResp.setData(onlineOfflineNotify);
+        return wsBaseResp;
+    }
+
+    private void assembleNum(WSOnlineOfflineNotify onlineOfflineNotify) {
+        ChatMemberStatisticResp memberStatistic = chatService.getMemberStatistic();
+        onlineOfflineNotify.setOnlineNum(memberStatistic.getOnlineNum());
     }
 
 }

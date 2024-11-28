@@ -1,6 +1,7 @@
 package com.ychat.common.chat.service.Impl;
 
 import com.ychat.common.Constants.Enums.Impl.NormalOrNoEnum;
+import com.ychat.common.user.service.cache.UserCache;
 import com.ychat.common.utils.Assert.AssertUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
@@ -18,6 +19,7 @@ import com.ychat.common.user.dao.MessageDao;
 import com.ychat.common.user.dao.MessageMarkDao;
 import com.ychat.common.user.dao.RoomFriendDao;
 import com.ychat.common.user.domain.entity.*;
+import com.ychat.common.websocket.domain.vo.resp.ChatMemberStatisticResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -56,6 +58,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Autowired
     private GroupMemberDao groupMemberDao;
+
+    @Autowired
+    private UserCache userCache;
 
     /**
      * 大群聊 ID 默认是 1
@@ -111,6 +116,15 @@ public class ChatServiceImpl implements ChatService {
         // 查询消息标志
         List<MessageMark> msgMark = messageMarkDao.getValidMarkByMsgIdBatch(messages.stream().map(Message::getId).collect(Collectors.toList()));
         return MessageAdapter.buildMsgResp(messages, msgMark, receiveUid);
+    }
+
+    @Override
+    public ChatMemberStatisticResp getMemberStatistic() {
+        // 拿到在线人数
+        Long onlineNum = userCache.getOnlineNum();
+        ChatMemberStatisticResp resp = new ChatMemberStatisticResp();
+        resp.setOnlineNum(onlineNum);
+        return resp;
     }
 
 }

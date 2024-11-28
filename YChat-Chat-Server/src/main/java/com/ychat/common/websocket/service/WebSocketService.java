@@ -1,5 +1,6 @@
 package com.ychat.common.websocket.service;
 
+import com.ychat.common.websocket.domain.dto.WSAuthorize;
 import com.ychat.common.websocket.domain.vo.resp.WSBaseResp;
 import io.netty.channel.Channel;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -9,17 +10,38 @@ import me.chanjar.weixin.common.error.WxErrorException;
  */
 public interface WebSocketService {
 
-    void saveChannel(Channel ctx);
-
+    /**
+     * 处理用户登录请求，需要返回一张带code的二维码
+     *
+     * @param channel
+     */
     void handleLoginReq(Channel channel) throws WxErrorException;
 
-    void offline(Channel ctx);
+    /**
+     * 处理所有ws连接的事件
+     *
+     * @param channel
+     */
+    void connect(Channel channel);
+
+    /**
+     * 处理ws断开连接的事件
+     *
+     * @param channel
+     */
+    void removed(Channel channel);
+
+    /**
+     * 主动认证登录
+     *
+     * @param channel
+     * @param wsAuthorize
+     */
+    void authorize(Channel channel, WSAuthorize wsAuthorize);
 
     void scanLoginSuccess(Integer loginCode, Long uid);
 
     void waitAuthorize(Integer loginCode);
-
-    void authorize(Channel channel, String token);
 
     /**
      * 单机才可以这么做，集群需要加一层路由服务
