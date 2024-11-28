@@ -1,10 +1,10 @@
 package com.ychat.common.TestApi.Controller;
 
 import com.ychat.common.Constants.front.Response.ApiResult;
-import com.ychat.common.config.Redis.RedisKeyBuilder;
-import com.ychat.common.config.ThreadPool.YChatUncaughtExceptionHandler;
-import com.ychat.common.user.dao.UserDao;
-import com.ychat.common.utils.Jwt.JwtUtils;
+import com.ychat.common.Config.Redis.RedisKeyBuilder;
+import com.ychat.common.Config.ThreadPool.YChatUncaughtExceptionHandler;
+import com.ychat.common.User.Dao.UserDao;
+import com.ychat.common.Utils.Jwt.JwtUtils;
 import com.ychat.Utils.Redis.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.ychat.common.config.ThreadPool.ThreadPoolConfig.YCHAT_EXECUTOR;
+import static com.ychat.common.Config.ThreadPool.ThreadPoolConfig.YCHAT_EXECUTOR;
 
 @Slf4j
 @RestController

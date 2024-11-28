@@ -1,6 +1,6 @@
 package com.ychat.common;
 
-import com.ychat.common.user.dao.UserDao;
+import com.ychat.common.User.Dao.UserDao;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;

@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ychat.common.user.mapper.ItemConfigMapper">
 
-    <resultMap id="BaseResultMap" type="com.ychat.common.user.domain.entity.ItemConfig">
+    <resultMap id="BaseResultMap" type="com.ychat.common.User.Domain.entity.ItemConfig">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="type" column="type" jdbcType="INTEGER"/>
             <result property="img" column="img" jdbcType="VARCHAR"/>

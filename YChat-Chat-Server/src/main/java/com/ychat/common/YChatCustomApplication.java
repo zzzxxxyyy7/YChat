@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2024/02/27
  */
 @SpringBootApplication(scanBasePackages = {"com.ychat"})
-@MapperScan("com.ychat.common.**.mapper")
+@MapperScan("com.ychat.common.**.Mapper")
 public class YChatCustomApplication {
 
     public static void main(String[] args) {

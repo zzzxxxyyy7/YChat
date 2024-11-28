@@ -1,7 +1,7 @@
 package com.ychat.common.SensitiveWord;
 
-import com.ychat.common.user.dao.SensitiveWordDao;
-import com.ychat.common.user.domain.entity.SensitiveWord;
+import com.ychat.common.User.Dao.SensitiveWordDao;
+import com.ychat.common.User.Domain.entity.SensitiveWord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

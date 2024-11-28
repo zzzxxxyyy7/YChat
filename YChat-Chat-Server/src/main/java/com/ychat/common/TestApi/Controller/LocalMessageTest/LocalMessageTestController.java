@@ -1,11 +1,10 @@
 package com.ychat.common.TestApi.Controller.LocalMessageTest;
 
 import com.ychat.common.Constants.front.Response.ApiResult;
-import com.ychat.common.user.dao.MessageDao;
-import com.ychat.common.user.domain.entity.Message;
-import com.ychat.common.user.domain.vo.IdRespVO;
+import com.ychat.common.User.Dao.MessageDao;
+import com.ychat.common.User.Domain.entity.Message;
+import com.ychat.common.User.Domain.vo.IdRespVO;
 import com.ychat.service.MQProducer;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
