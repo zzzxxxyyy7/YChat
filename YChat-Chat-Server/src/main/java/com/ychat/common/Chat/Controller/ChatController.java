@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/capi/chat")
 @Api(tags = "聊天室相关接口")
 @Slf4j
 public class ChatController {

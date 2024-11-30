@@ -1,4 +1,4 @@
-package com.ychat.common.User.Domain.dto.req;
+package com.ychat.common.Chat.domain.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -30,4 +30,5 @@ public class TextMsgReq {
     @ApiModelProperty("艾特的uid")
     @Size(max = 10, message = "一次别艾特这么多人")
     private List<Long> atUidList;
+
 }

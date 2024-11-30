@@ -9,7 +9,7 @@ import com.ychat.common.Chat.domain.dto.ChatMessageReq;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
 import com.ychat.common.Chat.Services.handler.AbstractMsgHandler;
 import com.ychat.common.Chat.Services.factory.MsgHandlerFactory;
-import com.ychat.common.User.Domain.dto.req.TextMsgReq;
+import com.ychat.common.Chat.domain.dto.TextMsgReq;
 import com.ychat.common.User.Domain.entity.Message;
 import com.ychat.common.User.Domain.entity.MessageMark;
 

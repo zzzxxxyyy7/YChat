@@ -14,7 +14,7 @@ import com.ychat.common.Chat.Services.adapter.MessageAdapter;
 import com.ychat.common.Chat.Services.cache.MsgCache;
 import com.ychat.common.Chat.Services.factory.MsgHandlerFactory;
 import com.ychat.common.User.Dao.MessageDao;
-import com.ychat.common.User.Domain.dto.req.TextMsgReq;
+import com.ychat.common.Chat.domain.dto.TextMsgReq;
 import com.ychat.common.User.Domain.entity.Message;
 import com.ychat.common.User.Domain.entity.User;
 import com.ychat.common.User.Services.IRoleService;
@@ -91,7 +91,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
 
     @Override
     public void saveMsg(Message msg, TextMsgReq body) {
-        //插入文本内容
+        // 插入文本内容
         MessageExtra extra = Optional.ofNullable(msg.getExtra()).orElse(new MessageExtra());
         Message updateMessage = new Message();
         updateMessage.setId(msg.getId());
@@ -102,6 +102,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
         if (Objects.nonNull(body.getReplyMsgId())) {
             Integer gapCount = messageDao.getGapCount(msg.getRoomId(), body.getReplyMsgId(), msg.getId());
             updateMessage.setGapCount(gapCount);
+            // 设置被回复消息的 ID
             updateMessage.setReplyMsgId(body.getReplyMsgId());
         }
 
@@ -117,6 +118,11 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
         messageDao.updateById(updateMessage);
     }
 
+    /**
+     * 规定文本消息的展示格式
+     * @param msg
+     * @return
+     */
     @Override
     public Object showMsg(Message msg) {
         TextMsgResp resp = new TextMsgResp();
@@ -124,7 +130,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
         resp.setUrlContentMap(Optional.ofNullable(msg.getExtra()).map(MessageExtra::getUrlContentMap).orElse(null));
         resp.setAtUidList(Optional.ofNullable(msg.getExtra()).map(MessageExtra::getAtUidList).orElse(null));
 
-        // 回复消息
+        // 拿到回复的消息
         Optional<Message> reply = Optional.ofNullable(msg.getReplyMsgId())
                 .map(msgCache::getMsg)
                 .filter(a -> Objects.equals(a.getStatus(), MessageStatusEnum.NORMAL.getStatus()));
@@ -134,9 +140,11 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
             replyMsgVO.setId(replyMessage.getId());
             replyMsgVO.setUid(replyMessage.getFromUid());
             replyMsgVO.setType(replyMessage.getType());
+            // 这条回复消息具体的展示样式
             replyMsgVO.setBody(MsgHandlerFactory.getStrategyNoNull(replyMessage.getType()).showReplyMsg(replyMessage));
             User replyUser = userCache.getUserInfo(replyMessage.getFromUid());
             replyMsgVO.setUsername(replyUser.getName());
+            // 消息是否可跳转，仅间隔在 100 条内才可跳转
             replyMsgVO.setCanCallback(YesOrNoEnum.toStatus(Objects.nonNull(msg.getGapCount()) && msg.getGapCount() <= MessageAdapter.CAN_CALLBACK_GAP_COUNT));
             replyMsgVO.setGapCount(msg.getGapCount());
             resp.setReply(replyMsgVO);
