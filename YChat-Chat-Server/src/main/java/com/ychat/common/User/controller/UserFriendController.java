@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/userFriend/private")
+@RequestMapping("/capi/user/friend")
 @Api(tags = "好友相关接口")
 @Slf4j
 public class UserFriendController {

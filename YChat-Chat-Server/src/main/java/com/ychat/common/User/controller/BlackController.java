@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024-11-04
  */
 @RestController
-@RequestMapping("/black/private")
+@RequestMapping("/capi/black")
 @Api(tags = "用户相关")
 public class BlackController {
 

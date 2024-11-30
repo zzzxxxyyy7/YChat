@@ -25,37 +25,17 @@ import java.util.List;
  * @since 2024-11-04
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/capi/user")
 @Api(tags = "用户相关")
 public class UserController {
 
     @Autowired
     private IUserService userService;
 
-    @GetMapping("/private/userInfo")
+    @GetMapping("/userInfo")
     @ApiOperation("获取用户信息")
     public ApiResult<UserInfoVo> userInfo() {
         return ApiResult.success(userService.getUserInfo(RequestHolder.get().getUid()));
-    }
-
-    @PostMapping("/private/modifyName")
-    @ApiOperation("修改用户名")
-    public ApiResult<Void> modifyName(@Valid @RequestBody ModifyNameReq req) {
-        userService.modifyName(RequestHolder.get().getUid(), req);
-        return ApiResult.success();
-    }
-
-    @GetMapping("/private/badges")
-    @ApiOperation("可选徽章预览")
-    public ApiResult<List<BadgeResp>> badges() {
-        return ApiResult.success(userService.badges(RequestHolder.get().getUid()));
-    }
-
-    @PostMapping("/private/wearBadge")
-    @ApiOperation("佩戴徽章")
-    public ApiResult<List<BadgeResp>> wearingBadge(@Valid @RequestBody WearingBadgeReq req) {
-        userService.wearingBadge(RequestHolder.get().getUid(), req.getItemId());
-        return ApiResult.success();
     }
 
     @PostMapping("/public/summary/userInfo/batch")
@@ -68,6 +48,26 @@ public class UserController {
     @ApiOperation("徽章聚合信息-返回的代表需要刷新的")
     public ApiResult<List<ItemInfoVo>> getItemInfo(@Valid @RequestBody ItemInfoReq req) {
         return ApiResult.success(userService.getItemInfo(req));
+    }
+
+    @PostMapping("/modifyName")
+    @ApiOperation("修改用户名")
+    public ApiResult<Void> modifyName(@Valid @RequestBody ModifyNameReq req) {
+        userService.modifyName(RequestHolder.get().getUid(), req);
+        return ApiResult.success();
+    }
+
+    @GetMapping("/badges")
+    @ApiOperation("可选徽章预览")
+    public ApiResult<List<BadgeResp>> badges() {
+        return ApiResult.success(userService.badges(RequestHolder.get().getUid()));
+    }
+
+    @PostMapping("/wearBadge")
+    @ApiOperation("佩戴徽章")
+    public ApiResult<List<BadgeResp>> wearingBadge(@Valid @RequestBody WearingBadgeReq req) {
+        userService.wearingBadge(RequestHolder.get().getUid(), req.getItemId());
+        return ApiResult.success();
     }
 
 }
