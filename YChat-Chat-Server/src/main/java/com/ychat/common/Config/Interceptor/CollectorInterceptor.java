@@ -23,7 +23,7 @@ public class CollectorInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         RequestInfo info = new RequestInfo();
-        info.setUid(Optional.ofNullable(request.getAttribute(TokenInterceptor.UID)).map(Object::toString).map(Long::parseLong).orElse(null));
+        info.setUid(Optional.ofNullable(request.getAttribute(TokenInterceptor.ATTRIBUTE_UID)).map(Object::toString).map(Long::parseLong).orElse(null));
         info.setIp(ServletUtil.getClientIP(request));
         RequestHolder.set(info);
         return true;

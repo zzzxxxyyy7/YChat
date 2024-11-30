@@ -71,5 +71,4 @@ public class ChatController {
         return ApiResult.success();
     }
 
-
 }

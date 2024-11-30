@@ -14,21 +14,23 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * <p>
  * 消息表 服务实现类
- * </p>
- *
- * @author ${author}
- * @since 2024-11-18
  */
 @Service
 public class MessageDao extends ServiceImpl<MessageMapper, Message> {
 
+    /**
+     * 计算当前会话下，本条消息和被回复的消息之间的消息数量差值
+     * @param roomId
+     * @param fromId
+     * @param toId
+     * @return
+     */
     public Integer getGapCount(Long roomId, Long fromId, Long toId) {
         return lambdaQuery()
                 .eq(Message::getRoomId, roomId)
-                .gt(Message::getId, fromId)
-                .le(Message::getId, toId)
+                .gt(Message::getId, fromId) // 大于被回复的消息
+                .le(Message::getId, toId) // 小于新插入的消息
                 .count();
     }
 

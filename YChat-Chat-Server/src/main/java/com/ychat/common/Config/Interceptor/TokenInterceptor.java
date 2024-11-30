@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TokenInterceptor implements HandlerInterceptor {
 
-    public static final String TOKEN_HEADER = "Authorization";
-    public static final String BEARER = "Bearer ";
-    public static final String UID = "uid";
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String AUTHORIZATION_SCHEMA = "Bearer ";
+    public static final String ATTRIBUTE_UID = "uid";
 
     @Autowired
     private LoginService loginService;
@@ -38,34 +38,32 @@ public class TokenInterceptor implements HandlerInterceptor {
         // 如果 token 无效
         if (Objects.isNull(validUid)) {
             // 校验接口是否需要登录
-            boolean privateURI = isPrivateURI(request, response);
-            if (privateURI) {
+            boolean isPublicURI = isPublicURI(request.getRequestURI());
+            if (!isPublicURI) {
                 HttpErrorEnum.ACCESS_DENIED.sendHttpError(response);
                 return false;
             }
         }
-        request.setAttribute(UID, validUid);
+        request.setAttribute(ATTRIBUTE_UID, validUid);
         return true;
     }
 
     /**
-     * 如果为 private，表示必须登录才可以访问，返回 false
-     * @param request
-     * @return
+     * 判断是不是公共方法，可以未登录访问的
+     *
+     * @param requestURI
      */
-    private boolean isPrivateURI(HttpServletRequest request , HttpServletResponse response) {
-        String requestURI = request.getRequestURI();
-        String[] URIArray = requestURI.split("/");
-        List<String> URIList = Arrays.stream(URIArray).collect(Collectors.toList());
-        return URIList.contains("private");
+    private boolean isPublicURI(String requestURI) {
+        String[] split = requestURI.split("/");
+        return split.length > 2 && "public".equals(split[3]);
     }
 
     private String getToken(HttpServletRequest request) {
-        String token = Optional.ofNullable(request.getHeader(TOKEN_HEADER))
-                .filter(h -> h.startsWith(BEARER))
-                .map(h -> h.replaceFirst(BEARER, ""))
+        String header = request.getHeader(AUTHORIZATION_HEADER);
+        return Optional.ofNullable(header)
+                .filter(h -> h.startsWith(AUTHORIZATION_SCHEMA))
+                .map(h -> h.replaceFirst(AUTHORIZATION_SCHEMA, ""))
                 .orElse(null);
-        return token;
     }
 
 
