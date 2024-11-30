@@ -32,7 +32,7 @@ public class ChatController {
     @Autowired
     private UserCache userCache;
 
-    @PostMapping("/private/msg")
+    @PostMapping("/msg")
     @ApiOperation("发送消息")
     // 频控、暂时注释
 //    @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)

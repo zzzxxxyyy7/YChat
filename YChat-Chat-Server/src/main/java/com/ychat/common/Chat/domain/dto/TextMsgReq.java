@@ -28,7 +28,7 @@ public class TextMsgReq {
     private Long replyMsgId;
 
     @ApiModelProperty("艾特的uid")
-    @Size(max = 10, message = "一次别艾特这么多人")
+    @Size(max = 10, message = "一次最多@10个人")
     private List<Long> atUidList;
 
 }
