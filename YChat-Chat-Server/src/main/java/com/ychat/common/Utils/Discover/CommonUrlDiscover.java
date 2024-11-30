@@ -6,8 +6,7 @@ import org.jsoup.nodes.Document;
 import javax.annotation.Nullable;
 
 /**
- * @author zhaoqichao
- * @date 2023/7/3 16:54
+ * 最常用的 URL 解析器
  */
 public class CommonUrlDiscover extends AbstractUrlDiscover {
 
@@ -31,7 +30,7 @@ public class CommonUrlDiscover extends AbstractUrlDiscover {
     @Override
     public String getImage(String url, Document document) {
         String image = document.select("link[type=image/x-icon]").attr("href");
-        //如果没有去匹配含有icon属性的logo
+        // 如果没有去匹配含有icon属性的logo
         String href = StrUtil.isEmpty(image) ? document.select("link[rel$=icon]").attr("href") : image;
         //如果url已经包含了logo
         if (StrUtil.containsAny(url, "favicon")) {

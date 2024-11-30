@@ -21,8 +21,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * @author zhaoqichao
- * @date 2023/7/3 16:38
+ * 模板方法模式
  */
 @Slf4j
 public abstract class AbstractUrlDiscover implements UrlDiscover {
@@ -30,23 +29,24 @@ public abstract class AbstractUrlDiscover implements UrlDiscover {
     //链接识别的正则
     private static final Pattern PATTERN = Pattern.compile("((http|https)://)?(www.)?([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
 
-
     @Nullable
     @Override
     public Map<String, UrlInfo> getUrlContentMap(String content) {
-
         if (StrUtil.isBlank(content)) {
             return new HashMap<>();
         }
+
+        // 通过正则表达式匹配出合法的 URL
         List<String> matchList = ReUtil.findAll(PATTERN, content, 0);
 
-        //并行请求
+        // 并行请求
         List<CompletableFuture<Pair<String, UrlInfo>>> futures = matchList.stream().map(match -> CompletableFuture.supplyAsync(() -> {
             UrlInfo urlInfo = getContent(match);
             return Objects.isNull(urlInfo) ? null : Pair.of(match, urlInfo);
         })).collect(Collectors.toList());
+
         CompletableFuture<List<Pair<String, UrlInfo>>> future = FutureUtils.sequenceNonNull(futures);
-        //结果组装
+        // 结果组装
         return future.join().stream().collect(Collectors.toMap(Pair::getFirst, Pair::getSecond, (a, b) -> a));
     }
 
@@ -77,6 +77,7 @@ public abstract class AbstractUrlDiscover implements UrlDiscover {
     protected Document getUrlDocument(String matchUrl) {
         try {
             Connection connect = Jsoup.connect(matchUrl);
+            // 当一个 URL 请求时间超过 2s 时，就熔断这个 URL，避免因为木桶原理导致的请求超时
             connect.timeout(2000);
             return connect.get();
         } catch (Exception e) {
