@@ -1,6 +1,8 @@
 package com.ychat.common.Chat.Services.Impl;
 
+import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
 import com.ychat.common.Constants.Enums.Impl.NormalOrNoEnum;
+import com.ychat.common.User.Dao.*;
 import com.ychat.common.User.Services.cache.UserCache;
 import com.ychat.common.Utils.Assert.AssertUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -14,11 +16,8 @@ import com.ychat.common.Chat.Services.cache.RoomGroupCache;
 import com.ychat.common.Chat.Services.handler.AbstractMsgHandler;
 import com.ychat.common.Chat.Services.factory.MsgHandlerFactory;
 import com.ychat.common.User.Event.MessageSendEvent;
-import com.ychat.common.User.Dao.GroupMemberDao;
-import com.ychat.common.User.Dao.MessageDao;
-import com.ychat.common.User.Dao.MessageMarkDao;
-import com.ychat.common.User.Dao.RoomFriendDao;
 import com.ychat.common.User.Domain.entity.*;
+import com.ychat.common.Utils.Request.CursorPageBaseResp;
 import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberStatisticResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,6 +61,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Autowired
     private UserCache userCache;
+
+    @Autowired
+    private ContactDao contactDao;
 
     /**
      * 大群聊 ID 默认是 1
@@ -125,6 +128,34 @@ public class ChatServiceImpl implements ChatService {
         ChatMemberStatisticResp resp = new ChatMemberStatisticResp();
         resp.setOnlineNum(onlineNum);
         return resp;
+    }
+
+    @Override
+    public CursorPageBaseResp<ChatMessageResp> getMsgPage(ChatMessagePageReq request, @Nullable Long receiveUid) {
+        // 用最后一条消息id，来限制被踢出的人能看见的最大一条消息
+        Long lastMsgId = getLastMsgId(request.getRoomId(), receiveUid);
+        CursorPageBaseResp<Message> cursorPage = messageDao.getCursorPage(request.getRoomId(), request, lastMsgId);
+        if (cursorPage.isEmpty()) {
+            return CursorPageBaseResp.empty();
+        }
+        return CursorPageBaseResp.init(cursorPage, getMsgRespBatch(cursorPage.getList(), receiveUid));
+    }
+
+    /**
+     * 获取一个会话最后一条消息 ID
+     * @param roomId
+     * @param receiveUid
+     * @return
+     */
+    private Long getLastMsgId(Long roomId, Long receiveUid) {
+        Room room = roomCache.get(roomId);
+        AssertUtil.isNotEmpty(room, "会话号有误");
+        if (room.isHotRoom()) {
+            return null;
+        }
+        AssertUtil.isNotEmpty(receiveUid, "请先登录");
+        Contact contact = contactDao.get(receiveUid, roomId);
+        return contact.getLastMsgId();
     }
 
 }

@@ -1,9 +1,14 @@
 package com.ychat.common.Chat.Services;
 
+import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
 import com.ychat.common.Chat.domain.dto.ChatMessageReq;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
 import com.ychat.common.User.Domain.entity.Message;
+import com.ychat.common.Utils.Request.CursorPageBaseResp;
 import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberStatisticResp;
+
+import javax.annotation.Nullable;
+import javax.validation.Valid;
 
 /**
  * 消息处理类
@@ -40,5 +45,13 @@ public interface ChatService {
      * @return
      */
     ChatMemberStatisticResp getMemberStatistic();
+
+    /**
+     * 获取消息记录列表
+     *
+     * @param request
+     * @return
+     */
+    CursorPageBaseResp<ChatMessageResp> getMsgPage(ChatMessagePageReq request, @Nullable Long receiveUid);
 
 }

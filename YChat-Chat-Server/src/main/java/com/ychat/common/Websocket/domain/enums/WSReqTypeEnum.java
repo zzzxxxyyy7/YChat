@@ -32,4 +32,5 @@ public enum WSReqTypeEnum {
     public static WSReqTypeEnum of(Integer type) {
         return cache.get(type);
     }
+
 }

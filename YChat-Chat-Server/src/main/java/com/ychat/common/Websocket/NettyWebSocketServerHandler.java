@@ -107,6 +107,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
         WSBaseReq wsBaseReq = JSONUtil.toBean(msg.text(), WSBaseReq.class);
         switch (WSReqTypeEnum.of(wsBaseReq.getType())) {
             case HEARTBEAT:
+                log.info("真听到来自 {} 的心跳信息", ctx.channel().remoteAddress());
                 break;
             case AUTHORIZE:
                 this.webSocketService.authorize(ctx.channel() , new WSAuthorize(wsBaseReq.getToken()));
