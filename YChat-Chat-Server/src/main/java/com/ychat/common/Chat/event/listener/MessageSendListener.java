@@ -2,7 +2,7 @@ package com.ychat.common.Chat.Event.listener;
 
 import com.ychat.common.Chat.Constant.MQConstant;
 import com.ychat.common.Chat.domain.dto.MsgSendMessageDTO;
-import com.ychat.common.User.Event.MessageSendEvent;
+import com.ychat.common.Chat.Event.MessageSendEvent;
 import com.ychat.service.MQProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

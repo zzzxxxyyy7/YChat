@@ -1,6 +1,7 @@
 package com.ychat.common.Websocket.Services.Adapter;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.ychat.common.Chat.domain.dto.ChatMsgRecallDTO;
 import com.ychat.common.Constants.Enums.Impl.ChatActiveStatusEnum;
 import com.ychat.common.Constants.Enums.Impl.YesOrNoEnum;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
@@ -9,6 +10,7 @@ import com.ychat.common.User.Domain.entity.User;
 import com.ychat.common.Websocket.Domain.Enums.WSRespTypeEnum;
 import com.ychat.common.Websocket.Domain.Vo.Resp.*;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -114,6 +116,19 @@ public class WebSocketAdapter {
         return info;
     }
 
+    /**
+     * 封装消息撤回信息
+     * @param recallDTO
+     * @return
+     */
+    public static WSBaseResp<?> buildMsgRecall(ChatMsgRecallDTO recallDTO) {
+        WSBaseResp<WSMsgRecall> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.RECALL.getType());
+        WSMsgRecall recall = new WSMsgRecall();
+        BeanUtils.copyProperties(recallDTO, recall);
+        wsBaseResp.setData(recall);
+        return wsBaseResp;
+    }
     public WSBaseResp<?> buildOnlineNotifyResp(User user) {
         WSBaseResp<WSOnlineOfflineNotify> wsBaseResp = new WSBaseResp<>();
         wsBaseResp.setType(WSRespTypeEnum.ONLINE_OFFLINE_NOTIFY.getType());

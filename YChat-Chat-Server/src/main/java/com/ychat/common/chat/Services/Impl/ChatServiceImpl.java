@@ -1,8 +1,15 @@
 package com.ychat.common.Chat.Services.Impl;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+import com.ychat.common.Chat.Services.handler.RecallMsgHandler;
+import com.ychat.common.Chat.domain.dto.ChatMessageBaseReq;
 import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
+import com.ychat.common.Constants.Enums.Impl.MessageTypeEnum;
 import com.ychat.common.Constants.Enums.Impl.NormalOrNoEnum;
+import com.ychat.common.Constants.Enums.Impl.RoleEnum;
 import com.ychat.common.User.Dao.*;
+import com.ychat.common.User.Services.IRoleService;
 import com.ychat.common.User.Services.cache.UserCache;
 import com.ychat.common.Utils.Assert.AssertUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -15,7 +22,7 @@ import com.ychat.common.Chat.Services.cache.RoomCache;
 import com.ychat.common.Chat.Services.cache.RoomGroupCache;
 import com.ychat.common.Chat.Services.handler.AbstractMsgHandler;
 import com.ychat.common.Chat.Services.factory.MsgHandlerFactory;
-import com.ychat.common.User.Event.MessageSendEvent;
+import com.ychat.common.Chat.Event.MessageSendEvent;
 import com.ychat.common.User.Domain.entity.*;
 import com.ychat.common.Utils.Request.CursorPageBaseResp;
 import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberStatisticResp;
@@ -26,9 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -64,6 +69,12 @@ public class ChatServiceImpl implements ChatService {
 
     @Autowired
     private ContactDao contactDao;
+
+    @Autowired
+    private IRoleService roleService;
+
+    @Autowired
+    private RecallMsgHandler recallMsgHandler;
 
     /**
      * 大群聊 ID 默认是 1
@@ -157,5 +168,40 @@ public class ChatServiceImpl implements ChatService {
         Contact contact = contactDao.get(receiveUid, roomId);
         return contact.getLastMsgId();
     }
+
+    /**
+     * 撤回一条消息
+     * @param uid
+     * @param request
+     */
+    @Override
+    public void recallMsg(Long uid, ChatMessageBaseReq request) {
+        // 查询出消息
+        Message message = messageDao.getById(request.getMsgId());
+        // 校验是否拥有撤回的权力
+        checkRecall(uid, message);
+        // 执行撤回
+        recallMsgHandler.recall(uid, message);
+    }
+
+    /**
+     * 消息这条消息是否可以被撤回
+     * @param uid 发起撤回申请人的 UID
+     * @param message 需要被撤回的消息
+     */
+    private void checkRecall(Long uid, Message message) {
+        AssertUtil.isNotEmpty(message, "消息有误");
+        // 校验消息是否已经被撤回
+        AssertUtil.notEqual(message.getType(), MessageTypeEnum.RECALL.getType(), "已经撤回的消息无法再次撤回");
+        // 是否拥有管理员权限
+        boolean hasPower = roleService.hasRole(uid, RoleEnum.CHAT_MANAGER);
+        if (hasPower) return;
+        // 如果没有管理员权限，校验撤回的消息是否是自己发出的，不是自己的不能撤回
+        AssertUtil.equal(uid, message.getFromUid(), "抱歉,您没有权限");
+        long intervalTime = DateUtil.between(message.getCreateTime(), new Date(), DateUnit.MINUTE);
+        AssertUtil.isTrue(intervalTime < 2, "覆水难收，已经超过2分钟的消息不能撤回");
+    }
+
+
 
 }

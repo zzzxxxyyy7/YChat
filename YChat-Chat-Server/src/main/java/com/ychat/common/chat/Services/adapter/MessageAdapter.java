@@ -54,7 +54,7 @@ public class MessageAdapter {
         if (Objects.nonNull(msgHandler)) {
             messageVO.setBody(msgHandler.showMsg(message));
         }
-        //消息标记
+        // 消息标记
         messageVO.setMessageMark(buildMsgMark(marks, receiveUid));
         return messageVO;
     }
@@ -86,4 +86,5 @@ public class MessageAdapter {
         chatMessageReq.setBody(textMsgReq);
         return chatMessageReq;
     }
+
 }

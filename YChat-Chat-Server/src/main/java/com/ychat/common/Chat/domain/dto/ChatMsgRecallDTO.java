@@ -14,11 +14,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatMsgRecallDTO {
 
+    // 撤回的消息 ID
     private Long msgId;
 
+    // 撤回的消息所在会话 ID
     private Long roomId;
 
-    //撤回的用户
+    // 发起撤回行为的用户 UID
     private Long recallUid;
 
 }

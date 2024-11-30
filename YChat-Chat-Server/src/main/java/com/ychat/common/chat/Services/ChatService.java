@@ -1,5 +1,6 @@
 package com.ychat.common.Chat.Services;
 
+import com.ychat.common.Chat.domain.dto.ChatMessageBaseReq;
 import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
 import com.ychat.common.Chat.domain.dto.ChatMessageReq;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
@@ -54,4 +55,10 @@ public interface ChatService {
      */
     CursorPageBaseResp<ChatMessageResp> getMsgPage(ChatMessagePageReq request, @Nullable Long receiveUid);
 
+    /**
+     * 撤回消息
+     * @param uid
+     * @param request
+     */
+    void recallMsg(Long uid, @Valid ChatMessageBaseReq request);
 }
