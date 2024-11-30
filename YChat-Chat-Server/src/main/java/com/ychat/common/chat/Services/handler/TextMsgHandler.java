@@ -76,13 +76,15 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
 
             // 前端传入的@用户列表可能会重复，需要去重
             List<Long> atUidList = body.getAtUidList().stream().distinct().collect(Collectors.toList());
-            Map<Long, User> batch = userInfoCache.getBatch(atUidList);
+            Map<Long, User> userInfoMaps = userInfoCache.getBatch(atUidList);
 
             // 如果@用户不存在，userInfoCache 返回的map中依然存在该key，但是value为null，需要过滤掉再校验
-            long batchCount = batch.values().stream().filter(Objects::nonNull).count();
-            AssertUtil.equal((long)atUidList.size(), batchCount, "@用户不存在");
+            long batchCount = userInfoMaps.values().stream().filter(Objects::nonNull).count();
+            AssertUtil.equal((long)atUidList.size(), batchCount, "被艾特的用户不存在");
+            // 判断是否艾特了所有的群成员
             boolean atAll = body.getAtUidList().contains(0L);
             if (atAll) {
+                // 艾特所有群成员下，校验是否有管理员权限
                 AssertUtil.isTrue(iRoleService.hasRole(uid, RoleEnum.CHAT_MANAGER), "没有权限");
             }
         }
