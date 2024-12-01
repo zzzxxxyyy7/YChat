@@ -10,10 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,7 +52,10 @@ public class TokenInterceptor implements HandlerInterceptor {
      */
     private boolean isPublicURI(String requestURI) {
         String[] split = requestURI.split("/");
-        return split.length > 2 && "public".equals(split[3]);
+        Set<String> set = Arrays.stream(split)
+                .filter(s -> !s.isEmpty()) // 去除空字符串
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return set.contains("public");
     }
 
     private String getToken(HttpServletRequest request) {

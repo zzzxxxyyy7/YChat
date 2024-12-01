@@ -1,6 +1,8 @@
 package com.ychat.common;
 
-import com.ychat.common.User.Dao.UserDao;
+import com.ychat.Oss.MinIOTemplate;
+import com.ychat.Oss.domain.OssReq;
+import com.ychat.Oss.domain.OssResp;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -8,7 +10,6 @@ import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -24,18 +25,21 @@ public class WXTest {
     @Resource
     private WxMpService wxMpService;
 
-    @Resource
-    private UserDao userDao;
-
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @Value("${ychat.mysql.ip}")
-    private String ip;
+    @Autowired
+    private MinIOTemplate minIOTemplate;
 
     @Test
-    public void te() {
-        System.out.println(ip);
+    public void getUploadUrl() {
+        OssReq ossReq = OssReq.builder()
+                .fileName("C:\\Users\\Rhss\\Desktop\\后端开发.pdf")
+                .filePath("/test")
+                .autoPath(false)
+                .build();
+        OssResp preSignedObjectUrl = minIOTemplate.getPreSignedObjectUrl(ossReq);
+        System.out.println(preSignedObjectUrl);
     }
 
     @Test

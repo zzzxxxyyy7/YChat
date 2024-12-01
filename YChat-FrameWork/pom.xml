@@ -14,6 +14,7 @@
     <modules>
         <module>YChat-Common-Starter</module>
         <module>YChat-Transaction</module>
+        <module>YChat-Oss-Starter</module>
     </modules>
 
     <properties>

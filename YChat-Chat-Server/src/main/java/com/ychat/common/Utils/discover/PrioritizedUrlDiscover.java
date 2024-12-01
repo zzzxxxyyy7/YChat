@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Description: 具有优先级的title查询器
+ * 责任链 - 规定优先级 URL 解析器
  */
 public class PrioritizedUrlDiscover extends AbstractUrlDiscover {
 

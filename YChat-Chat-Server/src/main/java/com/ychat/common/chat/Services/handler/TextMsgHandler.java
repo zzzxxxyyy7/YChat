@@ -54,6 +54,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
     @Autowired
     private SensitiveWordBs sensitiveWordBs;
 
+    // URL 责任链
     private static final PrioritizedUrlDiscover URL_TITLE_DISCOVER = new PrioritizedUrlDiscover();
 
     @Override
