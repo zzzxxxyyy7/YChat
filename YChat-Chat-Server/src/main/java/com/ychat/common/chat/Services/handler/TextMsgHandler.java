@@ -5,7 +5,7 @@ import com.ychat.common.Constants.Enums.Impl.MessageTypeEnum;
 import com.ychat.common.Constants.Enums.Impl.RoleEnum;
 import com.ychat.common.Constants.Enums.Impl.YesOrNoEnum;
 import com.ychat.Domain.Dto.UrlInfo;
-import com.ychat.common.SensitiveWord.SensitiveWordBs;
+import com.ychat.common.SensitiveWord.SensitiveWordBootStrap;
 import com.ychat.common.Utils.Assert.AssertUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.ychat.common.Chat.domain.entity.msg.MessageExtra;
@@ -52,7 +52,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
     private IRoleService iRoleService;
 
     @Autowired
-    private SensitiveWordBs sensitiveWordBs;
+    private SensitiveWordBootStrap sensitiveWordBootStrap;
 
     // URL 责任链
     private static final PrioritizedUrlDiscover URL_TITLE_DISCOVER = new PrioritizedUrlDiscover();
@@ -98,7 +98,8 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
         MessageExtra extra = Optional.ofNullable(msg.getExtra()).orElse(new MessageExtra());
         Message updateMessage = new Message();
         updateMessage.setId(msg.getId());
-        updateMessage.setContent(sensitiveWordBs.filter(body.getContent()));
+        // 发送消息敏感词过滤
+        updateMessage.setContent(sensitiveWordBootStrap.filter(body.getContent()));
         updateMessage.setExtra(extra);
 
         // 如果有回复消息

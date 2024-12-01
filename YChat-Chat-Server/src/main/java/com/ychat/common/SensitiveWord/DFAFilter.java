@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * 敏感词工具类
+ * DFA 过滤器 - 敏感词工具类
  */
 public final class DFAFilter implements SensitiveWordFilter {
 

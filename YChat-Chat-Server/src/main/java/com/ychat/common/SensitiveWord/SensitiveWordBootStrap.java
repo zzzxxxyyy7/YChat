@@ -1,26 +1,20 @@
 package com.ychat.common.SensitiveWord;
 
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 /**
  * 敏感词引导类
- *
- * @author zhaoyuhang
- * @date 2023/07/08
  */
-@Component
-public class SensitiveWordBs {
+public class SensitiveWordBootStrap {
 
     /**
      * 私有化构造器
      */
-    private SensitiveWordBs() {
+    private SensitiveWordBootStrap() {
     }
 
     /**
-     * 脱敏策略
+     * 脱敏策略，默认 DFA
      */
     private SensitiveWordFilter sensitiveWordFilter = DFAFilter.getInstance();
 
@@ -29,8 +23,8 @@ public class SensitiveWordBs {
      */
     private IWordFactory wordDeny;
 
-    public static SensitiveWordBs newInstance() {
-        return new SensitiveWordBs();
+    public static SensitiveWordBootStrap newInstance() {
+        return new SensitiveWordBootStrap();
     }
 
     /**
@@ -41,8 +35,7 @@ public class SensitiveWordBs {
      * @return this
      * @since 0.0.13
      */
-    public SensitiveWordBs init() {
-
+    public SensitiveWordBootStrap init() {
         List<String> words = wordDeny.getWordList();
         loadWord(words);
         return this;
@@ -55,7 +48,7 @@ public class SensitiveWordBs {
      * @return 结果
      * @since 0.7.0
      */
-    public SensitiveWordBs filterStrategy(SensitiveWordFilter filter) {
+    public SensitiveWordBootStrap filterStrategy(SensitiveWordFilter filter) {
         if (filter == null) {
             throw new IllegalArgumentException("filter can not be null");
         }
@@ -63,7 +56,7 @@ public class SensitiveWordBs {
         return this;
     }
 
-    public SensitiveWordBs sensitiveWord(IWordFactory wordFactory) {
+    public SensitiveWordBootStrap sensitiveWord(IWordFactory wordFactory) {
         if (wordFactory == null) {
             throw new IllegalArgumentException("wordFactory can not be null");
         }

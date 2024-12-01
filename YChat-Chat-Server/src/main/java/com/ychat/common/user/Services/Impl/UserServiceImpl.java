@@ -3,6 +3,7 @@ package com.ychat.common.User.Services.Impl;
 import com.ychat.common.Constants.Enums.Impl.ItemEnum;
 import com.ychat.common.Constants.Enums.Impl.ItemTypeEnum;
 import com.ychat.common.Constants.Exception.BusinessException;
+import com.ychat.common.SensitiveWord.SensitiveWordBootStrap;
 import com.ychat.common.Utils.Assert.AssertUtil;
 import com.ychat.common.User.Event.UserRegisterEvent;
 import com.ychat.common.User.Dao.UserDao;
@@ -69,6 +70,9 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private UserSummaryCache userSummaryCache;
 
+    @Autowired
+    private SensitiveWordBootStrap sensitiveWordBootStrap;
+
     @Override
     public User getById(Long uid) {
         return userDao.getById(uid);
@@ -110,6 +114,7 @@ public class UserServiceImpl implements IUserService {
     public void modifyName(Long uid, ModifyNameReq req) {
         User oldUser = userDao.getByName(req.getName());
         AssertUtil.isEmpty(oldUser, "名字已经被占用");
+        AssertUtil.isFalse(sensitiveWordBootStrap.hasSensitiveWord(req.getName()), "新名称存在敏感词，无法修改，请重试");
 
         // 使用 Redisson 获取分布式锁
         RLock lock = redissonClient.getLock("modifyName:uid:" + uid);
@@ -118,9 +123,7 @@ public class UserServiceImpl implements IUserService {
             if (lock.tryLock(10, 5, TimeUnit.SECONDS)) {
                 // 判断改名卡是否足够
                 UserBackpack firstValidItem = userBackpackService.getFirstValidItem(uid, ItemEnum.MODIFY_NAME_CARD.getId());
-
                 AssertUtil.isNotEmpty(firstValidItem, "改名卡不足，请等待活动发放");
-
                 // 使用改名卡
                 boolean isUsed = userBackpackService.useItem(firstValidItem);
                 if (isUsed) {

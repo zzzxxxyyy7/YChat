@@ -7,6 +7,7 @@ import java.util.List;
  * 敏感词过滤
  */
 public interface SensitiveWordFilter {
+
     /**
      * 有敏感词
      *
