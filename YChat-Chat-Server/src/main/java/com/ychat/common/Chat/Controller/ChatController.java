@@ -1,6 +1,7 @@
 package com.ychat.common.Chat.Controller;
 
 import com.ychat.common.Chat.domain.dto.ChatMessageBaseReq;
+import com.ychat.common.Chat.domain.dto.ChatMessageMarkReq;
 import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
 import com.ychat.common.Constants.Enums.Impl.BlackTypeEnum;
 import com.ychat.common.Constants.front.Response.ApiResult;
@@ -68,6 +69,14 @@ public class ChatController {
     //@FrequencyControl(time = 20, count = 3, target = FrequencyControl.Target.UID)
     public ApiResult<Void> recallMsg(@Valid @RequestBody ChatMessageBaseReq request) {
         chatService.recallMsg(RequestHolder.get().getUid(), request);
+        return ApiResult.success();
+    }
+
+    @PutMapping("/msg/mark")
+    @ApiOperation("标记消息")
+    //@FrequencyControl(time = 10, count = 5, target = FrequencyControl.Target.UID)
+    public ApiResult<Void> setMsgMark(@Valid @RequestBody ChatMessageMarkReq request) {
+        chatService.setMsgMark(RequestHolder.get().getUid(), request);
         return ApiResult.success();
     }
 

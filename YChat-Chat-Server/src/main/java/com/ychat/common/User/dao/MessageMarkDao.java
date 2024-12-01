@@ -10,9 +10,6 @@ import java.util.List;
 
 /**
  * 消息标记表 服务实现类
- *
- * @author ${author}
- * @since 2024-11-23
  */
 @Service
 public class MessageMarkDao extends ServiceImpl<MessageMarkMapper, MessageMark> {
@@ -22,6 +19,20 @@ public class MessageMarkDao extends ServiceImpl<MessageMarkMapper, MessageMark> 
                 .in(MessageMark::getMsgId, msgIds)
                 .eq(MessageMark::getStatus, NormalOrNoEnum.NORMAL.getStatus())
                 .list();
+    }
+
+    /**
+     * 获取给定的消息标记记录
+     * @param uid
+     * @param msgId
+     * @param markType
+     * @return
+     */
+    public MessageMark get(Long uid, Long msgId, Integer markType) {
+        return lambdaQuery().eq(MessageMark::getUid, uid)
+                .eq(MessageMark::getMsgId, msgId)
+                .eq(MessageMark::getType, markType)
+                .one();
     }
 
 }

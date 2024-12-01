@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Description: 消息标记类型
+ * 消息标记类型
  */
 @AllArgsConstructor
 @Getter
@@ -31,4 +31,5 @@ public enum MessageMarkTypeEnum {
     public static MessageMarkTypeEnum of(Integer type) {
         return cache.get(type);
     }
+
 }

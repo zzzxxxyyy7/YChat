@@ -3,11 +3,14 @@ package com.ychat.common.Chat.Services.Impl;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import com.ychat.common.Chat.Services.handler.RecallMsgHandler;
+import com.ychat.common.Chat.Services.mark.AbstractMsgMarkStrategy;
+import com.ychat.common.Chat.Services.mark.MsgMarkFactory;
 import com.ychat.common.Chat.domain.dto.ChatMessageBaseReq;
+import com.ychat.common.Chat.domain.dto.ChatMessageMarkReq;
 import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
-import com.ychat.common.Constants.Enums.Impl.MessageTypeEnum;
-import com.ychat.common.Constants.Enums.Impl.NormalOrNoEnum;
-import com.ychat.common.Constants.Enums.Impl.RoleEnum;
+import com.ychat.common.Config.Redis.RedissonConfig;
+import com.ychat.common.Constants.Enums.Impl.*;
+import com.ychat.common.Constants.Exception.BusinessException;
 import com.ychat.common.User.Dao.*;
 import com.ychat.common.User.Services.IRoleService;
 import com.ychat.common.User.Services.cache.UserCache;
@@ -27,6 +30,8 @@ import com.ychat.common.User.Domain.entity.*;
 import com.ychat.common.Utils.Request.CursorPageBaseResp;
 import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberStatisticResp;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -34,10 +39,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * Description: 消息处理类
+ * 消息处理类
  */
 @Service
 @Slf4j
@@ -75,6 +81,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Autowired
     private RecallMsgHandler recallMsgHandler;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     /**
      * 大群聊 ID 默认是 1
@@ -202,6 +211,36 @@ public class ChatServiceImpl implements ChatService {
         AssertUtil.isTrue(intervalTime < 2, "覆水难收，已经超过2分钟的消息不能撤回");
     }
 
-
+    /**
+     * 标记消息（点赞/点踩）
+     * @param uid
+     * @param request
+     */
+    @Override
+    public void setMsgMark(Long uid, ChatMessageMarkReq request) {
+        RLock lock = redissonClient.getLock("markMessage:uid:" + uid);
+        try {
+            // 尝试加锁，设置锁的过期时间为5秒，防止长时间占用
+            if (lock.tryLock(10, 5, TimeUnit.SECONDS)) {
+                AbstractMsgMarkStrategy strategy = MsgMarkFactory.getStrategyNoNull(request.getMarkType());
+                switch (MessageMarkActTypeEnum.of(request.getActType())) {
+                    case MARK: // 确认操作，调用指定策略类操作确认
+                        strategy.mark(uid, request.getMsgId());
+                        break;
+                    case UN_MARK: // 取消操作，调用指定策略类操作取消
+                        strategy.unMark(uid, request.getMsgId());
+                        break;
+                }
+            } else {
+                throw new BusinessException("点赞/点踩过于频繁，请稍后再试");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("锁等待被中断");
+        } finally {
+            // 确保在操作结束后释放锁
+            lock.unlock();
+        }
+    }
 
 }

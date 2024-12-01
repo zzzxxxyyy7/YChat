@@ -1,6 +1,7 @@
 package com.ychat.common.Chat.Services;
 
 import com.ychat.common.Chat.domain.dto.ChatMessageBaseReq;
+import com.ychat.common.Chat.domain.dto.ChatMessageMarkReq;
 import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
 import com.ychat.common.Chat.domain.dto.ChatMessageReq;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
@@ -61,4 +62,12 @@ public interface ChatService {
      * @param request
      */
     void recallMsg(Long uid, @Valid ChatMessageBaseReq request);
+
+    /**
+     * 标记一条消息
+     * @param uid
+     * @param request
+     */
+    void setMsgMark(Long uid, @Valid ChatMessageMarkReq request);
+
 }
