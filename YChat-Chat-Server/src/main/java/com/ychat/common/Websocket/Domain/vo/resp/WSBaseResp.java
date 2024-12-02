@@ -16,4 +16,5 @@ public class WSBaseResp<T> {
     private Integer type;
 
     private T data;
+
 }

@@ -35,4 +35,17 @@ public class MessageMarkDao extends ServiceImpl<MessageMarkMapper, MessageMark> 
                 .one();
     }
 
+    /**
+     * 查询这条消息被标记的次数
+     * @param msgId
+     * @param markType
+     * @return
+     */
+    public Integer getMarkCount(Long msgId, Integer markType) {
+        return lambdaQuery().eq(MessageMark::getMsgId, msgId)
+                .eq(MessageMark::getType, markType)
+                .eq(MessageMark::getStatus, NormalOrNoEnum.NORMAL.getStatus())
+                .count();
+    }
+
 }
