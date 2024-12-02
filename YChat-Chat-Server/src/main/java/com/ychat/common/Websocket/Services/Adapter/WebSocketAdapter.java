@@ -1,6 +1,7 @@
 package com.ychat.common.Websocket.Services.Adapter;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.ychat.common.Chat.domain.dto.ChatMessageMarkDTO;
 import com.ychat.common.Chat.domain.dto.ChatMsgRecallDTO;
 import com.ychat.common.Constants.Enums.Impl.ChatActiveStatusEnum;
 import com.ychat.common.Constants.Enums.Impl.YesOrNoEnum;
@@ -129,6 +130,19 @@ public class WebSocketAdapter {
         wsBaseResp.setData(recall);
         return wsBaseResp;
     }
+
+    public static WSBaseResp<WSMsgMark> buildMsgMarkSend(ChatMessageMarkDTO dto, Integer markCount) {
+        WSMsgMark.WSMsgMarkItem item = new WSMsgMark.WSMsgMarkItem();
+        BeanUtils.copyProperties(dto, item);
+        item.setMarkCount(markCount);
+        WSBaseResp<WSMsgMark> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.MARK.getType());
+        WSMsgMark mark = new WSMsgMark();
+        mark.setMarkList(Collections.singletonList(item));
+        wsBaseResp.setData(mark);
+        return wsBaseResp;
+    }
+
     public WSBaseResp<?> buildOnlineNotifyResp(User user) {
         WSBaseResp<WSOnlineOfflineNotify> wsBaseResp = new WSBaseResp<>();
         wsBaseResp.setType(WSRespTypeEnum.ONLINE_OFFLINE_NOTIFY.getType());

@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Description: 会话是否正常的通用枚举
+ * 会话是否正常的通用枚举
  */
 @AllArgsConstructor
 @Getter
@@ -34,4 +34,5 @@ public enum NormalOrNoEnum {
     public static Integer toStatus(Boolean bool) {
         return bool ? NORMAL.getStatus() : NOT_NORMAL.getStatus();
     }
+
 }
