@@ -1,6 +1,7 @@
 package com.ychat.common.Chat.Controller;
 
 import com.ychat.common.Chat.domain.dto.*;
+import com.ychat.common.Chat.domain.vo.MsgReadInfoDTO;
 import com.ychat.common.Constants.Enums.Impl.BlackTypeEnum;
 import com.ychat.common.Constants.front.Response.ApiResult;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -75,6 +77,13 @@ public class ChatController {
     public ApiResult<Void> setMsgMark(@Valid @RequestBody ChatMessageMarkReq request) {
         chatService.setMsgMark(RequestHolder.get().getUid(), request);
         return ApiResult.success();
+    }
+
+    @GetMapping("/msg/read")
+    @ApiOperation("获取消息的已读未读总数")
+    public ApiResult<Collection<MsgReadInfoDTO>> getReadInfo(@Valid ChatMessageReadInfoReq request) {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(chatService.getMsgReadInfo(uid, request));
     }
 
     @PutMapping("/msg/read")

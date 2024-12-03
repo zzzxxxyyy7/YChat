@@ -2,12 +2,14 @@ package com.ychat.common.Chat.Services;
 
 import com.ychat.common.Chat.domain.dto.*;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
+import com.ychat.common.Chat.domain.vo.MsgReadInfoDTO;
 import com.ychat.common.User.Domain.entity.Message;
 import com.ychat.common.Utils.Request.CursorPageBaseResp;
 import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberStatisticResp;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
+import java.util.Collection;
 
 /**
  * 消息处理类
@@ -73,5 +75,13 @@ public interface ChatService {
      * @param request
      */
     void msgRead(Long uid, ChatMessageMemberReq request);
+
+    /**
+     * 查询消息的已读和未读总数
+     * @param uid
+     * @param request
+     * @return
+     */
+    Collection<MsgReadInfoDTO> getMsgReadInfo(Long uid, @Valid ChatMessageReadInfoReq request);
 
 }

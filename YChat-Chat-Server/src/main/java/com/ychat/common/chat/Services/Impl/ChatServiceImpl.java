@@ -6,10 +6,12 @@ import com.ychat.common.Chat.Services.handler.RecallMsgHandler;
 import com.ychat.common.Chat.Services.mark.AbstractMsgMarkStrategy;
 import com.ychat.common.Chat.Services.mark.MsgMarkFactory;
 import com.ychat.common.Chat.domain.dto.*;
+import com.ychat.common.Chat.domain.vo.MsgReadInfoDTO;
 import com.ychat.common.Config.Redis.RedissonConfig;
 import com.ychat.common.Constants.Enums.Impl.*;
 import com.ychat.common.Constants.Exception.BusinessException;
 import com.ychat.common.User.Dao.*;
+import com.ychat.common.User.Services.IContactService;
 import com.ychat.common.User.Services.IRoleService;
 import com.ychat.common.User.Services.cache.UserCache;
 import com.ychat.common.Utils.Assert.AssertUtil;
@@ -82,6 +84,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Autowired
     private RedissonClient redissonClient;
+
+    @Autowired
+    private IContactService contactService;
 
     /**
      * 大群聊 ID 默认是 1
@@ -277,6 +282,15 @@ public class ChatServiceImpl implements ChatService {
             // 确保在操作结束后释放锁
             lock.unlock();
         }
+    }
+
+    @Override
+    public Collection<MsgReadInfoDTO> getMsgReadInfo(Long uid, ChatMessageReadInfoReq request) {
+        List<Message> messages = messageDao.listByIds(request.getMsgId());
+        messages.forEach(message -> {
+            AssertUtil.equal(uid, message.getFromUid(), "只能查询自己发送的消息");
+        });
+        return contactService.getMsgReadInfo(messages).values();
     }
 
 }
