@@ -1,6 +1,7 @@
 package com.ychat.common.Chat.Controller;
 
 import com.ychat.common.Chat.domain.dto.*;
+import com.ychat.common.Chat.domain.vo.ChatMessageReadResp;
 import com.ychat.common.Chat.domain.vo.MsgReadInfoDTO;
 import com.ychat.common.Constants.Enums.Impl.BlackTypeEnum;
 import com.ychat.common.Constants.front.Response.ApiResult;
@@ -77,6 +78,13 @@ public class ChatController {
     public ApiResult<Void> setMsgMark(@Valid @RequestBody ChatMessageMarkReq request) {
         chatService.setMsgMark(RequestHolder.get().getUid(), request);
         return ApiResult.success();
+    }
+
+    @GetMapping("/msg/read/page")
+    @ApiOperation("消息的已读未读列表")
+    public ApiResult<CursorPageBaseResp<ChatMessageReadResp>> getReadPage(@Valid ChatMessageReadReq request) {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(chatService.getReadPage(uid, request));
     }
 
     @GetMapping("/msg/read")

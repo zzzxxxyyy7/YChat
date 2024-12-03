@@ -50,7 +50,12 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
         }, Message::getId);
     }
 
-
+    /**
+     * 查询某个会话下的未读消息总数
+     * @param roomId
+     * @param readTime
+     * @return
+     */
     public Integer getUnReadCount(Long roomId, Date readTime) {
         return lambdaQuery()
                 .eq(Message::getRoomId, roomId)

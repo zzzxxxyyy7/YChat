@@ -60,7 +60,6 @@ public class RoomAppServiceImpl implements RoomAppService {
     @Autowired
     private IRoomService roomService;
 
-
     @Override
     public CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid) {
         // 查出用户要展示的会话列表

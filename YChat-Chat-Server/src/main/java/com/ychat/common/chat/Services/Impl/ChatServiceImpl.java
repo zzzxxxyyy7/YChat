@@ -2,10 +2,12 @@ package com.ychat.common.Chat.Services.Impl;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import com.ychat.common.Chat.Services.adapter.RoomAdapter;
 import com.ychat.common.Chat.Services.handler.RecallMsgHandler;
 import com.ychat.common.Chat.Services.mark.AbstractMsgMarkStrategy;
 import com.ychat.common.Chat.Services.mark.MsgMarkFactory;
 import com.ychat.common.Chat.domain.dto.*;
+import com.ychat.common.Chat.domain.vo.ChatMessageReadResp;
 import com.ychat.common.Chat.domain.vo.MsgReadInfoDTO;
 import com.ychat.common.Config.Redis.RedissonConfig;
 import com.ychat.common.Constants.Enums.Impl.*;
@@ -291,6 +293,23 @@ public class ChatServiceImpl implements ChatService {
             AssertUtil.equal(uid, message.getFromUid(), "只能查询自己发送的消息");
         });
         return contactService.getMsgReadInfo(messages).values();
+    }
+
+    @Override
+    public CursorPageBaseResp<ChatMessageReadResp> getReadPage(Long uid, ChatMessageReadReq request) {
+        Message message = messageDao.getById(request.getMsgId());
+        AssertUtil.isNotEmpty(message, "消息Id有误");
+        AssertUtil.equal(uid, message.getFromUid(), "只能查看自己的消息");
+        CursorPageBaseResp<Contact> page;
+        if (request.getSearchType() == 1) { // 已读
+            page = contactDao.getReadPage(message, request);
+        } else {
+            page = contactDao.getUnReadPage(message, request);
+        }
+        if (CollectionUtil.isEmpty(page.getList())) {
+            return CursorPageBaseResp.empty();
+        }
+        return CursorPageBaseResp.init(page, RoomAdapter.buildReadResp(page.getList()));
     }
 
 }

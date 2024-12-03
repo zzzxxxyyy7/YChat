@@ -1,6 +1,7 @@
 package com.ychat.common.Chat.Services;
 
 import com.ychat.common.Chat.domain.dto.*;
+import com.ychat.common.Chat.domain.vo.ChatMessageReadResp;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
 import com.ychat.common.Chat.domain.vo.MsgReadInfoDTO;
 import com.ychat.common.User.Domain.entity.Message;
@@ -83,5 +84,13 @@ public interface ChatService {
      * @return
      */
     Collection<MsgReadInfoDTO> getMsgReadInfo(Long uid, @Valid ChatMessageReadInfoReq request);
+
+    /**
+     *
+     * @param uid
+     * @param request
+     * @return
+     */
+    CursorPageBaseResp<ChatMessageReadResp> getReadPage(Long uid, @Valid ChatMessageReadReq request);
 
 }

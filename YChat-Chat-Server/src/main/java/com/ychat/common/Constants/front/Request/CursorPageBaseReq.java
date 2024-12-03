@@ -34,4 +34,5 @@ public class CursorPageBaseReq {
     public Boolean isFirstPage() {
         return StringUtils.isEmpty(cursor);
     }
+
 }

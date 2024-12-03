@@ -1,5 +1,6 @@
 package com.ychat.common.User.Dao;
 
+import com.ychat.common.Chat.domain.dto.ChatMessageReadReq;
 import com.ychat.common.Constants.front.Request.CursorPageBaseReq;
 import com.ychat.common.User.Domain.entity.Contact;
 import com.ychat.common.User.Domain.entity.Message;
@@ -82,6 +83,22 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
                 .ne(Contact::getUid, message.getFromUid()) // 不需要查询自己是否已读
                 .ge(Contact::getReadTime, message.getCreateTime()) // 阅读时间大于这条消息的创建时间就算已读
                 .count();
+    }
+
+    public CursorPageBaseResp<Contact> getReadPage(Message message, CursorPageBaseReq cursorPageBaseReq) {
+        return CursorUtils.getCursorPageByMysql(this, cursorPageBaseReq, wrapper -> {
+            wrapper.eq(Contact::getRoomId, message.getRoomId());
+            wrapper.ne(Contact::getUid, message.getFromUid()); // 不需要查询出自己
+            wrapper.ge(Contact::getReadTime, message.getCreateTime()); // 已读时间大于等于消息发送时间
+        }, Contact::getReadTime);
+    }
+
+    public CursorPageBaseResp<Contact> getUnReadPage(Message message, CursorPageBaseReq cursorPageBaseReq) {
+        return CursorUtils.getCursorPageByMysql(this, cursorPageBaseReq, wrapper -> {
+            wrapper.eq(Contact::getRoomId, message.getRoomId());
+            wrapper.ne(Contact::getUid, message.getFromUid()); // 不需要查询出自己
+            wrapper.lt(Contact::getReadTime, message.getCreateTime()); // 已读时间小于消息发送时间
+        }, Contact::getReadTime);
     }
 
 }
