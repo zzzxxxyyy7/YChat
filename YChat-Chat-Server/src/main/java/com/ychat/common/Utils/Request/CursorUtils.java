@@ -24,6 +24,14 @@ import java.util.stream.Collectors;
  */
 public class CursorUtils {
 
+    /**
+     * Redis 游标翻页查找工具类
+     * @param cursorPageBaseReq
+     * @param redisKey
+     * @param typeConvert
+     * @return
+     * @param <T>
+     */
     public static <T> CursorPageBaseResp<Pair<T, Double>> getCursorPageByRedis(CursorPageBaseReq cursorPageBaseReq, String redisKey, Function<String, T> typeConvert) {
         Set<ZSetOperations.TypedTuple<String>> typedTuples;
         if (StrUtil.isBlank(cursorPageBaseReq.getCursor())) {//第一次
@@ -44,6 +52,15 @@ public class CursorUtils {
         return new CursorPageBaseResp<>(cursor, isLast, result);
     }
 
+    /**
+     * MySQl 游标翻页查找工具类
+     * @param mapper
+     * @param request
+     * @param initWrapper
+     * @param cursorColumn
+     * @return
+     * @param <T>
+     */
     public static <T> CursorPageBaseResp<T> getCursorPageByMysql(IService<T> mapper, CursorPageBaseReq request, Consumer<LambdaQueryWrapper<T>> initWrapper, SFunction<T, ?> cursorColumn) {
         //游标字段类型
         Class<?> cursorType = LambdaUtils.getReturnType(cursorColumn);
@@ -83,4 +100,5 @@ public class CursorUtils {
             return cursor;
         }
     }
+
 }

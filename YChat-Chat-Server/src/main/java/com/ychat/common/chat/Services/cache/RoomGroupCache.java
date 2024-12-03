@@ -37,4 +37,5 @@ public class RoomGroupCache extends AbstractRedisStringCache<Long, RoomGroup> {
         List<RoomGroup> roomGroups = roomGroupDao.listByRoomIds(roomIds);
         return roomGroups.stream().collect(Collectors.toMap(RoomGroup::getRoomId, Function.identity()));
     }
+
 }

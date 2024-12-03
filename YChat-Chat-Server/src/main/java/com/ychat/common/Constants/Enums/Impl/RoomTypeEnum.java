@@ -30,4 +30,5 @@ public enum RoomTypeEnum {
     public static RoomTypeEnum of(Integer type) {
         return cache.get(type);
     }
+
 }

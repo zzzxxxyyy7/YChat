@@ -11,6 +11,7 @@ import com.ychat.common.Utils.Request.CursorUtils;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -47,6 +48,14 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
             wrapper.eq(Message::getStatus, MessageStatusEnum.NORMAL.getStatus());
             wrapper.le(Objects.nonNull(lastMsgId), Message::getId, lastMsgId);
         }, Message::getId);
+    }
+
+
+    public Integer getUnReadCount(Long roomId, Date readTime) {
+        return lambdaQuery()
+                .eq(Message::getRoomId, roomId)
+                .gt(Objects.nonNull(readTime), Message::getCreateTime, readTime)
+                .count();
     }
 
 }

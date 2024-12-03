@@ -8,7 +8,7 @@ import com.ychat.common.User.Dao.RoomFriendDao;
 import com.ychat.common.User.Domain.entity.Room;
 import com.ychat.common.User.Domain.entity.RoomFriend;
 import com.ychat.common.User.Services.IRoomFriendService;
-import com.ychat.common.User.Services.adapter.ChatAdapter;
+import com.ychat.common.Chat.Services.adapter.ChatAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

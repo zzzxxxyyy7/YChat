@@ -26,11 +26,11 @@ public class Room implements Serializable {
     /**
      * id
      */
-      @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 房间类型 1群聊 2单聊
+     * 会话类型 1群聊 2单聊
      */
     @TableField("type")
     private Integer type;

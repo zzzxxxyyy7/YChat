@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Description: 是否热点枚举类
+ * Description: 是否是热点会话枚举类
  */
 @AllArgsConstructor
 @Getter
@@ -30,4 +30,5 @@ public enum HotFlagEnum {
     public static HotFlagEnum of(Integer type) {
         return cache.get(type);
     }
+
 }
