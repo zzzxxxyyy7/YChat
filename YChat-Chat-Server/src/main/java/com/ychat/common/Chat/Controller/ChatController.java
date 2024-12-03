@@ -1,12 +1,9 @@
 package com.ychat.common.Chat.Controller;
 
-import com.ychat.common.Chat.domain.dto.ChatMessageBaseReq;
-import com.ychat.common.Chat.domain.dto.ChatMessageMarkReq;
-import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
+import com.ychat.common.Chat.domain.dto.*;
 import com.ychat.common.Constants.Enums.Impl.BlackTypeEnum;
 import com.ychat.common.Constants.front.Response.ApiResult;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
-import com.ychat.common.Chat.domain.dto.ChatMessageReq;
 import com.ychat.common.Chat.Services.ChatService;
 import com.ychat.common.User.Services.cache.UserCache;
 import com.ychat.common.Utils.Request.CursorPageBaseResp;
@@ -77,6 +74,14 @@ public class ChatController {
     //@FrequencyControl(time = 10, count = 5, target = FrequencyControl.Target.UID)
     public ApiResult<Void> setMsgMark(@Valid @RequestBody ChatMessageMarkReq request) {
         chatService.setMsgMark(RequestHolder.get().getUid(), request);
+        return ApiResult.success();
+    }
+
+    @PutMapping("/msg/read")
+    @ApiOperation("消息阅读上报，用户阅读了一条消息是一定要上报服务端的")
+    public ApiResult<Void> msgRead(@Valid @RequestBody ChatMessageMemberReq request) {
+        Long uid = RequestHolder.get().getUid();
+        chatService.msgRead(uid, request);
         return ApiResult.success();
     }
 

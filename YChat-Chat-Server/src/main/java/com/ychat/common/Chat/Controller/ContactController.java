@@ -31,9 +31,6 @@ import javax.validation.Valid;
 public class ContactController {
 
     @Autowired
-    private ChatService chatService;
-
-    @Autowired
     private RoomAppService roomService;
 
     @GetMapping("/public/contact/page")

@@ -5,9 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import com.ychat.common.Chat.Services.handler.RecallMsgHandler;
 import com.ychat.common.Chat.Services.mark.AbstractMsgMarkStrategy;
 import com.ychat.common.Chat.Services.mark.MsgMarkFactory;
-import com.ychat.common.Chat.domain.dto.ChatMessageBaseReq;
-import com.ychat.common.Chat.domain.dto.ChatMessageMarkReq;
-import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
+import com.ychat.common.Chat.domain.dto.*;
 import com.ychat.common.Config.Redis.RedissonConfig;
 import com.ychat.common.Constants.Enums.Impl.*;
 import com.ychat.common.Constants.Exception.BusinessException;
@@ -17,7 +15,6 @@ import com.ychat.common.User.Services.cache.UserCache;
 import com.ychat.common.Utils.Assert.AssertUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import com.ychat.common.Chat.domain.dto.ChatMessageReq;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
 import com.ychat.common.Chat.Services.ChatService;
 import com.ychat.common.Chat.Services.adapter.MessageAdapter;
@@ -30,6 +27,7 @@ import com.ychat.common.User.Domain.entity.*;
 import com.ychat.common.Utils.Request.CursorPageBaseResp;
 import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberStatisticResp;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -233,6 +231,44 @@ public class ChatServiceImpl implements ChatService {
                 }
             } else {
                 throw new BusinessException("点赞/点踩过于频繁，请稍后再试");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("锁等待被中断");
+        } finally {
+            // 确保在操作结束后释放锁
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 上报会话最新阅读时间
+     * @param uid
+     * @param request
+     */
+    @Override
+    public void msgRead(Long uid, ChatMessageMemberReq request) {
+        // 避免并发上报会话
+        RLock lock = redissonClient.getLock("readMsgUpload:uid:" + uid);
+        try {
+            // 尝试加锁，设置锁的过期时间为5秒，防止长时间占用
+            if (lock.tryLock(3, 1, TimeUnit.SECONDS)) {
+                // 查询这个用户在这个会话下的消息表
+                Contact contact = contactDao.get(uid, request.getRoomId());
+                if (Objects.nonNull(contact)) {
+                    Contact updateContact = new Contact();
+                    updateContact.setId(contact.getId());
+                    updateContact.setReadTime(new Date()); // 更新最新阅读到的时间
+                    contactDao.updateById(updateContact);
+                } else {
+                    Contact newContact = new Contact();
+                    newContact.setUid(uid);
+                    newContact.setRoomId(request.getRoomId());
+                    newContact.setReadTime(new Date());
+                    contactDao.save(newContact);
+                }
+            } else {
+                throw new BusinessException("消息上报过于频繁，请稍后再试");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

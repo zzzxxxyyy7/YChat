@@ -1,9 +1,6 @@
 package com.ychat.common.Chat.Services;
 
-import com.ychat.common.Chat.domain.dto.ChatMessageBaseReq;
-import com.ychat.common.Chat.domain.dto.ChatMessageMarkReq;
-import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
-import com.ychat.common.Chat.domain.dto.ChatMessageReq;
+import com.ychat.common.Chat.domain.dto.*;
 import com.ychat.common.Chat.domain.vo.ChatMessageResp;
 import com.ychat.common.User.Domain.entity.Message;
 import com.ychat.common.Utils.Request.CursorPageBaseResp;
@@ -69,5 +66,12 @@ public interface ChatService {
      * @param request
      */
     void setMsgMark(Long uid, @Valid ChatMessageMarkReq request);
+
+    /**
+     * 上报用户自身在某个会话下的最新阅读时间
+     * @param uid
+     * @param request
+     */
+    void msgRead(Long uid, ChatMessageMemberReq request);
 
 }
