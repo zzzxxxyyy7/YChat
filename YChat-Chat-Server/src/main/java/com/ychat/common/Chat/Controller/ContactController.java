@@ -43,4 +43,18 @@ public class ContactController {
         return ApiResult.success(roomService.getContactPage(request, uid));
     }
 
+    @GetMapping("/public/contact/detail")
+    @ApiOperation("新消息推送时创建新的会话详情")
+    public ApiResult<ChatRoomResp> getContactDetail(@Valid IdReqVO request) {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(roomService.getContactDetail(uid, request.getId()));
+    }
+
+    @GetMapping("/public/contact/detail/friend")
+    @ApiOperation("从好友列表发消息时创建会话详情")
+    public ApiResult<ChatRoomResp> getContactDetailByFriend(@Valid ContactFriendReq request) {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(roomService.getContactDetailByFriend(uid, request.getUid()));
+    }
+
 }

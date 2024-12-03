@@ -17,7 +17,9 @@ import com.ychat.common.Constants.front.Request.CursorPageBaseReq;
 import com.ychat.common.User.Dao.ContactDao;
 import com.ychat.common.User.Dao.MessageDao;
 import com.ychat.common.User.Domain.entity.*;
+import com.ychat.common.User.Services.IRoomService;
 import com.ychat.common.User.Services.cache.UserInfoCache;
+import com.ychat.common.Utils.Assert.AssertUtil;
 import com.ychat.common.Utils.Request.CursorPageBaseResp;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +56,9 @@ public class RoomAppServiceImpl implements RoomAppService {
 
     @Autowired
     private MessageDao messageDao;
+
+    @Autowired
+    private IRoomService roomService;
 
 
     @Override
@@ -215,6 +220,21 @@ public class RoomAppServiceImpl implements RoomAppService {
         return contacts.parallelStream()
                 .map(contact -> Pair.of(contact.getRoomId(), messageDao.getUnReadCount(contact.getRoomId(), contact.getReadTime())))
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    }
+
+    @Override
+    public ChatRoomResp getContactDetail(Long uid, Long roomId) {
+        Room room = roomCache.get(roomId);
+        AssertUtil.isNotEmpty(room, "房间号有误");
+        // 构建单个会话
+        return buildContactResp(uid, Collections.singletonList(roomId)).get(0);
+    }
+
+    @Override
+    public ChatRoomResp getContactDetailByFriend(Long uid, Long friendUid) {
+        RoomFriend friendRoom = roomService.getFriendRoom(uid, friendUid);
+        AssertUtil.isNotEmpty(friendRoom, "他不是您的好友");
+        return buildContactResp(uid, Collections.singletonList(friendRoom.getRoomId())).get(0);
     }
 
 }
