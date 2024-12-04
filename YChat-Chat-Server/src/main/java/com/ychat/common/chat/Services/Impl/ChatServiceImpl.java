@@ -2,6 +2,8 @@ package com.ychat.common.Chat.Services.Impl;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.Pair;
+import com.ychat.common.Chat.Services.adapter.MemberAdapter;
 import com.ychat.common.Chat.Services.adapter.RoomAdapter;
 import com.ychat.common.Chat.Services.handler.RecallMsgHandler;
 import com.ychat.common.Chat.Services.mark.AbstractMsgMarkStrategy;
@@ -12,6 +14,7 @@ import com.ychat.common.Chat.domain.vo.MsgReadInfoDTO;
 import com.ychat.common.Config.Redis.RedissonConfig;
 import com.ychat.common.Constants.Enums.Impl.*;
 import com.ychat.common.Constants.Exception.BusinessException;
+import com.ychat.common.Constants.front.Request.CursorPageBaseReq;
 import com.ychat.common.User.Dao.*;
 import com.ychat.common.User.Services.IContactService;
 import com.ychat.common.User.Services.IRoleService;
@@ -28,10 +31,11 @@ import com.ychat.common.Chat.Services.handler.AbstractMsgHandler;
 import com.ychat.common.Chat.Services.factory.MsgHandlerFactory;
 import com.ychat.common.Chat.Event.MessageSendEvent;
 import com.ychat.common.User.Domain.entity.*;
+import com.ychat.common.Utils.Chat.ChatMemberHelper;
 import com.ychat.common.Utils.Request.CursorPageBaseResp;
+import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberResp;
 import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberStatisticResp;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +94,12 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     private IContactService contactService;
 
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private RoomGroupDao roomGroupDao;
+
     /**
      * 大群聊 ID 默认是 1
      */
@@ -110,7 +120,7 @@ public class ChatServiceImpl implements ChatService {
 
     private void check(ChatMessageReq request, Long uid) {
         Room room = roomCache.get(request.getRoomId());
-        if (room.isHotRoom()) {//全员群跳过校验
+        if (room.isHotRoom()) { // 全员群跳过校验
             return;
         }
         if (room.isRoomFriend()) {
@@ -123,7 +133,6 @@ public class ChatServiceImpl implements ChatService {
             GroupMember member = groupMemberDao.getMember(roomGroup.getId(), uid);
             AssertUtil.isNotEmpty(member, "您已经被移除该群");
         }
-
     }
 
     @Override
@@ -311,5 +320,44 @@ public class ChatServiceImpl implements ChatService {
         }
         return CursorPageBaseResp.init(page, RoomAdapter.buildReadResp(page.getList()));
     }
+
+    @Override
+    public CursorPageBaseResp<ChatMemberResp> getMemberPage(List<Long> memberUidList, MemberReq request) {
+        Pair<ChatActiveStatusEnum, String> pair = ChatMemberHelper.getCursorPair(request.getCursor());
+        ChatActiveStatusEnum activeStatusEnum = pair.getKey();
+        String timeCursor = pair.getValue();
+        List<ChatMemberResp> resultList = new ArrayList<>(); // 最终列表
+        Boolean isLast = Boolean.FALSE;
+        if (activeStatusEnum == ChatActiveStatusEnum.ONLINE) { // 在线列表
+            CursorPageBaseResp<User> cursorPage = userDao.getCursorPage(memberUidList, new CursorPageBaseReq(request.getPageSize(), timeCursor), ChatActiveStatusEnum.ONLINE);
+            resultList.addAll(MemberAdapter.buildMember(cursorPage.getList())); // 添加在线列表
+            if (cursorPage.getIsLast()) { // 如果是最后一页，从离线列表再补点数据
+                activeStatusEnum = ChatActiveStatusEnum.OFFLINE;
+                Integer leftSize = request.getPageSize() - cursorPage.getList().size();
+                cursorPage = userDao.getCursorPage(memberUidList, new CursorPageBaseReq(leftSize, null), ChatActiveStatusEnum.OFFLINE);
+                resultList.addAll(MemberAdapter.buildMember(cursorPage.getList())); // 添加离线线列表
+            }
+            timeCursor = cursorPage.getCursor();
+            isLast = cursorPage.getIsLast();
+        } else if (activeStatusEnum == ChatActiveStatusEnum.OFFLINE) { // 离线列表
+            CursorPageBaseResp<User> cursorPage = userDao.getCursorPage(memberUidList, new CursorPageBaseReq(request.getPageSize(), timeCursor), ChatActiveStatusEnum.OFFLINE);
+            resultList.addAll(MemberAdapter.buildMember(cursorPage.getList())); // 添加离线线列表
+            timeCursor = cursorPage.getCursor();
+            isLast = cursorPage.getIsLast();
+        }
+        // 获取群成员角色ID
+        List<Long> uidList = resultList.stream().map(ChatMemberResp::getUid).collect(Collectors.toList());
+        RoomGroup roomGroup = roomGroupDao.getByRoomId(request.getRoomId());
+        Map<Long, Integer> uidMapRole = groupMemberDao.getMemberMapRole(roomGroup.getId(), uidList);
+        resultList.forEach(member -> member.setRoleId(uidMapRole.get(member.getUid())));
+        // 组装结果
+        return new CursorPageBaseResp<>(ChatMemberHelper.generateCursor(activeStatusEnum, timeCursor), isLast, resultList);
+    }
+
+
+
+
+
+
 
 }

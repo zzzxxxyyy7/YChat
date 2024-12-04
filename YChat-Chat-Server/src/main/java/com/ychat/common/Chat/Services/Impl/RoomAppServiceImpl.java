@@ -2,32 +2,57 @@ package com.ychat.common.Chat.Services.Impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Pair;
+import com.ychat.common.Chat.Enum.GroupErrorEnum;
+import com.ychat.common.Chat.Enum.GroupRoleAPPEnum;
+import com.ychat.common.Chat.Enum.GroupRoleEnum;
+import com.ychat.common.Chat.Event.GroupMemberAddEvent;
+import com.ychat.common.Chat.Services.ChatService;
 import com.ychat.common.Chat.Services.RoomAppService;
 import com.ychat.common.Chat.Services.adapter.ChatAdapter;
-import com.ychat.common.Chat.Services.cache.HotRoomCache;
-import com.ychat.common.Chat.Services.cache.RoomCache;
-import com.ychat.common.Chat.Services.cache.RoomFriendCache;
-import com.ychat.common.Chat.Services.cache.RoomGroupCache;
+import com.ychat.common.Chat.Services.adapter.MemberAdapter;
+import com.ychat.common.Chat.Services.adapter.RoomAdapter;
+import com.ychat.common.Chat.Services.cache.*;
 import com.ychat.common.Chat.Services.factory.MsgHandlerFactory;
 import com.ychat.common.Chat.Services.handler.AbstractMsgHandler;
-import com.ychat.common.Chat.domain.dto.RoomBaseInfo;
+import com.ychat.common.Chat.Services.mark.AbstractMsgMarkStrategy;
+import com.ychat.common.Chat.Services.mark.MsgMarkFactory;
+import com.ychat.common.Chat.domain.dto.*;
+import com.ychat.common.Chat.domain.vo.ChatMemberListResp;
 import com.ychat.common.Chat.domain.vo.ChatRoomResp;
+import com.ychat.common.Chat.domain.vo.MemberResp;
+import com.ychat.common.Constants.Enums.Impl.MessageMarkActTypeEnum;
+import com.ychat.common.Constants.Enums.Impl.RoleEnum;
 import com.ychat.common.Constants.Enums.Impl.RoomTypeEnum;
+import com.ychat.common.Constants.Exception.BusinessException;
 import com.ychat.common.Constants.front.Request.CursorPageBaseReq;
 import com.ychat.common.User.Dao.ContactDao;
+import com.ychat.common.User.Dao.GroupMemberDao;
 import com.ychat.common.User.Dao.MessageDao;
+import com.ychat.common.User.Dao.UserDao;
 import com.ychat.common.User.Domain.entity.*;
+import com.ychat.common.User.Services.IRoleService;
 import com.ychat.common.User.Services.IRoomService;
+import com.ychat.common.User.Services.Impl.PushService;
+import com.ychat.common.User.Services.cache.UserCache;
 import com.ychat.common.User.Services.cache.UserInfoCache;
 import com.ychat.common.Utils.Assert.AssertUtil;
 import com.ychat.common.Utils.Request.CursorPageBaseResp;
+import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberResp;
+import com.ychat.common.Websocket.Domain.Vo.Resp.WSBaseResp;
+import com.ychat.common.Websocket.Domain.Vo.Resp.WSMemberChange;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -59,6 +84,33 @@ public class RoomAppServiceImpl implements RoomAppService {
 
     @Autowired
     private IRoomService roomService;
+
+    @Autowired
+    private UserCache userCache;
+
+    @Autowired
+    private GroupMemberDao groupMemberDao;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ChatService chatService;
+
+    @Autowired
+    private IRoleService roleService;
+
+    @Autowired
+    private GroupMemberCache groupMemberCache;
+
+    @Autowired
+    private PushService pushService;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Override
     public CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid) {
@@ -235,5 +287,184 @@ public class RoomAppServiceImpl implements RoomAppService {
         AssertUtil.isNotEmpty(friendRoom, "他不是您的好友");
         return buildContactResp(uid, Collections.singletonList(friendRoom.getRoomId())).get(0);
     }
+
+    /**
+     * 获取群聊会话详情
+     * @param uid
+     * @param roomId
+     * @return
+     */
+    @Override
+    public MemberResp getGroupDetail(Long uid, long roomId) {
+        RoomGroup roomGroup = roomGroupCache.get(roomId);
+        Room room = roomCache.get(roomId);
+        AssertUtil.isNotEmpty(roomGroup, "roomId有误");
+        Long onlineNum;
+        if (room.isHotRoom()) { // 热点群（所有用户都会默认加入热点群聊） --> 从 Redis 获取人数
+            onlineNum = userCache.getOnlineNum();
+        } else {
+            // 拿到所有群成员
+            List<Long> memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
+            onlineNum = userDao.getOnlineCount(memberUidList).longValue();
+        }
+        // 获取自己在这个群聊会话的角色
+        GroupRoleAPPEnum groupRole = getGroupRole(uid, roomGroup, room);
+        return MemberResp.builder()
+                .avatar(roomGroup.getAvatar())
+                .roomId(roomId)
+                .groupName(roomGroup.getName())
+                .onlineNum(onlineNum)
+                .role(groupRole.getType())
+                .build();
+    }
+
+    /**
+     * 获取用户在群聊会话的角色
+     * @param uid
+     * @param roomGroup
+     * @param room
+     * @return
+     */
+    private GroupRoleAPPEnum getGroupRole(Long uid, RoomGroup roomGroup, Room room) {
+        GroupMember member = Objects.isNull(uid) ? null : groupMemberDao.getMember(roomGroup.getId(), uid);
+        if (Objects.nonNull(member)) {
+            return GroupRoleAPPEnum.of(member.getRole());
+        } else if (room.isHotRoom()) {
+            return GroupRoleAPPEnum.MEMBER;
+        } else {
+            return GroupRoleAPPEnum.REMOVE;
+        }
+    }
+
+    @Override
+    public CursorPageBaseResp<ChatMemberResp> getMemberPage(MemberReq request) {
+        Room room = roomCache.get(request.getRoomId());
+        AssertUtil.isNotEmpty(room, "会话不存在");
+        // 群成员列表
+        List<Long> memberUidList;
+        if (room.isHotRoom()) { // 全员群展示所有用户
+            memberUidList = null;
+        } else { // 只展示房间内的群成员
+            RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
+            memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
+        }
+        return chatService.getMemberPage(memberUidList, request);
+    }
+
+    /**
+     * 获取 @ 群成员列表，可以加缓存
+     * @param request
+     * @return
+     */
+    @Override
+    @Cacheable(cacheNames = "member", key = "'memberList.'+#request.roomId")
+    public List<ChatMemberListResp> getMemberList(ChatMessageMemberReq request) {
+        Room room = roomCache.get(request.getRoomId());
+        AssertUtil.isNotEmpty(room, "会话不存在");
+        if (room.isHotRoom()) { // 全员群展示所有用户100名
+            List<User> memberList = userDao.getMemberList();
+            return MemberAdapter.buildMemberList(memberList);
+        } else {
+            RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
+            List<Long> memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
+            Map<Long, User> batch = userInfoCache.getBatch(memberUidList);
+            return MemberAdapter.buildMemberList(batch);
+        }
+    }
+
+    /**
+     * 移除群成员
+     * @param uid
+     * @param request
+     */
+    @Override
+    public void delMember(Long uid, MemberDelReq request) {
+        Room room = roomCache.get(request.getRoomId());
+        AssertUtil.isNotEmpty(room, "会话不存在");
+        RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
+        AssertUtil.isNotEmpty(roomGroup, "会话不存在");
+        GroupMember self = groupMemberDao.getMember(roomGroup.getId(), uid);
+        AssertUtil.isNotEmpty(self, GroupErrorEnum.USER_NOT_IN_GROUP);
+        // 1. 判断被移除的人是否是群主或者管理员（群主不可以被移除，管理员只能被群主移除）
+        Long removedUid = request.getUid();
+        // 1.1 群主 非法操作
+        AssertUtil.isFalse(groupMemberDao.isLord(roomGroup.getId(), removedUid), GroupErrorEnum.NOT_ALLOWED_FOR_REMOVE);
+        // 1.2 判断被移除人是否是管理员
+        if (groupMemberDao.isManager(roomGroup.getId(), removedUid)) {
+            // 判断操作人是否是群主
+            Boolean isLord = groupMemberDao.isLord(roomGroup.getId(), uid);
+            AssertUtil.isTrue(isLord, GroupErrorEnum.NOT_ALLOWED_FOR_REMOVE);
+        }
+        // 1.3 普通成员 判断是否有权限操作
+        AssertUtil.isTrue(hasRole(self), GroupErrorEnum.NOT_ALLOWED_FOR_REMOVE);
+        GroupMember member = groupMemberDao.getMember(roomGroup.getId(), removedUid);
+        AssertUtil.isNotEmpty(member, "用户已经移除");
+        groupMemberDao.removeById(member.getId());
+        // 发送移除事件告知群成员
+        List<Long> memberUidList = groupMemberCache.getMemberUidList(roomGroup.getRoomId());
+        WSBaseResp<WSMemberChange> ws = MemberAdapter.buildMemberRemoveWS(roomGroup.getRoomId(), member.getUid());
+        pushService.sendPushMsg(ws, memberUidList);
+        groupMemberCache.evictMemberUidList(room.getId());
+    }
+
+    private boolean hasRole(GroupMember self) {
+        return Objects.equals(self.getRole(), GroupRoleEnum.LEADER.getType())
+                || Objects.equals(self.getRole(), GroupRoleEnum.MANAGER.getType())
+                || roleService.hasRole(self.getUid(), RoleEnum.ADMIN);
+    }
+
+    @Override
+    public Long addGroup(Long uid, GroupAddReq request) {
+        // 先创建一条群聊会话记录
+        RoomGroup roomGroup = roomService.createGroupRoom(uid);
+        // 批量保存群成员
+        List<GroupMember> groupMembers = RoomAdapter.buildGroupMemberBatch(request.getUidList(), roomGroup.getId());
+        groupMemberDao.saveBatch(groupMembers);
+        // 发送邀请加群消息 ---> 触发每个人的会话
+        applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, roomGroup, groupMembers, uid));
+        return roomGroup.getRoomId();
+    }
+
+    /**
+     * 邀请好友
+     * @param uid
+     * @param request
+     */
+    @Override
+    public void addMember(Long uid, MemberAddReq request) {
+        RLock lock = redissonClient.getLock("inventFriend:uid:" + uid);
+        try {
+            // 尝试加锁，设置锁的过期时间为5秒，防止长时间占用
+            if (lock.tryLock(5, 2, TimeUnit.SECONDS)) {
+                Room room = roomCache.get(request.getRoomId());
+                AssertUtil.isNotEmpty(room, "会话不存在");
+                AssertUtil.isFalse(room.isHotRoom(), "全员群无需邀请好友");
+                RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
+                AssertUtil.isNotEmpty(roomGroup, "会话不存在");
+                GroupMember self = groupMemberDao.getMember(roomGroup.getId(), uid);
+                AssertUtil.isNotEmpty(self, "您不在该群中，无法邀请其他人加入群聊");
+                List<Long> memberBatch = groupMemberDao.getMemberBatch(roomGroup.getId(), request.getUidList());
+                Set<Long> existUid = new HashSet<>(memberBatch);
+                List<Long> waitAddUidList = request.getUidList().stream().filter(a -> !existUid.contains(a)).distinct().collect(Collectors.toList());
+                if (CollectionUtils.isEmpty(waitAddUidList)) {
+                    return;
+                }
+                List<GroupMember> groupMembers = MemberAdapter.buildMemberAdd(roomGroup.getId(), waitAddUidList);
+                groupMemberDao.saveBatch(groupMembers);
+                applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, roomGroup, groupMembers, uid));
+            } else {
+                throw new BusinessException("已经邀请过了，请勿频繁邀请");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("锁等待被中断");
+        } finally {
+            // 确保在操作结束后释放锁
+            lock.unlock();
+        }
+    }
+
+
+
 
 }

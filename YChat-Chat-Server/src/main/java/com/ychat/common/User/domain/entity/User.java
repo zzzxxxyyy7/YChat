@@ -5,8 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,9 +15,13 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName(value = "user", autoResultMap = true)
 public class User implements Serializable {
 
+    public static Long UID_SYSTEM = 1L; // 系统uid
     private static final long serialVersionUID = 1L;
 
     /**

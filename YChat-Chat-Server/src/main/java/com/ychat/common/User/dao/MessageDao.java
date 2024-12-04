@@ -1,5 +1,8 @@
 package com.ychat.common.User.Dao;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ychat.common.Chat.domain.dto.ChatMessagePageReq;
 import com.ychat.common.Constants.Enums.Impl.MessageStatusEnum;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -62,5 +66,30 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
                 .gt(Objects.nonNull(readTime), Message::getCreateTime, readTime)
                 .count();
     }
+
+    /**
+     * 根据房间ID逻辑删除消息
+     *
+     * @param roomId  房间ID
+     * @param uidList 群成员列表
+     * @return 是否删除成功
+     */
+    public Boolean removeByRoomId(Long roomId, List<Long> uidList) {
+        if (CollectionUtil.isNotEmpty(uidList)) {
+            LambdaUpdateWrapper<Message> wrapper = new UpdateWrapper<Message>().lambda()
+                    .eq(Message::getRoomId, roomId)
+                    .in(Message::getFromUid, uidList)
+                    .set(Message::getStatus, MessageStatusEnum.DELETE.getStatus());
+            return this.update(wrapper);
+        }
+        return false;
+    }
+
+
+
+
+
+
+
 
 }

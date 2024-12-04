@@ -6,11 +6,13 @@ import com.ychat.common.Chat.domain.vo.ChatMessageResp;
 import com.ychat.common.Chat.domain.vo.MsgReadInfoDTO;
 import com.ychat.common.User.Domain.entity.Message;
 import com.ychat.common.Utils.Request.CursorPageBaseResp;
+import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberResp;
 import com.ychat.common.Websocket.Domain.Vo.Resp.ChatMemberStatisticResp;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 消息处理类
@@ -92,5 +94,14 @@ public interface ChatService {
      * @return
      */
     CursorPageBaseResp<ChatMessageReadResp> getReadPage(Long uid, @Valid ChatMessageReadReq request);
+
+    /**
+     * 获取群成员列表
+     *
+     * @param memberUidList
+     * @param request
+     * @return
+     */
+    CursorPageBaseResp<ChatMemberResp> getMemberPage(List<Long> memberUidList, MemberReq request);
 
 }

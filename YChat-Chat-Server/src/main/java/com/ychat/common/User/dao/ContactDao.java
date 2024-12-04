@@ -1,5 +1,8 @@
 package com.ychat.common.User.Dao;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ychat.common.Chat.domain.dto.ChatMessageReadReq;
 import com.ychat.common.Constants.front.Request.CursorPageBaseReq;
 import com.ychat.common.User.Domain.entity.Contact;
@@ -100,5 +103,27 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
             wrapper.lt(Contact::getReadTime, message.getCreateTime()); // 已读时间小于消息发送时间
         }, Contact::getReadTime);
     }
+
+    /**
+     * 根据房间ID删除会话
+     *
+     * @param roomId  房间ID
+     * @param uidList 群成员列表
+     * @return 是否删除成功
+     */
+    public Boolean removeByRoomId(Long roomId, List<Long> uidList) {
+        if (CollectionUtil.isNotEmpty(uidList)) {
+            LambdaQueryWrapper<Contact> wrapper = new QueryWrapper<Contact>().lambda()
+                    .eq(Contact::getRoomId, roomId)
+                    .in(Contact::getUid, uidList);
+            return this.remove(wrapper);
+        }
+        return false;
+    }
+
+
+
+
+
 
 }

@@ -7,8 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import java.util.Date;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 /**
  * 会话成员表
@@ -16,6 +15,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("group_member")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class GroupMember implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -5,6 +5,8 @@ import com.ychat.common.Constants.Enums.Impl.NormalOrNoEnum;
 import com.ychat.common.Constants.Enums.Impl.RoomTypeEnum;
 import com.ychat.common.User.Domain.entity.Room;
 import com.ychat.common.User.Domain.entity.RoomFriend;
+import com.ychat.common.User.Domain.entity.RoomGroup;
+import com.ychat.common.User.Domain.entity.User;
 
 import java.util.Collection;
 import java.util.List;
@@ -75,5 +77,16 @@ public class ChatAdapter {
     public static Long getFriendUid(RoomFriend roomFriend, Long uid) {
         return Objects.equals(uid, roomFriend.getUid1()) ? roomFriend.getUid2() : roomFriend.getUid1();
     }
+
+    public static RoomGroup buildGroupRoom(User user, Long roomId) {
+        RoomGroup roomGroup = new RoomGroup();
+        roomGroup.setName(user.getName() + "的群组");
+        roomGroup.setAvatar(user.getAvatar());
+        roomGroup.setRoomId(roomId);
+        return roomGroup;
+    }
+
+
+
 
 }

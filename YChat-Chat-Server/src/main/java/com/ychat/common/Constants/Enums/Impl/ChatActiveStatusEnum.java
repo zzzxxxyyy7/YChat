@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Description: 用户是否在线枚举
+ * 用户是否在线枚举
  */
 @AllArgsConstructor
 @Getter
@@ -30,4 +30,5 @@ public enum ChatActiveStatusEnum {
     public static ChatActiveStatusEnum of(Integer type) {
         return cache.get(type);
     }
+
 }

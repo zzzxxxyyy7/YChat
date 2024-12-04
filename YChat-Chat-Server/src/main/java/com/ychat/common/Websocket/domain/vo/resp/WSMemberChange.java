@@ -16,6 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WSMemberChange {
+
     public static final Integer CHANGE_TYPE_ADD = 1;
     public static final Integer CHANGE_TYPE_REMOVE = 2;
 
