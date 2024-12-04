@@ -30,4 +30,5 @@ public class ChatMemberResp {
 
     @ApiModelProperty("最后一次上下线时间")
     private Date lastOptTime;
+
 }

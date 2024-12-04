@@ -44,7 +44,7 @@ public class RoomController {
     }
 
     @GetMapping("/public/group/member/page")
-    @ApiOperation("群成员列表")
+    @ApiOperation("组合游标获取 -- 群成员列表")
     public ApiResult<CursorPageBaseResp<ChatMemberResp>> getMemberPage(@Valid MemberReq request) {
         return ApiResult.success(roomService.getMemberPage(request));
     }

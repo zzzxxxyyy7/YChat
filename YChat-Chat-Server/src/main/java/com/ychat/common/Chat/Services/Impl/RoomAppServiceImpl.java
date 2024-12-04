@@ -336,15 +336,20 @@ public class RoomAppServiceImpl implements RoomAppService {
         }
     }
 
+    /**
+     * 组合游标获取 -- 群成员列表
+     * @param request
+     * @return
+     */
     @Override
     public CursorPageBaseResp<ChatMemberResp> getMemberPage(MemberReq request) {
         Room room = roomCache.get(request.getRoomId());
         AssertUtil.isNotEmpty(room, "会话不存在");
         // 群成员列表
         List<Long> memberUidList;
-        if (room.isHotRoom()) { // 全员群展示所有用户
+        if (room.isHotRoom()) { // 全员群展示所有用户（所有用户都需要参与排序）
             memberUidList = null;
-        } else { // 只展示房间内的群成员
+        } else { // 普通会话，只展示房间内的群成员
             RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
             memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
         }
